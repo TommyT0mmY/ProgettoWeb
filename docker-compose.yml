@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  db: #Container del database MySQL
+    image: mysql:latest
+    restart: always
+    environment: # Lista di variabili d'ambiente per configurare MySQL: https://hub.docker.com/_/mysql#environment-variables
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_password
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD_FILE=/run/secrets/db_user_password
+    volumes:
+      - "./db/:/docker-entrypoint-initdb.d" # Script di inizializzazione del database
+      - db_data:/var/lib/mysql # Persistenza dati, volume Docker, non directory locale
+    secrets:
+      - db_root_password
+      - db_user_password
+    networks:
+      - lamp_docker
+    healthcheck: # Healthcheck per assicurarsi che MySQL sia pronto prima di avviare gli altri container
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--user=${MYSQL_USER}", "--password=$(cat /run/secrets/db_user_password)"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 30s
+  www: #Container del server web Apache con PHP
+    build: . # Si basa sul Dockerfile nella directory corrente
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD_FILE=/run/secrets/db_user_password
+    secrets:
+      - db_user_password
+    depends_on:
+      - db
+    volumes:
+      - "./www:/var/www/html:ro" # Sola lettura
+    ports:
+      - 80:80
+    networks:
+      - lamp_docker
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+    - 8001:80 # Espone phpMyAdmin sulla porta 8001
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    networks:
+      - lamp_docker
+  # Questo viene usato solo per generare dati di test nel database, non fa parte del progetto
+  # ma ci aiuta durante lo sviluppo a popolare il database con dati fittizi.
+  python:
+    build: ./python # Si basa sul Dockerfile nella cartella python
+    container_name: mock_data
+    restart: no
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - lamp_docker
+    #stdin_open: true # modalità interattiva
+    #tty: true        # mantieni il terminale aperto
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./python
+          target: /app
+        # rebuild se il Dockerfile o requirements.txt cambiano
+        - action: rebuild
+          path: ./python/Dockerfile
+        - action: rebuild
+          path: ./python/requirements.txt
+
+volumes:
+  db_data:
+
+networks:
+  lamp_docker:
+    driver: bridge
+
+secrets:
+  db_root_password:
+    file: ./secrets/db_root_password.txt
+  db_user_password:
+    file: ./secrets/db_user_password.txt
