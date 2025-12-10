@@ -1,9 +1,8 @@
-version: '3.8'
 name: unibostu
 
 services:
   db: #Container del database MySQL
-    image: mysql:latest
+    image: mysql:9.5.0
     restart: always
     environment: # Lista di variabili d'ambiente per configurare MySQL: https://hub.docker.com/_/mysql#environment-variables
       - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_password
@@ -42,7 +41,7 @@ services:
     networks:
       - lamp_docker
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:5.2.3
     depends_on:
       - db
     ports:
