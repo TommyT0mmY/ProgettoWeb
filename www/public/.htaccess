@@ -2,4 +2,4 @@ RewriteEngine On
 # Se il file o la cartella non esistono, passa tutto a index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+RewriteRule ^ index.php [L]
