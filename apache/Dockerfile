@@ -11,5 +11,4 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite headers
 
 # Configurazioni di sicurezza
-RUN echo "session.use_strict_mode = 1" > /usr/local/etc/php/conf.d/security-custom.ini \
-    && echo "session.cookie_httponly = 1" >> /usr/local/etc/php/conf.d/security-custom.ini
+COPY security-custom.ini /usr/local/etc/php/conf.d/

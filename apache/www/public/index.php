@@ -1,4 +1,5 @@
-<?php
+<?php 
+declare(strict_types=1);
 
 // Basic PSR-4 autoloader
 spl_autoload_register(function($classname) {
@@ -17,5 +18,4 @@ spl_autoload_register(function($classname) {
 });
 
 $app = new \Unibostu\Core\App();
-
 ?>
