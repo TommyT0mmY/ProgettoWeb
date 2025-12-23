@@ -24,7 +24,7 @@ services:
       retries: 10
       start_period: 30s
   www: #Container del server web Apache con PHP
-    build: . # Si basa sul Dockerfile nella directory corrente
+    build: ./apache # Si basa sul Dockerfile in apache
     restart: always
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -35,7 +35,7 @@ services:
     depends_on:
       - db
     volumes:
-      - "./www:/var/www/html:ro" # Sola lettura
+      - "./apache/www:/var/www/html:ro" # Sola lettura
     ports:
       - 80:80
     networks:
