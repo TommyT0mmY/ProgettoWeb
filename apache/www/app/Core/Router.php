@@ -47,21 +47,22 @@ class BacktrackingResult {
 }
 
 /**
- * Router for storing HTTP routes and dispatching incoming HTTP requests.
+ * HTTP Router for registering routes and dispatching requests.
  *
- * The router is based on a Prefix Tree.
- * The router concatenates the HTTP method and the path
- * (e.g. "GET" + "/users/:id") and splits them by '/' to traverse
- * or build the trie.
+ * Register routes using HTTP method methods (get, post, etc.) and provide
+ * a callback function. When a route matches an incoming request, the router
+ * invokes the callback with route variables as an associative array.
  *
- * Variable segments must start with {@see VARIABLE_PREFIX} (':'),
- * for example ":id".
- * Variable segments are stored in {@see Node::$variables} without the prefix.
+ * Variable routes are defined with a colon prefix (e.g., ":id").
+ * Example: For route "/users/:id", matching "/users/123" invokes
+ * $callback(['id' => '123']).
  *
- * General behavior:
- * - {@see add()} registers a route and associates a callback with its ending node.
- * - {@see dispatch()} resolves an incoming request, applies variables
- *   when no concrete path remains, and invokes the matching callback.
+ * Usage:
+ * $router = new Router();
+ * $router->get('/users/:id', function($params) {
+ *     // $params is ['id' => '123'] for "/users/123"
+ * });
+ * $router->dispatch('GET', '/users/123');
  */
 class Router {
     /**
@@ -73,26 +74,64 @@ class Router {
         $this->routes = new Node();
     }
 
+    /**
+     * Registers a GET route.
+     *
+     * @param string  $path     Route path (e.g. "/users/:id").
+     * @param Closure $callback Callback that receives route variables as an associative array.
+     *                          Example: For route "/users/:id", matching "/users/123" invokes
+     *                          $callback(['id' => '123']).
+     */
     public function get(string $path, Closure $callback) {
         $this->add("GET", $path, $callback);
     }
 
+    /**
+     * Registers a POST route.
+     *
+     * @param string  $path     Route path.
+     * @param Closure $callback Callback that receives route variables as an associative array.
+     */
     public function post(string $path, Closure $callback) {
         $this->add("POST", $path, $callback);
     }
 
+    /**
+     * Registers a PUT route.
+     *
+     * @param string  $path     Route path.
+     * @param Closure $callback Callback that receives route variables as an associative array.
+     */
     public function put(string $path, Closure $callback) {
         $this->add("PUT", $path, $callback);
     }
 
+    /**
+     * Registers a DELETE route.
+     *
+     * @param string  $path     Route path.
+     * @param Closure $callback Callback that receives route variables as an associative array.
+     */
     public function delete(string $path, Closure $callback) {
         $this->add("DELETE", $path, $callback);
     }
 
+    /**
+     * Registers a PATCH route.
+     *
+     * @param string  $path     Route path.
+     * @param Closure $callback Callback that receives route variables as an associative array.
+     */
     public function patch(string $path, Closure $callback) {
         $this->add("PATCH", $path, $callback);
     }
 
+    /**
+     * Registers a OPTIONS route.
+     *
+     * @param string  $path     Route path.
+     * @param Closure $callback Callback that receives route variables as an associative array.
+     */
     public function options(string $path, Closure $callback) {
         $this->add("OPTIONS", $path, $callback);
     }
