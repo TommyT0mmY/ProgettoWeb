@@ -37,8 +37,8 @@ class UsersController {
     /**
      * Registra un nuovo utente
      */
-    public function register(string $idutente, int $identita, string $password, string $nome, string $cognome, int $idfacolta): void {
-        $result = $this->userService->registerUser($idutente, $identita, $password, $nome, $cognome, $idfacolta);
+    public function register(string $idutente, string $password, string $nome, string $cognome, int $idfacolta): void {
+        $result = $this->userService->registerUser($idutente, $password, $nome, $cognome, $idfacolta);
         // Gestisci il risultato
     }
 

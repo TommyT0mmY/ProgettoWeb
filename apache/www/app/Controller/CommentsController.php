@@ -24,16 +24,16 @@ class CommentsController {
     /**
      * Crea un nuovo commento
      */
-    public function create(int $postid, int $idcommento, string $testo, int $identita): void {
-        $result = $this->commentService->createComment($postid, $idcommento, $testo, $identita);
+    public function create(int $postid, int $idcommento, string $testo, string $idutente): void {
+        $result = $this->commentService->createComment($postid, $idcommento, $testo, $idutente);
         // Gestisci il risultato
     }
 
     /**
      * Elimina un commento
      */
-    public function delete(int $idpost, int $idcommento): void {
-        $result = $this->commentService->deleteComment($idpost, $idcommento);
+    public function delete(int $idpost, int $idcommento, string $idutente): void {
+        $result = $this->commentService->deleteComment($idpost, $idcommento, $idutente);
         // Gestisci il risultato
     }
 }

@@ -42,17 +42,9 @@ class PostsController {
     /**
      * Crea un nuovo post
      */
-    public function create(string $titolo, string $descrizione, int $identita, ?string $percorso_allegato = null, ?int $idcorso = null): void {
-        $idpost = $this->postService->createPost($titolo, $descrizione, $identita, $percorso_allegato, $idcorso);
+    public function create(string $titolo, string $descrizione, string $idutente, ?string $percorso_allegato = null, ?int $idcorso = null): void {
+        $idpost = $this->postService->createPost($titolo, $descrizione, $idutente, $percorso_allegato, $idcorso);
         // Gestisci il risultato (redirect o messaggio)
-    }
-
-    /**
-     * Aggiorna un post
-     */
-    public function update(int $idpost, string $titolo, string $descrizione): void {
-        $result = $this->postService->updatePost($idpost, $titolo, $descrizione);
-        // Gestisci il risultato
     }
 
     /**
@@ -72,8 +64,8 @@ class PostsController {
     /**
      * Elimina un post
      */
-    public function delete(int $idpost): void {
-        $result = $this->postService->deletePost($idpost);
+    public function delete(int $idpost, string $idutente): void {
+        $result = $this->postService->deletePost($idpost, $idutente);
         // Gestisci il risultato
     }
 }
