@@ -80,7 +80,7 @@ create table utenti (
      password varchar(255) not null,
      nome varchar(30) not null,
      cognome varchar(30) not null,
-     idfacolta int not null,
+     idfacolta int,
      utente_sospeso boolean not null default false,
      constraint IDutenti primary key (idutente),
      constraint FKR_1_ID unique (identita));
