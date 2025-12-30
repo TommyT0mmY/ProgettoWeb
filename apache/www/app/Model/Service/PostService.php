@@ -67,10 +67,12 @@ class PostService {
     public function createPost(
         string $titolo,
         string $descrizione,
-        int $identita,
+        string $idutente,
         ?string $percorso_allegato = null,
         ?int $idcorso = null
     ): int {
+        $user = $this->userRepository->findByUserId($idutente);
+
         $post = new PostEntity(
             0, // Sarà auto-generato dal database
             $titolo,
@@ -79,26 +81,11 @@ class PostService {
             0,
             0,
             date('Y-m-d'),
-            $identita,
+            $user->identita,
             $idcorso
         );
 
         return $this->postRepository->save($post);
-    }
-
-    /**
-     * Aggiorna un post
-     */
-    public function updatePost(int $idpost, string $titolo, string $descrizione): bool {
-        $post = $this->postRepository->findById($idpost);
-        if (!$post) {
-            return false;
-        }
-
-        $post->titolo = $titolo;
-        $post->descrizione = $descrizione;
-
-        return $this->postRepository->update($post);
     }
 
     /**
@@ -118,7 +105,12 @@ class PostService {
     /**
      * Elimina un post
      */
-    public function deletePost(int $idpost): bool {
+    public function deletePost(int $idpost, string $idutente): bool {
+        $user = $this->userRepository->findByUserId($idutente);
+        if (!$user || $user->identita !== $this->postRepository->findById($idpost)?->identita) {
+            return false;
+        }
+
         return $this->postRepository->delete($idpost);
     }
 }

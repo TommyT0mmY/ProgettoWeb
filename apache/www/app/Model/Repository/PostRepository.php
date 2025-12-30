@@ -104,26 +104,6 @@ class PostRepository {
     }
 
     /**
-     * Aggiorna un post
-     */
-    public function update(PostEntity $post): bool {
-        $stmt = $this->pdo->prepare(
-            "UPDATE posts 
-             SET titolo = :titolo, descrizione = :descrizione, percorso_allegato = :percorso_allegato, 
-                 likes = :likes, dislikes = :dislikes, idcorso = :idcorso
-             WHERE idpost = :idpost"
-        );
-        $stmt->bindValue(':titolo', $post->titolo, PDO::PARAM_STR);
-        $stmt->bindValue(':descrizione', $post->descrizione, PDO::PARAM_STR);
-        $stmt->bindValue(':percorso_allegato', $post->percorso_allegato, PDO::PARAM_STR);
-        $stmt->bindValue(':likes', $post->likes, PDO::PARAM_INT);
-        $stmt->bindValue(':dislikes', $post->dislikes, PDO::PARAM_INT);
-        $stmt->bindValue(':idcorso', $post->idcorso, PDO::PARAM_INT);
-        $stmt->bindValue(':idpost', $post->idpost, PDO::PARAM_INT);
-        return $stmt->execute();
-    }
-
-    /**
      * Incrementa i like di un post
      */
     public function incrementLikes(int $idpost): bool {

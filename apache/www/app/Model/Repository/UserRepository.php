@@ -15,7 +15,7 @@ class UserRepository {
     }
 
     /**
-     * Recupera un utente tramite ID utente
+     * Recupera un utente tramite ID utente (contiene anche identita)
      */
     public function findByUserId(string $idutente): ?UserEntity {
         $stmt = $this->pdo->prepare(
@@ -48,21 +48,49 @@ class UserRepository {
 
     /**
      * Salva un nuovo utente
+     * 1. Inserisce prima un record in entita
+     * 2. Recupera l'identita generato
+     * 3. Inserisce il record in utenti con l'identita appena creato
      */
     public function save(UserEntity $user): bool {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO utenti 
-             (idutente, identita, password, nome, cognome, idfacolta, utente_sospeso)
-             VALUES (:idutente, :identita, :password, :nome, :cognome, :idfacolta, :utente_sospeso)"
-        );
-        $stmt->bindValue(':idutente', $user->idutente, PDO::PARAM_STR);
-        $stmt->bindValue(':identita', $user->identita, PDO::PARAM_INT);
-        $stmt->bindValue(':password', $user->password, PDO::PARAM_STR);
-        $stmt->bindValue(':nome', $user->nome, PDO::PARAM_STR);
-        $stmt->bindValue(':cognome', $user->cognome, PDO::PARAM_STR);
-        $stmt->bindValue(':idfacolta', $user->idfacolta, PDO::PARAM_INT);
-        $stmt->bindValue(':utente_sospeso', $user->utente_sospeso, PDO::PARAM_BOOL);
-        return $stmt->execute();
+        try {
+            $this->pdo->beginTransaction();
+
+            // Step 1: Inserisci in entita per generare un nuovo identita
+            $stmtEntita = $this->pdo->prepare(
+                "INSERT INTO entita DEFAULT VALUES"
+            );
+            $stmtEntita->execute();
+
+            // Step 2: Recupera l'identita appena creato (il più grande)
+            $stmtLastId = $this->pdo->prepare(
+                "SELECT MAX(identita) as identita FROM entita"
+            );
+            $stmtLastId->execute();
+            $result = $stmtLastId->fetch(PDO::FETCH_ASSOC);
+            $newIdentita = (int)$result['identita'];
+
+            // Step 3: Inserisci in utenti con il nuovo identita
+            $stmtUtenti = $this->pdo->prepare(
+                "INSERT INTO utenti 
+                 (idutente, identita, password, nome, cognome, idfacolta, utente_sospeso)
+                 VALUES (:idutente, :identita, :password, :nome, :cognome, :idfacolta, :utente_sospeso)"
+            );
+            $stmtUtenti->bindValue(':idutente', $user->idutente, PDO::PARAM_STR);
+            $stmtUtenti->bindValue(':identita', $newIdentita, PDO::PARAM_INT);
+            $stmtUtenti->bindValue(':password', $user->password, PDO::PARAM_STR);
+            $stmtUtenti->bindValue(':nome', $user->nome, PDO::PARAM_STR);
+            $stmtUtenti->bindValue(':cognome', $user->cognome, PDO::PARAM_STR);
+            $stmtUtenti->bindValue(':idfacolta', $user->idfacolta, PDO::PARAM_INT);
+            $stmtUtenti->bindValue(':utente_sospeso', $user->utente_sospeso, PDO::PARAM_BOOL);
+            $success = $stmtUtenti->execute();
+
+            $this->pdo->commit();
+            return $success;
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
 
     /**

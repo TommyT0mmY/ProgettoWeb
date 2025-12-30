@@ -40,7 +40,6 @@ class UserService {
      */
     public function registerUser(
         string $idutente,
-        int $identita,
         string $password,
         string $nome,
         string $cognome,
@@ -48,7 +47,7 @@ class UserService {
     ): bool {
         $user = new UserEntity(
             $idutente,
-            $identita,
+            0,
             password_hash($password, PASSWORD_BCRYPT),
             $nome,
             $cognome,

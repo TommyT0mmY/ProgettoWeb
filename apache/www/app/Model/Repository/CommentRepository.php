@@ -35,6 +35,19 @@ class CommentRepository {
     }
 
     /**
+     * Recupera un commento tramite ID
+     */
+    public function findById(int $idpost, int $idcommento): ?CommentEntity {
+        $stmt = $this->pdo->prepare("SELECT * FROM commenti WHERE idpost = :idpost AND idcommento = :idcommento");
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+        $stmt->bindValue(':idcommento', $idcommento, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ? $this->rowToEntity($row) : null;
+    }
+
+    /**
      * Salva un nuovo commento
      */
     public function save(CommentEntity $comment): bool {
