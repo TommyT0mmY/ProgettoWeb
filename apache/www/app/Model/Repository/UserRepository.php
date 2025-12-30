@@ -58,7 +58,7 @@ class UserRepository {
 
             // Step 1: Inserisci in entita per generare un nuovo identita
             $stmtEntita = $this->pdo->prepare(
-                "INSERT INTO entita DEFAULT VALUES"
+                "INSERT INTO entita (identita) VALUES (DEFAULT)"
             );
             $stmtEntita->execute();
 
