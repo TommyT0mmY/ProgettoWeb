@@ -120,7 +120,8 @@ alter table commenti add constraint FKrisposte
 
 alter table corsi add constraint FKcomposizione
      foreign key (idfacolta)
-     references facolta (idfacolta);
+     references facolta (idfacolta)
+     on delete cascade;
 
 alter table post_tags add constraint FKpos_tag
      foreign key (idcorso, tipo)
@@ -140,11 +141,13 @@ alter table posts add constraint FKcorso_posts
 
 alter table tags add constraint FKcorsi_tags
      foreign key (idcorso)
-     references corsi (idcorso);
+     references corsi (idcorso)
+     on delete cascade;
 
 alter table utenti add constraint FKappartenenza
      foreign key (idfacolta)
-     references facolta (idfacolta);
+     references facolta (idfacolta)
+     on delete set null;
 
 alter table utenti add constraint FKR_1_FK
      foreign key (identita)
