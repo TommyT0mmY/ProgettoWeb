@@ -45,13 +45,13 @@ class PostRepository {
     /**
      * Recupera i post di un utente
      */
-    public function findByUserId(int $idutente): array {
+    public function findByUserId(int $identita): array {
         $stmt = $this->pdo->prepare(
             "SELECT * FROM posts 
-             WHERE idutente = :idutente
+             WHERE identita = :identita
              ORDER BY data_creazione DESC"
         );
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_INT);
+        $stmt->bindValue(':identita', $identita, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
