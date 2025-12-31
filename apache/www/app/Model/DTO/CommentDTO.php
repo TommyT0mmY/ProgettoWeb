@@ -28,5 +28,3 @@ class CommentsListDTO {
         $this->comments[] = $comment;
     }
 }
-
-?>

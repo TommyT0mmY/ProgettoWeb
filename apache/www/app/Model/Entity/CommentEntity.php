@@ -33,5 +33,3 @@ class CommentEntity {
         $this->idcommento_genitore = $idcommento_genitore;
     }
 }
-
-?>

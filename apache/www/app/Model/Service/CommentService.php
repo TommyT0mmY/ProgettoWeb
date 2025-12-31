@@ -79,5 +79,3 @@ class CommentService {
         return $this->commentRepository->delete($idpost, $idcommento);
     }
 }
-
-?>

@@ -73,5 +73,3 @@ class UserService {
         return $this->userRepository->update($user);
     }
 }
-
-?>

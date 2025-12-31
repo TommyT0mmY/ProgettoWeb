@@ -28,5 +28,3 @@ class PostListDTO {
         $this->posts[] = $post;
     }
 }
-
-?>

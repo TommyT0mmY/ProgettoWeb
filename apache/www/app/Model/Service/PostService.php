@@ -114,5 +114,3 @@ class PostService {
         return $this->postRepository->delete($idpost);
     }
 }
-
-?>

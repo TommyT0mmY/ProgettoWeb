@@ -30,5 +30,3 @@ class UserEntity {
         $this->utente_sospeso = $utente_sospeso;
     }
 }
-
-?>

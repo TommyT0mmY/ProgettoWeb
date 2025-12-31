@@ -12,5 +12,3 @@ class UserProfileDTO {
         $this->user = $user;
     }
 }
-
-?>

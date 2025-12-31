@@ -36,5 +36,3 @@ class PostEntity {
         $this->idcorso = $idcorso;
     }
 }
-
-?>
