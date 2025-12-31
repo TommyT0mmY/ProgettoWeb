@@ -16,6 +16,4 @@ spl_autoload_register(function($classname) {
         require $file;
     }
 });
-
 $app = new \Unibostu\Core\App();
-?>

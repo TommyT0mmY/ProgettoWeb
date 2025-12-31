@@ -238,7 +238,6 @@ class Router {
             }
         }
         return new BacktrackingResult(); // No match
-
     }
     
     private static function getRoute(string $method, string $path): string {
@@ -248,5 +247,4 @@ class Router {
         return $route;
     }
 }
-?>
 
