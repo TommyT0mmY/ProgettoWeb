@@ -15,16 +15,3 @@ class CommentWithAuthorDTO {
         $this->author = $author;
     }
 }
-
-class CommentsListDTO {
-    /** @var CommentWithAuthorDTO[] */
-    public array $comments;
-
-    public function __construct(array $comments = []) {
-        $this->comments = $comments;
-    }
-
-    public function addComment(CommentWithAuthorDTO $comment): void {
-        $this->comments[] = $comment;
-    }
-}
