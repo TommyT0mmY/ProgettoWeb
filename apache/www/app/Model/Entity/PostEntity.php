@@ -13,6 +13,12 @@ class PostEntity {
     public string $data_creazione;
     public int $identita;
     public ?int $idcorso;
+    /** @var array Array of tag arrays with 'tipo' and 'idcorso' keys */
+    public array $tags;
+    /** @var array Array of category IDs */
+    public array $categorie;
+    /** @var array Array of faculty IDs for visibility (for admin posts) */
+    public array $facolta;
 
     public function __construct(
         int $idpost,
@@ -23,7 +29,10 @@ class PostEntity {
         int $dislikes,
         string $data_creazione,
         int $identita,
-        ?int $idcorso
+        ?int $idcorso,
+        array $tags = [],
+        array $categorie = [],
+        array $facolta = []
     ) {
         $this->idpost = $idpost;
         $this->titolo = $titolo;
@@ -34,5 +43,8 @@ class PostEntity {
         $this->data_creazione = $data_creazione;
         $this->identita = $identita;
         $this->idcorso = $idcorso;
+        $this->tags = $tags;
+        $this->categorie = $categorie;
+        $this->facolta = $facolta;
     }
 }
