@@ -72,4 +72,17 @@ class UserService {
 
         return $this->userRepository->update($user);
     }
+
+    /**
+     * Sospende un utente impostando il flag utente_sospeso a true
+     */
+    public function suspendUser(string $idutente): bool {
+        $user = $this->userRepository->findByUserId($idutente);
+        if (!$user) {
+            return false;
+        }
+
+        $user->utente_sospeso = true;
+        return $this->userRepository->update($user);
+    }
 }

@@ -26,15 +26,15 @@ create table categorie (
      constraint IDcategorie primary key (idcategoria));
 
 create table commenti (
+     idcommento int not null auto_increment,
      idpost int not null,
-     idcommento int not null,
      testo text not null,
      data_creazione date not null,
      cancellato boolean not null default false,
      identita int not null,
      idpost_genitore int not null,
-     idcommento_genitore int not null,
-     constraint IDcommenti primary key (idpost, idcommento));
+     idcommento_genitore int,
+     constraint IDcommenti primary key (idcommento, idpost));
 
 create table corsi (
      idcorso int not null auto_increment,
@@ -115,8 +115,8 @@ alter table commenti add constraint FKcommenti_posts
      references posts (idpost);
 
 alter table commenti add constraint FKrisposte
-     foreign key (idpost_genitore, idcommento_genitore)
-     references commenti (idpost, idcommento);
+     foreign key (idcommento_genitore, idpost_genitore)
+     references commenti (idcommento, idpost);
 
 alter table corsi add constraint FKcomposizione
      foreign key (idfacolta)

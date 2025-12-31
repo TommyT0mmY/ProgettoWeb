@@ -37,10 +37,10 @@ class CommentRepository {
     /**
      * Recupera un commento tramite ID
      */
-    public function findById(int $idpost, int $idcommento): ?CommentEntity {
-        $stmt = $this->pdo->prepare("SELECT * FROM commenti WHERE idpost = :idpost AND idcommento = :idcommento");
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+    public function findById(int $idcommento, int $idpost): ?CommentEntity {
+        $stmt = $this->pdo->prepare("SELECT * FROM commenti WHERE idcommento = :idcommento AND idpost = :idpost");
         $stmt->bindValue(':idcommento', $idcommento, PDO::PARAM_INT);
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -53,11 +53,10 @@ class CommentRepository {
     public function save(CommentEntity $comment): bool {
         $stmt = $this->pdo->prepare(
             "INSERT INTO commenti 
-             (idpost, idcommento, testo, data_creazione, cancellato, identita, idpost_genitore, idcommento_genitore)
-             VALUES (:idpost, :idcommento, :testo, :data_creazione, :cancellato, :identita, :idpost_genitore, :idcommento_genitore)"
+             (idpost, testo, data_creazione, cancellato, identita, idpost_genitore, idcommento_genitore)
+             VALUES (:idpost, :testo, :data_creazione, :cancellato, :identita, :idpost_genitore, :idcommento_genitore)"
         );
         $stmt->bindValue(':idpost', $comment->idpost, PDO::PARAM_INT);
-        $stmt->bindValue(':idcommento', $comment->idcommento, PDO::PARAM_INT);
         $stmt->bindValue(':testo', $comment->testo, PDO::PARAM_STR);
         $stmt->bindValue(':data_creazione', $comment->data_creazione, PDO::PARAM_STR);
         $stmt->bindValue(':cancellato', $comment->cancellato, PDO::PARAM_BOOL);
@@ -70,21 +69,21 @@ class CommentRepository {
     /**
      * Segna un commento come cancellato (soft delete)
      */
-    public function delete(int $idpost, int $idcommento): bool {
+    public function delete(int $idcommento, int $idpost): bool {
         $stmt = $this->pdo->prepare(
             "UPDATE commenti SET cancellato = true, testo = :testo 
-             WHERE idpost = :idpost AND idcommento = :idcommento"
+             WHERE idcommento = :idcommento AND idpost = :idpost"
         );
         $stmt->bindValue(':testo', 'commento cancellato', PDO::PARAM_STR);
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
         $stmt->bindValue(':idcommento', $idcommento, PDO::PARAM_INT);
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
     private function rowToEntity(array $row): CommentEntity {
         return new CommentEntity(
-            (int)$row['idpost'],
             (int)$row['idcommento'],
+            (int)$row['idpost'],
             $row['testo'],
             $row['data_creazione'],
             (bool)$row['cancellato'],

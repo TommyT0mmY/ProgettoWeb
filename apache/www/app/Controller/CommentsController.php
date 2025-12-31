@@ -24,8 +24,8 @@ class CommentsController {
     /**
      * Crea un nuovo commento
      */
-    public function create(int $postid, int $idcommento, string $testo, string $idutente): void {
-        $result = $this->commentService->createComment($postid, $idcommento, $testo, $idutente);
+    public function create(int $postid, string $testo, string $idutente, ?int $idcommento_genitore): void {
+        $result = $this->commentService->createComment($postid, $testo, $idutente, $idcommento_genitore);
         // Gestisci il risultato
     }
 

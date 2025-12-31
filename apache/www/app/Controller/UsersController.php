@@ -49,6 +49,14 @@ class UsersController {
         $result = $this->userService->updateProfile($idutente, $nome, $cognome);
         // Gestisci il risultato
     }
+
+    /**
+     * Sospende un utente
+     */
+    public function suspendUser(string $idutente): void {
+        $result = $this->userService->suspendUser($idutente);
+        // Gestisci il risultato
+    }
 }
 
 ?>

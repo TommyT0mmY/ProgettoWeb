@@ -40,22 +40,20 @@ class CommentService {
      */
     public function createComment(
         int $idpost,
-        int $idcommento,
         string $testo,
         string $idutente,
-        int $idpost_genitore = 0,
-        int $idcommento_genitore = 0
+        ?int $idcommento_genitore
     ): bool {
         $user = $this->userRepository->findByUserId($idutente);
 
         $comment = new CommentEntity(
+            0,
             $idpost,
-            $idcommento,
             $testo,
             date('Y-m-d'),
             false,
             $user->identita,
-            $idpost_genitore,
+            $idpost,
             $idcommento_genitore
         );
 
@@ -65,17 +63,17 @@ class CommentService {
     /**
      * Cancella un commento
      */
-    public function deleteComment(int $idpost, int $idcommento, string $idutente): bool {
+    public function deleteComment(int $idcommento, int $idpost, string $idutente): bool {
         $user = $this->userRepository->findByUserId($idutente);
         if (!$user) {
             return false;
         }
 
-        $comment = $this->commentRepository->findById($idpost, $idcommento);
+        $comment = $this->commentRepository->findById($idcommento, $idpost);
         if (!$comment || $comment->identita !== $user->identita) {
             return false;
         }
 
-        return $this->commentRepository->delete($idpost, $idcommento);
+        return $this->commentRepository->delete($idcommento, $idpost);
     }
 }
