@@ -58,5 +58,3 @@ class UsersController {
         // Gestisci il risultato
     }
 }
-
-?>

@@ -37,5 +37,3 @@ class CommentsController {
         // Gestisci il risultato
     }
 }
-
-?>

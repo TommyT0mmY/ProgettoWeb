@@ -69,5 +69,3 @@ class PostsController {
         // Gestisci il risultato
     }
 }
-
-?>

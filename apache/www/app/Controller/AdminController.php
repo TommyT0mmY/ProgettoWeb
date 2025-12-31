@@ -50,5 +50,3 @@ class AdminController {
         // Gestisci il risultato
     }
 }
-
-?>

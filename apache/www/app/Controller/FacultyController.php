@@ -54,5 +54,3 @@ class FacultyController {
         // Gestisci il risultato
     }
 }
-
-?>
