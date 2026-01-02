@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-use Unibostu\Model\Entity\TagEntity;
-
 class TagDTO {
-    public TagEntity $tag;
+    public string $tipo;
+    public int $idcorso;
 
-    public function __construct(TagEntity $tag) {
-        $this->tag = $tag;
+    public function __construct(
+        string $tipo,
+        int $idcorso
+    ) {
+        $this->tipo = $tipo;
+        $this->idcorso = $idcorso;
     }
 }

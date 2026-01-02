@@ -10,8 +10,4 @@ class CommentsListDTO {
     public function __construct(array $comments = []) {
         $this->comments = $comments;
     }
-
-    public function addComment(CommentWithAuthorDTO $comment): void {
-        $this->comments[] = $comment;
-    }
 }

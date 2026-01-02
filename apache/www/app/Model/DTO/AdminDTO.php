@@ -3,13 +3,19 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-use Unibostu\Model\Entity\AdminEntity;
-
 class AdminDTO {
-    public AdminEntity $admin;
+    public string $idamministratore;
+    public int $identita;
+    public string $password;
 
-    public function __construct(AdminEntity $admin) {
-        $this->admin = $admin;
+    public function __construct(
+        string $idamministratore,
+        int $identita,
+        string $password
+    ) {
+        $this->idamministratore = $idamministratore;
+        $this->identita = $identita;
+        $this->password = $password;
     }
 }
 

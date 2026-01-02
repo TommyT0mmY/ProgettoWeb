@@ -3,13 +3,19 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-use Unibostu\Model\Entity\CourseEntity;
-
 class CourseDTO {
-    public CourseEntity $course;
+    public int $idcorso;
+    public string $nome_corso;
+    public int $idfacolta;
 
-    public function __construct(CourseEntity $course) {
-        $this->course = $course;
+    public function __construct(
+        int $idcorso,
+        string $nome_corso,
+        int $idfacolta
+    ) {
+        $this->idcorso = $idcorso;
+        $this->nome_corso = $nome_corso;
+        $this->idfacolta = $idfacolta;
     }
 }
 

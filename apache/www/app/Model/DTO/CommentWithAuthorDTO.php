@@ -3,14 +3,11 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-use Unibostu\Model\Entity\CommentEntity;
-use Unibostu\Model\Entity\UserEntity;
-
 class CommentWithAuthorDTO {
-    public CommentEntity $comment;
-    public UserEntity $author;
+    public CommentDTO $comment;
+    public UserProfileDTO $author;
 
-    public function __construct(CommentEntity $comment, UserEntity $author) {
+    public function __construct(CommentDTO $comment, UserProfileDTO $author) {
         $this->comment = $comment;
         $this->author = $author;
     }

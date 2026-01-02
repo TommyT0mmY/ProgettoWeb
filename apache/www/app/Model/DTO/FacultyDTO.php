@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-use Unibostu\Model\Entity\FacultyEntity;
-
 class FacultyDTO {
-    public FacultyEntity $faculty;
+    public int $idfacolta;
+    public string $nome_facolta;
 
-    public function __construct(FacultyEntity $faculty) {
-        $this->faculty = $faculty;
+    public function __construct(
+        int $idfacolta,
+        string $nome_facolta
+    ) {
+        $this->idfacolta = $idfacolta;
+        $this->nome_facolta = $nome_facolta;
     }
 }
 

@@ -32,8 +32,4 @@ class PostFilterDTO {
         $this->limit = $limit;
         $this->offset = $offset;
     }
-
-    public function hasFilters(): bool {
-        return !empty($this->corsi) || !empty($this->categorie) || !empty($this->tags);
-    }
 }
