@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Repository;
 
-use Unibostu\Model\Entity\UserEntity;
+use Unibostu\Model\DTO\UserProfileDTO;
 use Unibostu\Core\Database;
 use PDO;
 
@@ -15,9 +15,9 @@ class UserRepository {
     }
 
     /**
-     * Recupera un utente tramite ID utente (contiene anche identita)
+     * Recupera un utente tramite ID utente
      */
-    public function findByUserId(string $idutente): ?UserEntity {
+    public function findByUserId(string $idutente): ?UserProfileDTO {
         $stmt = $this->pdo->prepare(
             "SELECT * FROM utenti WHERE idutente = :idutente"
         );
@@ -25,103 +25,91 @@ class UserRepository {
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $row ? $this->rowToEntity($row) : null;
+        return $row ? $this->rowToDTO($row) : null;
     }
 
     /**
-     * Recupera un utente tramite identita (tabella intermedia entita)
-     * Usato quando si ha solo identita da commenti/posts
+     * Verifica se un utente esiste per idutente
      */
-    public function findByEntita(int $identita): ?UserEntity {
+    public function isUser(string $idutente): bool {
         $stmt = $this->pdo->prepare(
-            "SELECT u.* 
-             FROM utenti u, entita e 
-             WHERE u.identita = e.identita 
-              AND e.identita = :identita"
+            "SELECT COUNT(*) as count FROM utenti WHERE idutente = :idutente"
         );
-        $stmt->bindValue(':identita', $identita, PDO::PARAM_INT);
+        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
         $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $row ? $this->rowToEntity($row) : null;
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'] > 0;
     }
 
     /**
      * Salva un nuovo utente
-     * 1. Inserisce prima un record in entita
-     * 2. Recupera l'identita generato
-     * 3. Inserisce il record in utenti con l'identita appena creato
+     * @throws \Exception in caso di errore nel salvataggio
      */
-    public function save(UserEntity $user): bool {
-        try {
-            $this->pdo->beginTransaction();
+    public function save(\Unibostu\Model\DTO\CreateUserDTO $dto): void {
+        $stmtUtenti = $this->pdo->prepare(
+            "INSERT INTO utenti 
+                (idutente, password, nome, cognome, idfacolta, utente_sospeso)
+                VALUES (:idutente, :password, :nome, :cognome, :idfacolta, :utente_sospeso)"
+        );
+        $stmtUtenti->bindValue(':idutente', $dto->idutente, PDO::PARAM_STR);
+        $stmtUtenti->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
+        $stmtUtenti->bindValue(':nome', $dto->nome, PDO::PARAM_STR);
+        $stmtUtenti->bindValue(':cognome', $dto->cognome, PDO::PARAM_STR);
+        $stmtUtenti->bindValue(':idfacolta', $dto->idfacolta, PDO::PARAM_INT);
+        $stmtUtenti->bindValue(':utente_sospeso', false, PDO::PARAM_BOOL);
+        $success = $stmtUtenti->execute();
 
-            // Step 1: Inserisci in entita per generare un nuovo identita
-            $stmtEntita = $this->pdo->prepare(
-                "INSERT INTO entita (identita) VALUES (DEFAULT)"
-            );
-            $stmtEntita->execute();
-
-            // Step 2: Recupera l'identita appena creato (il più grande)
-            $stmtLastId = $this->pdo->prepare(
-                "SELECT MAX(identita) as identita FROM entita"
-            );
-            $stmtLastId->execute();
-            $result = $stmtLastId->fetch(PDO::FETCH_ASSOC);
-            $newIdentita = (int)$result['identita'];
-
-            // Step 3: Inserisci in utenti con il nuovo identita
-            $stmtUtenti = $this->pdo->prepare(
-                "INSERT INTO utenti 
-                 (idutente, identita, password, nome, cognome, idfacolta, utente_sospeso)
-                 VALUES (:idutente, :identita, :password, :nome, :cognome, :idfacolta, :utente_sospeso)"
-            );
-            $stmtUtenti->bindValue(':idutente', $user->idutente, PDO::PARAM_STR);
-            $stmtUtenti->bindValue(':identita', $newIdentita, PDO::PARAM_INT);
-            $stmtUtenti->bindValue(':password', $user->password, PDO::PARAM_STR);
-            $stmtUtenti->bindValue(':nome', $user->nome, PDO::PARAM_STR);
-            $stmtUtenti->bindValue(':cognome', $user->cognome, PDO::PARAM_STR);
-            $stmtUtenti->bindValue(':idfacolta', $user->idfacolta, PDO::PARAM_INT);
-            $stmtUtenti->bindValue(':utente_sospeso', $user->utente_sospeso, PDO::PARAM_BOOL);
-            $success = $stmtUtenti->execute();
-
-            $this->pdo->commit();
-            return $success;
-        } catch (\Exception $e) {
-            $this->pdo->rollBack();
-            throw $e;
+        if (!$success) {
+            throw new \Exception("Errore durante il salvataggio dell'utente");
         }
     }
 
     /**
-     * Aggiorna i dati di un utente
+     * Aggiorna il profilo di un utente
+     * @throws \Exception in caso di errore
      */
-    public function update(UserEntity $user): bool {
+    public function updateProfile(string $idutente, string $password, string $nome, string $cognome): void {
         $stmt = $this->pdo->prepare(
             "UPDATE utenti 
-             SET password = :password, nome = :nome, cognome = :cognome, idfacolta = :idfacolta, utente_sospeso = :utente_sospeso
+             SET nome = :nome, cognome = :cognome, password = :password
              WHERE idutente = :idutente"
         );
-        $stmt->bindValue(':password', $user->password, PDO::PARAM_STR);
-        $stmt->bindValue(':nome', $user->nome, PDO::PARAM_STR);
-        $stmt->bindValue(':cognome', $user->cognome, PDO::PARAM_STR);
-        $stmt->bindValue(':idfacolta', $user->idfacolta, PDO::PARAM_INT);
-        $stmt->bindValue(':utente_sospeso', $user->utente_sospeso, PDO::PARAM_BOOL);
-        $stmt->bindValue(':idutente', $user->idutente, PDO::PARAM_STR);
-        return $stmt->execute();
+        $stmt->bindValue(':nome', $nome, PDO::PARAM_STR);
+        $stmt->bindValue(':cognome', $cognome, PDO::PARAM_STR);
+        $stmt->bindValue(':password', password_hash($password, PASSWORD_BCRYPT), PDO::PARAM_STR);
+        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        
+        if (!$stmt->execute()) {
+            throw new \Exception("Errore durante l'aggiornamento del profilo");
+        }
     }
 
-    private function rowToEntity(array $row): UserEntity {
-        return new UserEntity(
+    /**
+     * Sospende un utente
+     * @throws \Exception in caso di errore
+     */
+    public function suspendUser(string $idutente): void {
+        $stmt = $this->pdo->prepare(
+            "UPDATE utenti 
+             SET utente_sospeso = true
+             WHERE idutente = :idutente"
+        );
+        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        
+        if (!$stmt->execute()) {
+            throw new \Exception("Errore durante la sospensione dell'utente");
+        }
+    }
+
+    private function rowToDTO(array $row): UserProfileDTO {
+        return new UserProfileDTO(
             $row['idutente'],
             (int)$row['identita'],
-            $row['password'],
             $row['nome'],
             $row['cognome'],
             (int)$row['idfacolta'],
-            (bool)$row['utente_sospeso']
+            (bool)$row['utente_sospeso'],
+            $row['password'] ?? null
         );
     }
 }
-
-?>

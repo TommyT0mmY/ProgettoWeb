@@ -5,7 +5,7 @@ namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\DTO\UserProfileDTO;
-use Unibostu\Model\Entity\UserEntity;
+use Unibostu\Model\DTO\CreateUserDTO;
 
 class UserService {
     private UserRepository $userRepository;
@@ -18,71 +18,72 @@ class UserService {
      * Ottiene il profilo di un utente tramite ID
      */
     public function getUserProfile(string $idutente): ?UserProfileDTO {
-        $user = $this->userRepository->findByUserId($idutente);
-        return $user ? new UserProfileDTO($user) : null;
+        return $this->userRepository->findByUserId($idutente);
     }
 
     /**
      * Verifica le credenziali di un utente
+     * @throws \Exception se le credenziali non sono valide
      */
-    public function authenticate(string $idutente, string $password): ?UserProfileDTO {
+    public function authenticate(string $idutente, string $password): bool {
         $user = $this->userRepository->findByUserId($idutente);
         
-        if ($user && password_verify($password, $user->password) && !$user->utente_sospeso) {
-            return new UserProfileDTO($user);
+        if (!$user) {
+            throw new \Exception("Utente non trovato");
         }
 
-        return null;
+        if (!password_verify($password, $user->password)) {
+            throw new \Exception("Password errata");
+        }
+
+        if ($user->utente_sospeso) {
+            throw new \Exception("Utente sospeso, accesso negato");
+        }
+
+        return true;
     }
 
     /**
      * Registra un nuovo utente
+     * @throws \Exception se l'username è già preso o i dati sono invalidi
      */
-    public function registerUser(
-        string $idutente,
-        string $password,
-        string $nome,
-        string $cognome,
-        int $idfacolta
-    ): bool {
-        $user = new UserEntity(
-            $idutente,
-            0,
-            password_hash($password, PASSWORD_BCRYPT),
-            $nome,
-            $cognome,
-            $idfacolta,
-            false
-        );
+    public function registerUser(CreateUserDTO $dto): void {
+        // Verifica che l'username non esista già
+        $existingUser = $this->userRepository->findByUserId($dto->idutente);
+        if ($existingUser) {
+            throw new \Exception("Username '$dto->idutente' già utilizzato");
+        }
 
-        return $this->userRepository->save($user);
+        if ($dto->idfacolta <= 0) {
+            throw new \Exception("Facoltà non valida");
+        }
+
+        $this->userRepository->save($dto);
     }
 
     /**
      * Aggiorna il profilo di un utente
+     * @throws \Exception se l'utente non esiste o i dati non sono validi
      */
-    public function updateProfile(string $idutente, string $nome, string $cognome): bool {
+    public function updateProfile(string $idutente, string $password, string $nome, string $cognome): void {
         $user = $this->userRepository->findByUserId($idutente);
         if (!$user) {
-            return false;
+            throw new \Exception("Utente '$idutente' non trovato");
         }
 
-        $user->nome = $nome;
-        $user->cognome = $cognome;
-
-        return $this->userRepository->update($user);
+        $this->userRepository->updateProfile($idutente, $password, $nome, $cognome);
     }
 
     /**
-     * Sospende un utente impostando il flag utente_sospeso a true
+     * Sospende un utente
+     * @throws \Exception se l'utente non esiste
      */
-    public function suspendUser(string $idutente): bool {
+    public function suspendUser(string $idutente): void {
         $user = $this->userRepository->findByUserId($idutente);
         if (!$user) {
-            return false;
+            throw new \Exception("Utente '$idutente' non trovato");
         }
 
-        $user->utente_sospeso = true;
-        return $this->userRepository->update($user);
+        $this->userRepository->suspendUser($idutente);
     }
 }
