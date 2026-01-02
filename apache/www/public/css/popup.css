@@ -1,0 +1,113 @@
+.popup {
+    position: fixed;
+    width: fit-content;
+    left: 50%;
+    z-index: 100;
+
+    border-radius: 0.5vw;
+    box-shadow: 0px 0.3vw 1.5vw rgba(0, 0, 0, 0.5);
+    
+    opacity: 0%;
+    bottom: 100vh;
+    
+    transform: translateX(-50%);
+
+    transition: all 500ms cubic-bezier(0,0,1,0.1), opacity 500ms 0s; /*animazione di uscita*/
+}
+
+.popup:hover {
+    box-shadow: 0px 0.3vw 1.5vw rgba(0, 0, 0, 0.7);
+    transition: all 200ms;
+}
+
+.popup.open {
+    transform: translateX(-50%) translateY(calc(100% + 2vh));
+    opacity: 100%;
+
+    transition: all 500ms cubic-bezier(0,0,0.1,1), opacity 0s; /*animazione di entrata*/
+}
+
+.popupcontent {
+    display: flex;
+    width: max-content;
+    max-width: 40vw;
+    gap: 1vw;
+    border-radius: inherit;
+    background: #fd4646;
+
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    
+    padding-left: 2vw;
+    padding-right: 1vw;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+
+    font-size: 1vw;
+    font-weight: 500;
+}
+
+/*POPUP ICONS*/
+.popupicon {
+    user-select: none;
+    width: 1vw;
+    height: 1vw;
+}
+
+/*Applying SVGs*/
+.popupicon {
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    background: black;
+}
+
+.erroricon {
+    -webkit-mask-image: url("../images/icons/error_icon.svg");
+    mask-image: url("../images/icons/error_icon.svg");
+}
+
+.popupclose {
+    -webkit-mask-image: url("../images/icons/close_icon.svg");
+    mask-image: url("../images/icons/close_icon.svg");
+}
+
+
+/*POPUP CLOSE BUTTON*/
+.popupclose {
+    cursor: pointer;
+    margin-left: 1vw;
+}
+
+.popupclose:hover {
+    transform: scale(1.1);
+    transition: all 200ms;
+}
+
+/*POPUP TEXT*/
+.popuptext {
+    position: relative;
+    bottom: 1px;
+}
+
+/* schermi medi e piccoli */
+@media only screen and (max-width: 810px) {
+    .popup {
+        border-radius: 5px;
+    }
+
+    .popupcontent {
+        width: 50vw;
+        max-width: 50vw;
+        justify-content: space-around;
+
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .popupicon {
+        user-select: none;
+        width: 1rem;
+        height: 1rem;
+    }
+}
