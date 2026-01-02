@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>UniboStu - Home</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     
+</head>
+<body>
+ <header>
+    <button id="open-sidebar-button"><img class="menu-container" src="./img/menu.svg" alt="menu" /></button>          
+    <h1> UniboStu </h1>
+    <a href="profile.html"><img class="profile-container" src="./img/user-profile.svg" alt="user-profile" /></a>    
+ </header>
+
+ <nav id="navbar">
+    <div>
+    <ul>
+      <li>
+        <button id="close-sidebar-button" >
+          <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#c9c9c9"><path d="m480-444.62-209.69 209.7q-7.23 7.23-17.5 7.42-10.27.19-17.89-7.42-7.61-7.62-7.61-17.7 0-10.07 7.61-17.69L444.62-480l-209.7-209.69q-7.23-7.23-7.42-17.5-.19-10.27 7.42-17.89 7.62-7.61 17.7-7.61 10.07 0 17.69 7.61L480-515.38l209.69-209.7q7.23-7.23 17.5-7.42 10.27-.19 17.89 7.42 7.61 7.62 7.61 17.7 0 10.07-7.61 17.69L515.38-480l209.7 209.69q7.23 7.23 7.42 17.5.19 10.27-7.42 17.89-7.62 7.61-17.7 7.61-10.07 0-17.69-7.61L480-444.62Z"/></svg>
+        </button>
+      </li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="userPreferences.html">Preferences</a></li>
+
+    </ul>
+    </div>
+  </nav> 
+  <div id="overlay" ></div>
+
+<main>
+  <h2 class="createPost">Create the post</h2>
+
+  <form action="#" method="post" enctype="multipart/form-data">
+    <ul>
+
+      <li>
+        <label for="postTitle" id="labelPostTitle">Title:</label>
+        <input type="text" name="title" id="postTitle" placeholder="Insert post title" required/>
+      </li>
+
+      <li>
+        <label for="type" id="typeLabel">Type:</label>
+        <select id="type" name="type" required>
+          <option value="bulletin">Bulletin</option> <!--riservato a admin( js/ php)-->
+          <option value="question">Question</option>
+          <option value="post">Post</option>         
+        </select>
+      </li>
+
+      <li>
+        <label for="course" id="courseLabel">Course:</label>
+        <select id="course" name="course" required>
+          <option value="algorithms">Algorithms</option>
+          <option value="databases">Databases</option>
+          <option value="web">Web Programming</option>
+        </select>
+      </li>
+
+       <li>
+        <fieldset class="tags">
+            <legend>Topic tags (optional)</legend>
+<div class="tag-list">
+            <!-- questi vengono generati dal backend -->
+            <label>
+            <input type="checkbox" name="tags[]" value="arrays">
+            Arrays
+            </label>
+
+            <label>
+            <input type="checkbox" name="tags[]" value="sorting">
+            Sorting
+            </label>
+
+            <label>
+            <input type="checkbox" name="tags[]" value="complexity">
+            Complexity
+            </label>
+</div>
+        </fieldset>
+     </li>
+
+      <li>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" placeholder="Write your post here..." required>       
+        </textarea>
+      </li>
+
+      <li>
+            <label for="notes">Upload your notes:</label>
+            <input type="file" name="file" id="notesFile"/>      
+      </li>
+
+      <li>
+        <input type="submit" value="CREATE POST">
+      </li>
+
+    </ul>
+  </form>
+</main>
+
+<script src="./javascript/navbar.js" type="text/javascript"></script>
+</body>
+</html>
