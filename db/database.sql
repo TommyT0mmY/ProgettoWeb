@@ -60,7 +60,7 @@ create table posts (
      titolo varchar(100) not null,
      descrizione text not null,
      percorso_allegato varchar(255) default null,
-     data_creazione date not null,
+     data_creazione timestamp not null,
      idutente varchar(60) not null,
      idcorso int not null,
      constraint IDposts primary key (idpost)
