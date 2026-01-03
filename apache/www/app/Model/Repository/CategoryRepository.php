@@ -58,6 +58,22 @@ class CategoryRepository {
     }
 
     /**
+     * Aggiorna una categoria
+     * @throws \Exception in caso di errore
+     */
+    public function update(int $idcategoria, string $nome_categoria): void {
+        $stmt = $this->pdo->prepare(
+            "UPDATE categorie SET nome_categoria = :nome_categoria WHERE idcategoria = :idcategoria"
+        );
+        $stmt->bindValue(':idcategoria', $idcategoria, PDO::PARAM_INT);
+        $stmt->bindValue(':nome_categoria', $nome_categoria, PDO::PARAM_STR);
+
+        if (!$stmt->execute()) {
+            throw new \Exception("Errore durante l'aggiornamento della categoria");
+        }
+    }
+
+    /**
      * Elimina una categoria
      * @throws \Exception in caso di errore
      */

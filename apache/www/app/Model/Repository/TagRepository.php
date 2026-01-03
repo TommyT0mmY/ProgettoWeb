@@ -76,6 +76,22 @@ class TagRepository {
     }
 
     /**
+     * Aggiorna un tag
+     * @throws \Exception in caso di errore
+     */
+    public function update(int $idtag, string $tipo): void {
+        $stmt = $this->pdo->prepare(
+            "UPDATE tags SET tipo = :tipo WHERE idtag = :idtag"
+        );
+        $stmt->bindValue(':idtag', $idtag, PDO::PARAM_INT);
+        $stmt->bindValue(':tipo', $tipo, PDO::PARAM_STR);
+
+        if (!$stmt->execute()) {
+            throw new \Exception("Errore durante l'aggiornamento del tag");
+        }
+    }
+
+    /**
      * Elimina un tag
      * @throws \Exception in caso di errore
      */

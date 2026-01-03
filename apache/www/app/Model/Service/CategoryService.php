@@ -40,6 +40,22 @@ class CategoryService {
     }
 
     /**
+     * Aggiorna i dati di una categoria
+     * @throws \Exception se la categoria non esiste o i dati non sono validi
+     */
+    public function updateCategory(int $idcategoria, string $nome_categoria): void {
+        $category = $this->categoryRepository->findById($idcategoria);
+        if (!$category) {
+            throw new \Exception("Categoria non trovata");
+        }
+
+        if (empty($nome_categoria)) {
+            throw new \Exception("Nome categoria non può essere vuoto");
+        }
+        $this->categoryRepository->update($idcategoria, $nome_categoria);
+    }
+
+    /**
      * Elimina una categoria
      * @throws \Exception se la categoria non esiste
      */

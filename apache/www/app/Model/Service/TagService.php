@@ -41,6 +41,27 @@ class TagService {
     }
 
     /**
+     * Aggiorna un tag
+     * @throws \Exception se il tag non esiste o i dati non sono validi
+     */
+    public function updateTag(int $idtag, string $tipo, int $idcorso): void {
+        if (empty($tipo)) {
+            throw new \Exception("Tipo tag non può essere vuoto");
+        }
+
+        if ($idcorso <= 0) {
+            throw new \Exception("Corso non valido");
+        }
+
+        $tag = $this->tagRepository->findByIdAndCourse($idtag, $idcorso);
+        if (!$tag) {
+            throw new \Exception("Tag non trovato");
+        }
+
+        $this->tagRepository->update($idtag, $tipo);
+    }
+
+    /**
      * Elimina un tag
      * @throws \Exception se il tag non esiste
      */
