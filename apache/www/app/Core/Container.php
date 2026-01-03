@@ -14,7 +14,8 @@ class Container {
      * Register a service with a factory callable
      *
      * @param string $name The name of the service
-     * @param callable $factory A callable that returns an instance of the service
+     * @param callable $factory A callable that returns an instance of the service,
+     *        it can accept the container as a parameter for nested dependencies.
      */
     public function register(string $name, callable $factory): void {
         $this->services[$name] = $factory;
@@ -31,7 +32,7 @@ class Container {
             if (!isset($this->services[$name])) {
                 throw new \InvalidArgumentException("Service '$name' not found");
             }
-            $this->instances[$name] = call_user_func($this->services[$name]);
+            $this->instances[$name] = call_user_func($this->services[$name], $this);
         }
         return $this->instances[$name];
     }
