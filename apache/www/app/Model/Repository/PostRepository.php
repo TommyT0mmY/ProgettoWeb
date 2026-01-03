@@ -35,8 +35,6 @@ class PostRepository {
 
     /**
      * Recupera post con filtri applicati
-     * per ora funziona con offset se vogliamo fare scroll infinito
-     * bisogna che cambiamo
      */     
     public function findWithFilters(PostFilterDTO $filter): array {
         $sql = "SELECT DISTINCT p.* FROM posts p";
@@ -66,10 +64,13 @@ class PostRepository {
         }
 
         // Filtro per corsi
-        if (!empty($filter->corsi)) {
-            $placeholders = array_fill(0, count($filter->corsi), '?');
-            $conditions[] = "p.idcorso IN (" . implode(',', $placeholders) . ")";
-            $params = array_merge($params, $filter->corsi);
+        if (!empty($filter->corso)) {
+            $params[] = $filter->corso;
+            $conditions[] = " p.idcorso IN (?)";
+        } else {
+            $conditions[] = " p.idcorso IN (
+                SELECT idcorso FROM corsi_utente WHERE idutene = ?;
+            )";
         }
 
         // Aggiungi WHERE clause se ci sono condizioni
@@ -77,13 +78,18 @@ class PostRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
+        if ($filter->ordinamento === 'ASC') {
+            $sql .= " AND p.idpost > ?";
+        } else {
+            $sql .= " AND p.idpost < ?";
+        }
+
         // Ordinamento
         $sql .= " ORDER BY p.data_creazione " . $filter->ordinamento;
 
         // Limit e offset
-        $sql .= " LIMIT ? OFFSET ?";
+        $sql .= " LIMIT ?";
         $params[] = $filter->limit;
-        $params[] = $filter->offset;
 
         $stmt = $this->pdo->prepare($sql);
         foreach ($params as $key => $value) {

@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Repository;
 
-use Unibostu\Model\DTO\PublicUserDTO;
+use Unibostu\Model\DTO\UserDTO;
 use Unibostu\Core\Database;
-use Unibostu\Model\DTO\PrivateUserDto;
 use PDO;
 
 class UserRepository {
@@ -18,21 +17,7 @@ class UserRepository {
     /**
      * Recupera un utente tramite ID utente
      */
-    public function findByUserIdPublic(string $idutente): ?PublicUserDTO {
-        $stmt = $this->pdo->prepare(
-            "SELECT * FROM utenti WHERE idutente = :idutente"
-        );
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $row ? $this->rowToDTO($row) : null;
-    }
-
-    /**
-     * Recupera un utente tramite ID utente (privato)
-     */
-    public function findByUserIdPrivate(string $idutente): ?PrivateUserDTO {
+    public function findByUserId(string $idutente): ?UserDTO {
         $stmt = $this->pdo->prepare(
             "SELECT * FROM utenti WHERE idutente = :idutente"
         );
@@ -60,7 +45,7 @@ class UserRepository {
      * Salva un nuovo utente
      * @throws \Exception in caso di errore nel salvataggio
      */
-    public function save(\Unibostu\Model\DTO\CreateUserDTO $dto): void {
+    public function save(UserDTO $dto): void {
         $stmtUtenti = $this->pdo->prepare(
             "INSERT INTO utenti 
                 (idutente, password, nome, cognome, idfacolta, utente_sospeso)
@@ -83,16 +68,15 @@ class UserRepository {
      * Aggiorna il profilo di un utente
      * @throws \Exception in caso di errore
      */
-    public function updateProfile(\Unibostu\Model\DTO\UpdateUserDTO $dto): void {
+    public function updateProfile(UserDTO $dto): void {
         $stmt = $this->pdo->prepare(
             "UPDATE utenti 
-             SET nome = :nome, cognome = :cognome, password = :password, idutente = :nuovo_idutente
+             SET nome = :nome, cognome = :cognome, password = :password
              WHERE idutente = :idutente"
         );
         $stmt->bindValue(':nome', $dto->nome, PDO::PARAM_STR);
         $stmt->bindValue(':cognome', $dto->cognome, PDO::PARAM_STR);
         $stmt->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
-        $stmt->bindValue(':nuovo_idutente', $dto->nuovo_idutente, PDO::PARAM_STR);
         $stmt->bindValue(':idutente', $dto->idutente, PDO::PARAM_STR);
 
         if (!$stmt->execute()) {
@@ -117,18 +101,8 @@ class UserRepository {
         }
     }
 
-    private function rowToDTO(array $row): PublicUserDTO {
-        return new PublicUserDTO(
-            $row['idutente'],
-            $row['nome'],
-            $row['cognome'],
-            (int)$row['idfacolta'],
-            (bool)$row['utente_sospeso'],
-        );
-    }
-
-    private function rowToPrivateDTO(array $row): PrivateUserDTO {
-        return new PrivateUserDTO(
+    private function rowToPrivateDTO(array $row): UserDTO {
+        return new UserDTO(
             $row['idutente'],
             $row['nome'],
             $row['cognome'],
