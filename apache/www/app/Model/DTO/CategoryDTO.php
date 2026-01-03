@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace Unibostu\Model\DTO;
 
 class CategoryDTO {
-    public string $idcategoria;
-    public bool $riservata;
+    public int $idcategoria;
+    public string $nome_categoria;
 
     public function __construct(
-        string $idcategoria,
-        bool $riservata
+        int $idcategoria,
+        string $nome_categoria
     ) {
         $this->idcategoria = $idcategoria;
-        $this->riservata = $riservata;
+        $this->nome_categoria = $nome_categoria;
     }
 }
