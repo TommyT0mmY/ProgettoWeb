@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Unibostu\Core;
 
 final class SessionManager {
-    private static ?self $instance = null;
     /** Interval for periodic session ID regeneration (30 mins). */
     private const REGENERATION_INTERVAL = 1800;
     /** Tolerance window (5 mins) for late requests after an ID change. */
@@ -17,23 +16,11 @@ final class SessionManager {
     /** @var bool Internal flag to track session_start() status. */
     private bool $started = false;
 
-    private function __construct() {
+    public function __construct() {
         $this->start();
     }
 
     private function __clone() {
-    }
-
-    /**
-     * Get the singleton instance.
-     *
-     * @return self The instance.
-     */
-    public static function getInstance(): self {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
     }
 
     private function start(): void {
