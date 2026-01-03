@@ -5,9 +5,9 @@ namespace Unibostu\Model\DTO;
 
 readonly class CommentWithAuthorDTO {
     public CommentDTO $comment;
-    public PublicUserDTO $author;
+    public UserDTO $author;
 
-    public function __construct(CommentDTO $comment, PublicUserDTO $author) {
+    public function __construct(CommentDTO $comment, UserDTO $author) {
         $this->comment = $comment;
         $this->author = $author;
     }

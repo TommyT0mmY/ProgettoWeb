@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\PostRepository;
-use Unibostu\Model\Repository\PostCategoryRepository;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\PostWithAuthorDTO;
@@ -14,13 +13,11 @@ use Unibostu\Model\DTO\CreateUserPostDTO;
 
 class PostService {
     private PostRepository $postRepository;
-    private PostCategoryRepository $postCategoryRepository;
     private UserRepository $userRepository;
     private CourseRepository $courseRepository;
 
     public function __construct() {
         $this->postRepository = new PostRepository();
-        $this->postCategoryRepository = new PostCategoryRepository();
         $this->userRepository = new UserRepository();
         $this->courseRepository = new CourseRepository();
     }
@@ -30,35 +27,13 @@ class PostService {
      * Se nessun filtro è fornito, carica tutti i post
      * Filtri disponibili: corsi, categorie, ordinamento
      */
-    public function loadHomePageWithFilters(PostFilterDTO $filter): PostListDTO {
+    public function loadPostsWithFilters(PostFilterDTO $filter): PostListDTO {
         $postDtos = $this->postRepository->findWithFilters($filter);
         $postsList = array();
 
         foreach ($postDtos as $post) {
-            $author = $this->userRepository->findByUserIdPublic($post->idutente);
-            if ($author && !$author->utente_sospeso) {
-                $postsList[] = new PostWithAuthorDTO($post, $author);
-            }
-        }
-
-        return new PostListDTO($postsList);
-    }
-
-    /**
-     * Carica i post di un corso con filtri
-     * Filtri disponibili: categorie, tag del corso, ordinamento
-     */
-    public function loadCoursePostsWithFilters(int $idcorso, PostFilterDTO $filter): PostListDTO {
-        // Aggiungi il corso al filtro se non già presente
-        if (!in_array($idcorso, $filter->corsi)) {
-            $filter->corsi = [$idcorso];
-        }
-
-        $postDtos = $this->postRepository->findWithFilters($filter);
-        $postsList = array();
-        
-        foreach ($postDtos as $post) {
-            $author = $this->userRepository->findByUserIdPublic($post->idutente);
+            $author = $this->userRepository->findByUserId($post->idutente);
+            
             if ($author && !$author->utente_sospeso) {
                 $postsList[] = new PostWithAuthorDTO($post, $author);
             }
@@ -71,7 +46,7 @@ class PostService {
      * Ottiene tutti i post di un utente specifico con i relativi dati
      */
     public function getPostsWithAuthorByUserId(string $idutente): ?PostListDTO {
-        $user = $this->userRepository->findByUserIdPublic($idutente);
+        $user = $this->userRepository->findByUserId($idutente);
         if (!$user || $user->utente_sospeso) {
             return null;
         }
@@ -96,7 +71,7 @@ class PostService {
      */
     public function createUserPost(CreateUserPostDTO $dto): void {
         // Risolvi idutente a utente
-        $user = $this->userRepository->findByUserIdPublic($dto->idutente);
+        $user = $this->userRepository->findByUserId($dto->idutente);
         if (!$user) {
             throw new \Exception("Utente non trovato");
         }
@@ -117,8 +92,8 @@ class PostService {
             }
         }
 
-        if (empty($dto->titolo) || empty($dto->contenuto)) {
-            throw new \Exception("Titolo e contenuto non possono essere vuoti");
+        if (empty($dto->titolo) || empty($dto->descrizione)) {
+            throw new \Exception("Titolo e descrizione non possono essere vuoti");
         }
 
         $this->postRepository->save($dto);

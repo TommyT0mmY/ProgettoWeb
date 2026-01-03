@@ -15,6 +15,10 @@ readonly class PostDTO {
     public array $tags;
     /** @var array Array of category IDs */
     public array $categorie;
+    public int $likes;
+    public int $dislikes;
+    /** @var bool value is 0 if disliked, 1 if liked, null if no action taken */ 
+    public ?bool $likedByCurrentUser;
 
     public function __construct(
         int $idpost,
@@ -25,7 +29,10 @@ readonly class PostDTO {
         string $idutente,
         int $idcorso,
         array $tags = [],
-        array $categorie = []
+        array $categorie = [],
+        int $likes = 0,
+        int $dislikes = 0,
+        ?bool $likedByCurrentUser = null
     ) {
         $this->idpost = $idpost;
         $this->titolo = $titolo;
@@ -36,5 +43,8 @@ readonly class PostDTO {
         $this->idcorso = $idcorso;
         $this->tags = $tags;
         $this->categorie = $categorie;
+        $this->likes = $likes;
+        $this->dislikes = $dislikes;
+        $this->likedByCurrentUser = $likedByCurrentUser;
     }
 }

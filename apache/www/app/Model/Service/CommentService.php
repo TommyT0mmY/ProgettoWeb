@@ -26,7 +26,7 @@ class CommentService {
         $commetsList = array();
 
         foreach ($comments as $comment) {
-            $author = $this->userRepository->findByUserIdPublic($comment->idutente);
+            $author = $this->userRepository->findByUserId($comment->idutente);
             if ($author && !$author->utente_sospeso) {
                 $commetsList[] = new CommentWithAuthorDTO($comment, $author);
             }
@@ -41,7 +41,7 @@ class CommentService {
      */
     public function createComment(CreateCommentDTO $dto): void {
         // Verifica che l'utente esista
-        $user = $this->userRepository->findByUserIdPublic($dto->idutente);
+        $user = $this->userRepository->findByUserId($dto->idutente);
         if (!$user) {
             throw new \Exception("Utente non trovato");
         }

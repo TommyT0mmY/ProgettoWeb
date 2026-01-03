@@ -5,9 +5,9 @@ namespace Unibostu\Model\DTO;
 
 readonly class PostWithAuthorDTO {
     public PostDTO $post;
-    public PublicUserDTO $author;
+    public UserDTO $author;
 
-    public function __construct(PostDTO $post, PublicUserDTO $author) {
+    public function __construct(PostDTO $post, UserDTO $author) {
         $this->post = $post;
         $this->author = $author;
     }

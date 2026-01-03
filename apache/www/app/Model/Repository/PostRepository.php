@@ -264,6 +264,47 @@ class PostRepository {
     }
 
     /**
+     * Conta i like di un post
+     */
+    public function countLikes(int $idpost): int {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND is_like = 1");
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'];
+    }
+
+    /**
+     * Conta i dislike di un post
+     */
+    public function countDislikes(int $idpost): int {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND is_like = 0");
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'];
+    }
+
+    /**
+     * Verifica che l'utente ha messo like o dislike
+     */
+    private function hasUserVoted(int $idpost, string $idutente): ?bool {
+        $stmt = $this->pdo->prepare(
+            "SELECT is_like FROM likes WHERE idpost = :idpost AND idutente = :idutente"
+        );
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result === false) {
+            return null;
+        }
+
+        return (bool)$result['is_like'];
+    }
+
+    /**
      * Elimina un post
      */
     public function delete(int $idpost): bool {
@@ -272,10 +313,17 @@ class PostRepository {
         return $stmt->execute();
     }
 
+    /**
+     * Verifica che l'utente ha messo like o dislike
+     */
+
     private function rowToDTO(array $row): PostDTO {
         $idpost = (int)$row['idpost'];
         $tags = $this->postTagRepository->findTagsByPost($idpost);
         $categorie = array_map(fn($cat) => $cat['idcategoria'], $this->postCategoryRepository->findCategoriesByPost($idpost));
+        $likes = $this->countLikes($idpost);
+        $dislikes = $this->countDislikes($idpost);
+        $likedByCurrentUser = $this->hasUserVoted($idpost, $row['idutente']);
 
         $dto = new PostDTO(
             $idpost,
@@ -286,7 +334,10 @@ class PostRepository {
             (string)$row['idutente'],
             $row['idcorso'] ? (int)$row['idcorso'] : null,
             $tags,
-            $categorie
+            $categorie,
+            $likes,
+            $dislikes,
+            $likedByCurrentUser
         );
         return $dto;
     }
