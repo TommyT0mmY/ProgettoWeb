@@ -5,12 +5,16 @@ namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\CourseDTO;
+use Unibostu\Model\Repository\UserCoursesRepository;
+use Unibostu\Model\Repository\UserRepository;
 
 class CourseService {
     private CourseRepository $courseRepository;
+    private UserCoursesRepository $userCoursesRepository;
 
     public function __construct() {
         $this->courseRepository = new CourseRepository();
+        $this->userCoursesRepository = new UserCoursesRepository();
     }
 
     /**
@@ -32,6 +36,21 @@ class CourseService {
      */
     public function getCoursesByFaculty(int $idfacolta): array {
         return $this->courseRepository->findByFaculty($idfacolta);
+    }
+    
+    /**
+     * Recupera i corsi di un utente
+     */
+    public function getCoursesByUser(string $idutente): array {
+        return $this->userCoursesRepository->findCoursesByUser($idutente);
+    }
+
+    /**
+     * Salva i corsi di un utente
+     * @throws \Exception in caso di errore
+     */
+    public function saveUserCourses(string $idutente, array $courseIds): void {
+        $this->userCoursesRepository->saveUserCourses($idutente, $courseIds);
     }
 
     /**
