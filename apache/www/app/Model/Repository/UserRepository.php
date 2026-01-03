@@ -83,17 +83,18 @@ class UserRepository {
      * Aggiorna il profilo di un utente
      * @throws \Exception in caso di errore
      */
-    public function updateProfile(string $idutente, string $password, string $nome, string $cognome): void {
+    public function updateProfile(\Unibostu\Model\DTO\UpdateUserDTO $dto): void {
         $stmt = $this->pdo->prepare(
             "UPDATE utenti 
-             SET nome = :nome, cognome = :cognome, password = :password
+             SET nome = :nome, cognome = :cognome, password = :password, idutente = :nuovo_idutente
              WHERE idutente = :idutente"
         );
-        $stmt->bindValue(':nome', $nome, PDO::PARAM_STR);
-        $stmt->bindValue(':cognome', $cognome, PDO::PARAM_STR);
-        $stmt->bindValue(':password', password_hash($password, PASSWORD_BCRYPT), PDO::PARAM_STR);
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
-        
+        $stmt->bindValue(':nome', $dto->nome, PDO::PARAM_STR);
+        $stmt->bindValue(':cognome', $dto->cognome, PDO::PARAM_STR);
+        $stmt->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
+        $stmt->bindValue(':nuovo_idutente', $dto->nuovo_idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':idutente', $dto->idutente, PDO::PARAM_STR);
+
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'aggiornamento del profilo");
         }

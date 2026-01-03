@@ -6,6 +6,7 @@ namespace Unibostu\Model\Service;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\DTO\PublicUserDTO;
 use Unibostu\Model\DTO\CreateUserDTO;
+use Unibostu\Model\DTO\UpdateUserDTO;
 
 class UserService {
     private UserRepository $userRepository;
@@ -73,10 +74,17 @@ class UserService {
      * Aggiorna il profilo di un utente
      * @throws \Exception se l'utente non esiste o i dati non sono validi
      */
-    public function updateProfile(string $idutente, string $password, string $nome, string $cognome): void {
-        $user = $this->userRepository->findByUserIdPrivate($idutente);
+    public function updateProfile(UpdateUserDTO $dto): void {
+        $user = $this->userRepository->findByUserIdPrivate($dto->idutente);
         if (!$user) {
-            throw new \Exception("Utente '$idutente' non trovato");
+            throw new \Exception("Utente '$dto->idutente' non trovato");
+        }
+
+        if ($dto->nuovo_idutente !== $dto->idutente) {
+            $existingUser = $this->userRepository->findByUserIdPrivate($dto->nuovo_idutente);
+            if ($existingUser) {
+                throw new \Exception("Username '{$dto->nuovo_idutente}' già utilizzato");
+            }
         }
 
         if (empty($nome) || empty($cognome)) {
@@ -87,7 +95,7 @@ class UserService {
             throw new \Exception("La password non può essere vuota");
         }
 
-        $this->userRepository->updateProfile($idutente, $password, $nome, $cognome);
+        $this->userRepository->updateProfile($dto);
     }
 
     /**
