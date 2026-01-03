@@ -4,42 +4,67 @@ declare(strict_types=1);
 namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\PostRepository;
+use Unibostu\Model\Repository\PostCategoryRepository;
 use Unibostu\Model\Repository\UserRepository;
+use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\PostWithAuthorDTO;
 use Unibostu\Model\DTO\PostListDTO;
-use Unibostu\Model\Entity\PostEntity;
+use Unibostu\Model\DTO\PostFilterDTO;
+use Unibostu\Model\DTO\CreateUserPostDTO;
 
 class PostService {
     private PostRepository $postRepository;
+    private PostCategoryRepository $postCategoryRepository;
     private UserRepository $userRepository;
+    private CourseRepository $courseRepository;
 
     public function __construct() {
         $this->postRepository = new PostRepository();
+        $this->postCategoryRepository = new PostCategoryRepository();
         $this->userRepository = new UserRepository();
+        $this->courseRepository = new CourseRepository();
     }
 
     /**
-     * Carica i post per la home page con gli autori
+     * Carica i post della homepage con filtri
+     * Se nessun filtro è fornito, carica tutti i post
+     * Filtri disponibili: corsi, categorie, ordinamento
      */
-    public function loadHomePage(): PostListDTO {
-        $postEntities = $this->postRepository->findAll();
-        $dto = new PostListDTO();
+    public function loadHomePageWithFilters(PostFilterDTO $filter): PostListDTO {
+        $postDtos = $this->postRepository->findWithFilters($filter);
+        $postsList = array();
 
-        foreach ($postEntities as $post) {
-            $author = $this->userRepository->findByEntita($post->identita);
+        foreach ($postDtos as $post) {
+            $author = $this->userRepository->findByUserId($post->idutente);
             if ($author && !$author->utente_sospeso) {
-                $dto->addPost(new PostWithAuthorDTO($post, $author));
+                $postsList[] = new PostWithAuthorDTO($post, $author);
             }
         }
 
-        return $dto;
+        return new PostListDTO($postsList);
     }
 
     /**
-     * Carica i post di un corso
+     * Carica i post di un corso con filtri
+     * Filtri disponibili: categorie, tag del corso, ordinamento
      */
-    public function loadCoursePosts(int $idcorso): array {
-        return $this->postRepository->findByCourseId($idcorso);
+    public function loadCoursePostsWithFilters(int $idcorso, PostFilterDTO $filter): PostListDTO {
+        // Aggiungi il corso al filtro se non già presente
+        if (!in_array($idcorso, $filter->corsi)) {
+            $filter->corsi = [$idcorso];
+        }
+
+        $postDtos = $this->postRepository->findWithFilters($filter);
+        $postsList = array();
+        
+        foreach ($postDtos as $post) {
+            $author = $this->userRepository->findByUserId($post->idutente);
+            if ($author && !$author->utente_sospeso) {
+                $postsList[] = new PostWithAuthorDTO($post, $author);
+            }
+        }
+
+        return new PostListDTO($postsList);
     }
 
     /**
@@ -51,66 +76,103 @@ class PostService {
             return null;
         }
 
-        $posts = $this->postRepository->findByUserId($user->identita);
-        $dto = new PostListDTO();
+        $postDtos = $this->postRepository->findByUserId($idutente);
+        $postsList = array();
 
-        foreach ($posts as $post) {
-            $dto->addPost(new PostWithAuthorDTO($post, $user));
+        foreach ($postDtos as $post) {
+            $postsList[] = new PostWithAuthorDTO($post, $user);
         }
 
-        return $dto;
+        return new PostListDTO($postsList);
     }
 
     /**
-     * Crea un nuovo post
+     * Crea un nuovo post per un utente
+     * Gli utenti possono postare solo su UN UNICO corso
+     * I tag devono essere dello stesso corso
+     * Le categorie sono facoltative
+     *
+     * @throws \Exception se l'idutente non è valido o il corso non appartiene all'utente
      */
-    public function createPost(
-        string $titolo,
-        string $descrizione,
-        string $idutente,
-        ?string $percorso_allegato = null,
-        ?int $idcorso = null
-    ): int {
-        $user = $this->userRepository->findByUserId($idutente);
-
-        $post = new PostEntity(
-            0, // Sarà auto-generato dal database
-            $titolo,
-            $descrizione,
-            $percorso_allegato,
-            0,
-            0,
-            date('Y-m-d'),
-            $user->identita,
-            $idcorso
-        );
-
-        return $this->postRepository->save($post);
-    }
-
-    /**
-     * Aggiunge un like a un post
-     */
-    public function likePost(int $idpost): bool {
-        return $this->postRepository->incrementLikes($idpost);
-    }
-
-    /**
-     * Aggiunge un dislike a un post
-     */
-    public function dislikePost(int $idpost): bool {
-        return $this->postRepository->incrementDislikes($idpost);
-    }
-
-    /**
-     * Elimina un post
-     */
-    public function deletePost(int $idpost, string $idutente): bool {
-        $user = $this->userRepository->findByUserId($idutente);
-        if (!$user || $user->identita !== $this->postRepository->findById($idpost)?->identita) {
-            return false;
+    public function createUserPost(CreateUserPostDTO $dto): void {
+        // Risolvi idutente a utente
+        $user = $this->userRepository->findByUserId($dto->idutente);
+        if (!$user) {
+            throw new \Exception("Utente non trovato");
         }
 
-        return $this->postRepository->delete($idpost);
+        // Verifica che l'utente sia iscritto al corso
+        $course = $this->courseRepository->findById($dto->idcorso);
+        if (!$course || $course->idfacolta !== $user->idfacolta) {
+            throw new \Exception("L'utente non è iscritto a questo corso");
+        }
+
+        // Verifica che tutti i tag appartengono al corso selezionato
+        foreach ($dto->tags as $tag) {
+            if (!isset($tag['tipo']) || !isset($tag['idcorso'])) {
+                throw new \Exception("Tag non valido");
+            }
+            if ($tag['idcorso'] !== $dto->idcorso) {
+                throw new \Exception("I tag devono appartenere al corso selezionato");
+            }
+        }
+
+        if (empty($dto->titolo) || empty($dto->contenuto)) {
+            throw new \Exception("Titolo e contenuto non possono essere vuoti");
+        }
+
+        $this->postRepository->save($dto);
+    }
+
+    /**
+     * Aggiunge un voto (like/dislike) a un post
+     * 
+     * @param int $idpost ID del post
+     * @param string $idutente ID dell'utente
+     * @param bool $isLike true per like, false per dislike
+     */
+    public function votePost(int $idpost, string $idutente, bool $isLike): void {
+        $post = $this->postRepository->findById($idpost);
+        if (!$post) {
+            throw new \Exception("Post non trovato");
+        }
+        
+        $this->postRepository->addVote($idpost, $idutente, $isLike);
+    }
+
+    /**
+     * Rimuove un voto (like/dislike) a un post
+     * 
+     * @param int $idpost ID del post
+     * @param string $idutente ID dell'utente
+     */
+    public function removeVote(int $idpost, string $idutente): void {
+        $post = $this->postRepository->findById($idpost);
+        if (!$post) {
+            throw new \Exception("Post non trovato");
+        }
+        
+        $this->postRepository->removeVote($idpost, $idutente);
+    }
+
+    /**
+     * Elimina un post (solo il creatore)
+     * 
+     * @param int $idpost ID del post da eliminare
+     * @param string $idutente ID dell'utente che richiede l'eliminazione
+     */
+    public function deletePost(int $idpost, string $idutente): void {
+        $post = $this->postRepository->findById($idpost);
+        if (!$post) {
+            throw new \Exception("Post non trovato");
+        }
+
+        // Verifica che l'utente sia il creatore del post
+        if ($post->idutente !== $idutente) {
+            throw new \Exception("Non hai i permessi per eliminare questo post");
+        }
+
+        $this->postRepository->delete($idpost);
     }
 }
+

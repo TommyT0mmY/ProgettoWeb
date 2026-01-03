@@ -10,8 +10,4 @@ class PostListDTO {
     public function __construct(array $posts = []) {
         $this->posts = $posts;
     }
-
-    public function addPost(PostWithAuthorDTO $post): void {
-        $this->posts[] = $post;
-    }
 }
