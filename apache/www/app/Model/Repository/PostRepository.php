@@ -36,7 +36,7 @@ class PostRepository {
     /**
      * Recupera post con filtri applicati
      */     
-    public function findWithFilters(PostFilterDTO $filter): array {
+    public function findWithFilters(string $idutente, PostFilterDTO $filter): array {
         $sql = "SELECT DISTINCT p.* FROM posts p";
         $conditions = [];
         $params = [];
@@ -68,8 +68,9 @@ class PostRepository {
             $params[] = $filter->corso;
             $conditions[] = " p.idcorso IN (?)";
         } else {
+            $params[] = $idutente;
             $conditions[] = " p.idcorso IN (
-                SELECT idcorso FROM corsi_utente WHERE idutene = ?;
+                SELECT idcorso FROM utenti_corsi WHERE idutente = ?
             )";
         }
 
@@ -83,6 +84,7 @@ class PostRepository {
         } else {
             $sql .= " AND p.idpost < ?";
         }
+        $params[] = $filter->lastId;
 
         // Ordinamento
         $sql .= " ORDER BY p.data_creazione " . $filter->ordinamento;
@@ -332,7 +334,7 @@ class PostRepository {
             $row['percorso_allegato'],
             $row['data_creazione'],
             (string)$row['idutente'],
-            $row['idcorso'] ? (int)$row['idcorso'] : null,
+            $row['idcorso'],
             $tags,
             $categorie,
             $likes,

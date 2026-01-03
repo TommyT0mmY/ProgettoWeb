@@ -27,8 +27,8 @@ class PostService {
      * Se nessun filtro è fornito, carica tutti i post
      * Filtri disponibili: corsi, categorie, ordinamento
      */
-    public function loadPostsWithFilters(PostFilterDTO $filter): PostListDTO {
-        $postDtos = $this->postRepository->findWithFilters($filter);
+    public function getPostsWithFilters(string $idutente, PostFilterDTO $filter): PostListDTO {
+        $postDtos = $this->postRepository->findWithFilters($idutente, $filter);
         $postsList = array();
 
         foreach ($postDtos as $post) {

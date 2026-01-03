@@ -21,8 +21,8 @@ readonly class PostFilterDTO {
         ?int $corso = null,
         array $categorie = [],
         array $tags = [],
-        string $ordinamento,
-        int $lastId,
+        string $ordinamento = 'DESC',
+        int $lastId = PHP_INT_MAX,
         int $limit = 10
     ) {
         $this->corso = $corso;
