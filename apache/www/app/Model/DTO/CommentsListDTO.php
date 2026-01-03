@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class CommentsListDTO {
+readonly class CommentsListDTO {
     /** @var CommentWithAuthorDTO[] */
     public array $comments;
 

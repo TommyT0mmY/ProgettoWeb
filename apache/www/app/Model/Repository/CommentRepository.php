@@ -85,14 +85,15 @@ class CommentRepository {
     }
 
     private function rowToDTO(array $row): CommentDTO {
-        $dto = new CommentDTO();
-        $dto->idcommento = (int)$row['idcommento'];
-        $dto->idpost = (int)$row['idpost'];
-        $dto->testo = $row['testo'];
-        $dto->data_creazione = $row['data_creazione'];
-        $dto->cancellato = (bool)$row['cancellato'];
-        $dto->idutente = (string)$row['idutente'];
-        $dto->idcommento_genitore = $row['idcommento_genitore'] ? (int)$row['idcommento_genitore'] : null;
+        $dto = new CommentDTO(
+            (int)$row['idcommento'],
+            (int)$row['idpost'],
+            $row['testo'],
+            $row['data_creazione'],
+            (bool)$row['cancellato'],
+            (string)$row['idutente'],
+            $row['idcommento_genitore'] ? (int)$row['idcommento_genitore'] : null
+        );
         return $dto;
     }
 }

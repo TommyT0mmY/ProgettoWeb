@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class PostFilterDTO {
+readonly class PostFilterDTO {
     /** @var int[] Array of course IDs (for homepage filtering) */
     public array $corsi;
     /** @var string[] Array of category IDs */

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class AdminDTO {
+readonly class AdminDTO {
     public string $idamministratore;
     public string $password;
 

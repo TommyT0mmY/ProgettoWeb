@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class CommentWithAuthorDTO {
+readonly class CommentWithAuthorDTO {
     public CommentDTO $comment;
     public PublicUserDTO $author;
 

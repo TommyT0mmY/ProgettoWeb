@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class CategoryDTO {
+readonly class CategoryDTO {
     public int $idcategoria;
     public string $nome_categoria;
 

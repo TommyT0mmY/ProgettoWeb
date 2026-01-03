@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class PublicUserDTO {
+readonly class PublicUserDTO {
     public string $idutente;
     public string $nome;
     public string $cognome;

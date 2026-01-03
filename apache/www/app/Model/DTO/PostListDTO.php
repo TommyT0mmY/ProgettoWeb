@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class PostListDTO {
+readonly class PostListDTO {
     /** @var PostWithAuthorDTO[] */
     public array $posts;
 
