@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\UserRepository;
-use Unibostu\Model\DTO\UserProfileDTO;
+use Unibostu\Model\DTO\PublicUserDTO;
 use Unibostu\Model\DTO\CreateUserDTO;
 
 class UserService {
@@ -17,8 +17,8 @@ class UserService {
     /**
      * Ottiene il profilo di un utente tramite ID
      */
-    public function getUserProfile(string $idutente): ?UserProfileDTO {
-        return $this->userRepository->findByUserId($idutente);
+    public function getUserProfile(string $idutente): ?PublicUserDTO {
+        return $this->userRepository->findByUserIdPublic($idutente);
     }
 
     /**
@@ -26,7 +26,7 @@ class UserService {
      * @throws \Exception se le credenziali non sono valide
      */
     public function authenticate(string $idutente, string $password): bool {
-        $user = $this->userRepository->findByUserId($idutente);
+        $user = $this->userRepository->findByUserIdPrivate($idutente);
         
         if (!$user) {
             throw new \Exception("Utente non trovato");
@@ -49,7 +49,7 @@ class UserService {
      */
     public function registerUser(CreateUserDTO $dto): void {
         // Verifica che l'username non esista già
-        $existingUser = $this->userRepository->findByUserId($dto->idutente);
+        $existingUser = $this->userRepository->findByUserIdPrivate($dto->idutente);
         if ($existingUser) {
             throw new \Exception("Username '$dto->idutente' già utilizzato");
         }
@@ -74,7 +74,7 @@ class UserService {
      * @throws \Exception se l'utente non esiste o i dati non sono validi
      */
     public function updateProfile(string $idutente, string $password, string $nome, string $cognome): void {
-        $user = $this->userRepository->findByUserId($idutente);
+        $user = $this->userRepository->findByUserIdPrivate($idutente);
         if (!$user) {
             throw new \Exception("Utente '$idutente' non trovato");
         }
@@ -95,7 +95,7 @@ class UserService {
      * @throws \Exception se l'utente non esiste
      */
     public function suspendUser(string $idutente): void {
-        $user = $this->userRepository->findByUserId($idutente);
+        $user = $this->userRepository->findByUserIdPublic($idutente);
         if (!$user) {
             throw new \Exception("Utente '$idutente' non trovato");
         }

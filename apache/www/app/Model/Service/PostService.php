@@ -35,7 +35,7 @@ class PostService {
         $postsList = array();
 
         foreach ($postDtos as $post) {
-            $author = $this->userRepository->findByUserId($post->idutente);
+            $author = $this->userRepository->findByUserIdPublic($post->idutente);
             if ($author && !$author->utente_sospeso) {
                 $postsList[] = new PostWithAuthorDTO($post, $author);
             }
@@ -58,7 +58,7 @@ class PostService {
         $postsList = array();
         
         foreach ($postDtos as $post) {
-            $author = $this->userRepository->findByUserId($post->idutente);
+            $author = $this->userRepository->findByUserIdPublic($post->idutente);
             if ($author && !$author->utente_sospeso) {
                 $postsList[] = new PostWithAuthorDTO($post, $author);
             }
@@ -71,7 +71,7 @@ class PostService {
      * Ottiene tutti i post di un utente specifico con i relativi dati
      */
     public function getPostsWithAuthorByUserId(string $idutente): ?PostListDTO {
-        $user = $this->userRepository->findByUserId($idutente);
+        $user = $this->userRepository->findByUserIdPublic($idutente);
         if (!$user || $user->utente_sospeso) {
             return null;
         }
@@ -96,7 +96,7 @@ class PostService {
      */
     public function createUserPost(CreateUserPostDTO $dto): void {
         // Risolvi idutente a utente
-        $user = $this->userRepository->findByUserId($dto->idutente);
+        $user = $this->userRepository->findByUserIdPublic($dto->idutente);
         if (!$user) {
             throw new \Exception("Utente non trovato");
         }
