@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Repository;
 
-use Unibostu\Model\Entity\CommentEntity;
+use Unibostu\Model\DTO\CommentDTO;
+use Unibostu\Model\DTO\CreateCommentDTO;
 use Unibostu\Core\Database;
 use PDO;
 
@@ -29,7 +30,7 @@ class CommentRepository {
 
         $comments = [];
         foreach ($rows as $row) {
-            $comments[] = $this->rowToEntity($row);
+            $comments[] = $this->rowToDTO($row);
         }
         return $comments;
     }
@@ -37,39 +38,40 @@ class CommentRepository {
     /**
      * Recupera un commento tramite ID
      */
-    public function findById(int $idcommento, int $idpost): ?CommentEntity {
+    public function findById(int $idcommento, int $idpost): ?CommentDTO {
         $stmt = $this->pdo->prepare("SELECT * FROM commenti WHERE idcommento = :idcommento AND idpost = :idpost");
         $stmt->bindValue(':idcommento', $idcommento, PDO::PARAM_INT);
         $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $row ? $this->rowToEntity($row) : null;
+        return $row ? $this->rowToDTO($row) : null;
     }
 
     /**
-     * Salva un nuovo commento
+     * Salva un nuovo commento da DTO
      */
-    public function save(CommentEntity $comment): bool {
+    public function save(CreateCommentDTO $dto): void {
         $stmt = $this->pdo->prepare(
             "INSERT INTO commenti 
-             (idpost, testo, data_creazione, cancellato, identita, idpost_genitore, idcommento_genitore)
-             VALUES (:idpost, :testo, :data_creazione, :cancellato, :identita, :idpost_genitore, :idcommento_genitore)"
+             (idpost, testo, data_creazione, cancellato, idutente, idcommento_genitore)
+             VALUES (:idpost, :testo, :data_creazione, :cancellato, :idutente, :idcommento_genitore)"
         );
-        $stmt->bindValue(':idpost', $comment->idpost, PDO::PARAM_INT);
-        $stmt->bindValue(':testo', $comment->testo, PDO::PARAM_STR);
-        $stmt->bindValue(':data_creazione', $comment->data_creazione, PDO::PARAM_STR);
-        $stmt->bindValue(':cancellato', $comment->cancellato, PDO::PARAM_BOOL);
-        $stmt->bindValue(':identita', $comment->identita, PDO::PARAM_INT);
-        $stmt->bindValue(':idpost_genitore', $comment->idpost_genitore, PDO::PARAM_INT);
-        $stmt->bindValue(':idcommento_genitore', $comment->idcommento_genitore, PDO::PARAM_INT);
-        return $stmt->execute();
+        $stmt->bindValue(':idpost', $dto->idpost, PDO::PARAM_INT);
+        $stmt->bindValue(':testo', $dto->testo, PDO::PARAM_STR);
+        $stmt->bindValue(':data_creazione', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmt->bindValue(':cancellato', false, PDO::PARAM_BOOL);
+        $stmt->bindValue(':idutente', $dto->idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':idcommento_genitore', $dto->idcommento_genitore, PDO::PARAM_INT);
+        if (!$stmt->execute()) {
+            throw new \Exception("Errore nel salvataggio del commento");
+        }
     }
 
     /**
      * Segna un commento come cancellato (soft delete)
      */
-    public function delete(int $idcommento, int $idpost): bool {
+    public function delete(int $idcommento, int $idpost): void {
         $stmt = $this->pdo->prepare(
             "UPDATE commenti SET cancellato = true, testo = :testo 
              WHERE idcommento = :idcommento AND idpost = :idpost"
@@ -77,19 +79,20 @@ class CommentRepository {
         $stmt->bindValue(':testo', 'commento cancellato', PDO::PARAM_STR);
         $stmt->bindValue(':idcommento', $idcommento, PDO::PARAM_INT);
         $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-        return $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new \Exception("Errore nella cancellazione del commento");
+        }
     }
 
-    private function rowToEntity(array $row): CommentEntity {
-        return new CommentEntity(
-            (int)$row['idcommento'],
-            (int)$row['idpost'],
-            $row['testo'],
-            $row['data_creazione'],
-            (bool)$row['cancellato'],
-            (int)$row['identita'],
-            (int)$row['idpost_genitore'],
-            (int)$row['idcommento_genitore']
-        );
+    private function rowToDTO(array $row): CommentDTO {
+        $dto = new CommentDTO();
+        $dto->idcommento = (int)$row['idcommento'];
+        $dto->idpost = (int)$row['idpost'];
+        $dto->testo = $row['testo'];
+        $dto->data_creazione = $row['data_creazione'];
+        $dto->cancellato = (bool)$row['cancellato'];
+        $dto->idutente = (string)$row['idutente'];
+        $dto->idcommento_genitore = $row['idcommento_genitore'] ? (int)$row['idcommento_genitore'] : null;
+        return $dto;
     }
 }

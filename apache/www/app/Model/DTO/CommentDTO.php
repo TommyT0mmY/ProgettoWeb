@@ -10,7 +10,6 @@ class CommentDTO {
     public ?string $data_creazione = null;
     public bool $cancellato = false;
     public ?string $idutente = null;
-    public ?int $idpost_genitore = null;
     public ?int $idcommento_genitore = null;
 
     public function __construct(
@@ -20,7 +19,6 @@ class CommentDTO {
         ?string $data_creazione = null,
         bool $cancellato = false,
         ?string $idutente = null,
-        ?int $idpost_genitore = null,
         ?int $idcommento_genitore = null
     ) {
         $this->idcommento = $idcommento;
@@ -29,7 +27,6 @@ class CommentDTO {
         $this->data_creazione = $data_creazione;
         $this->cancellato = $cancellato;
         $this->idutente = $idutente;
-        $this->idpost_genitore = $idpost_genitore;
         $this->idcommento_genitore = $idcommento_genitore;
     }
 }

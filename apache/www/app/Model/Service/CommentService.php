@@ -7,7 +7,7 @@ use Unibostu\Model\Repository\CommentRepository;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\DTO\CommentWithAuthorDTO;
 use Unibostu\Model\DTO\CommentsListDTO;
-use Unibostu\Model\Entity\CommentEntity;
+use Unibostu\Model\DTO\CreateCommentDTO;
 
 class CommentService {
     private CommentRepository $commentRepository;
@@ -22,58 +22,55 @@ class CommentService {
      * Ottiene tutti i commenti di un post con gli autori
      */
     public function getCommentsByPostId(int $postid): CommentsListDTO {
-        $commentEntities = $this->commentRepository->findByPostId($postid);
-        $dto = new CommentsListDTO();
+        $comments = $this->commentRepository->findByPostId($postid);
+        $commetsList = array();
 
-        foreach ($commentEntities as $comment) {
-            $author = $this->userRepository->findByEntita($comment->identita);
+        foreach ($comments as $comment) {
+            $author = $this->userRepository->findByUserId($comment->idutente);
             if ($author && !$author->utente_sospeso) {
-                $dto->addComment(new CommentWithAuthorDTO($comment, $author));
+                $commetsList[] = new CommentWithAuthorDTO($comment, $author);
             }
         }
 
-        return $dto;
+        return new CommentsListDTO($commetsList);
     }
 
     /**
      * Crea un nuovo commento
+     * @throws \Exception se l'idutente non è valido o non esiste
      */
-    public function createComment(
-        int $idpost,
-        string $testo,
-        string $idutente,
-        ?int $idcommento_genitore
-    ): bool {
-        $user = $this->userRepository->findByUserId($idutente);
+    public function createComment(CreateCommentDTO $dto): void {
+        // Verifica che l'utente esista
+        $user = $this->userRepository->findByUserId($dto->idutente);
+        if (!$user) {
+            throw new \Exception("Utente non trovato");
+        }
 
-        $comment = new CommentEntity(
-            0,
-            $idpost,
-            $testo,
-            date('Y-m-d'),
-            false,
-            $user->identita,
-            $idpost,
-            $idcommento_genitore
-        );
+        if ($user->utente_sospeso) {
+            throw new \Exception("Utente sospeso, non può creare commenti");
+        }
 
-        return $this->commentRepository->save($comment);
+        if (empty($dto->testo)) {
+            throw new \Exception("Il testo del commento non può essere vuoto");
+        }
+
+        $this->commentRepository->save($dto);
     }
 
     /**
      * Cancella un commento
+     * @throws \Exception se l'idutente non esiste o non è proprietario del commento
      */
-    public function deleteComment(int $idcommento, int $idpost, string $idutente): bool {
-        $user = $this->userRepository->findByUserId($idutente);
-        if (!$user) {
-            return false;
-        }
-
+    public function deleteComment(int $idcommento, int $idpost, string $idutente): void {
         $comment = $this->commentRepository->findById($idcommento, $idpost);
-        if (!$comment || $comment->identita !== $user->identita) {
-            return false;
+        if (!$comment) {
+            throw new \Exception("Commento non trovato");
         }
 
-        return $this->commentRepository->delete($idcommento, $idpost);
+        if ($comment->idutente !== $idutente) {
+            throw new \Exception("Non sei il proprietario di questo commento");
+        }
+
+        $this->commentRepository->delete($idcommento, $idpost);
     }
 }
