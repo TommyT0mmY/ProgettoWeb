@@ -104,12 +104,10 @@ class UserRepository {
     private function rowToDTO(array $row): UserProfileDTO {
         return new UserProfileDTO(
             $row['idutente'],
-            (int)$row['identita'],
             $row['nome'],
             $row['cognome'],
             (int)$row['idfacolta'],
             (bool)$row['utente_sospeso'],
-            $row['password'] ?? null
         );
     }
 }

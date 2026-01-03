@@ -5,28 +5,22 @@ namespace Unibostu\Model\DTO;
 
 class UserProfileDTO {
     public string $idutente;
-    public int $identita;
     public string $nome;
     public string $cognome;
     public int $idfacolta;
     public bool $utente_sospeso;
-    public ?string $password = null;
 
     public function __construct(
         string $idutente,
-        int $identita,
         string $nome,
         string $cognome,
         int $idfacolta,
         bool $utente_sospeso,
-        ?string $password = null
     ) {
         $this->idutente = $idutente;
-        $this->identita = $identita;
         $this->nome = $nome;
         $this->cognome = $cognome;
         $this->idfacolta = $idfacolta;
         $this->utente_sospeso = $utente_sospeso;
-        $this->password = $password;
     }
 }
