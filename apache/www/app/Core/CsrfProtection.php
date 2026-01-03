@@ -15,14 +15,12 @@ namespace Unibostu\Core;
  * successful validation.
  */
 final class CsrfProtection {
-    private static SessionManager $session = SessionManager::getInstance();
-
     private const CSRF_TOKEN_LIFETIME = 3600;           // 1 hour
     private const KEY_CSRF_TOKENS = "_cp_csrf_tokens";
 
-    private function __construct() {
-        throw new \Exception('Not implemented');
-    }
+    public function __construct(
+        private readonly SessionManager $session
+    ) {}
 
     /**
      * Generates a unique CSRF token for a specific form.
@@ -33,7 +31,7 @@ final class CsrfProtection {
      * @param string $formId Unique identifier for the form (e.g., "login_form").
      * @return string The generated 64-character hexadecimal token.
      */
-    public static function generateToken(string $formId): string {
+    public function generateToken(string $formId): string {
         $token = bin2hex(random_bytes(32));
         self::getTokens()[$formId] = [
             'token' => $token,
@@ -56,7 +54,7 @@ final class CsrfProtection {
      * @param string $formId The identifier of the form that issued the token.
      * @return bool True if the token is valid and not expired.
      */
-    public static function validateToken(string $token, string $formId): bool {
+    public function validateToken(string $token, string $formId): bool {
         if (!isset(self::getTokens()[$formId])) {
             return false;
         }
@@ -80,11 +78,11 @@ final class CsrfProtection {
      *
      * @return array<string, array> Reference to the tokens array in session.
      */
-    private static function &getTokens(): array {
-        if (!self::$session->isset(self::KEY_CSRF_TOKENS)) {
-            self::$session->set(self::KEY_CSRF_TOKENS, []);
+    private function &getTokens(): array {
+        if (!$this->session->isset(self::KEY_CSRF_TOKENS)) {
+            $this->session->set(self::KEY_CSRF_TOKENS, []);
         }
-        return self::$session->getRef(self::KEY_CSRF_TOKENS);
+        return $this->session->getRef(self::KEY_CSRF_TOKENS);
     }
 }
 ?>

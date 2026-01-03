@@ -20,6 +20,12 @@ class App {
         $this->container->register(RenderingEngine::class, function() {
             return new RenderingEngine();
         });
+        $this->container->register(SessionManager::class, function() {
+            return new SessionManager();
+        });
+        $this->container->register(CsrfProtection::class, function(Container $container) {
+            return new CsrfProtection($container->get(SessionManager::class));
+        });
     }
 
     private function registerRoutes(): void {
