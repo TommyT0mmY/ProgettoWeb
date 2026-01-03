@@ -5,7 +5,6 @@ namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\CourseDTO;
-use Unibostu\Model\Entity\CourseEntity;
 
 class CourseService {
     private CourseRepository $courseRepository;
@@ -18,55 +17,71 @@ class CourseService {
      * Ottiene i dettagli di un corso tramite ID
      */
     public function getCourseDetails(int $idcorso): ?CourseDTO {
-        $course = $this->courseRepository->findById($idcorso);
-        return $course ? new CourseDTO($course) : null;
+        return $this->courseRepository->findById($idcorso);
     }
 
     /**
      * Recupera tutti i corsi
      */
     public function getAllCourses(): array {
-        $courses = $this->courseRepository->findAll();
-        return array_map(fn($course) => new CourseDTO($course), $courses);
+        return $this->courseRepository->findAll();
     }
 
     /**
      * Recupera i corsi di una facolta
      */
     public function getCoursesByFaculty(int $idfacolta): array {
-        $courses = $this->courseRepository->findByFaculty($idfacolta);
-        return array_map(fn($course) => new CourseDTO($course), $courses);
+        return $this->courseRepository->findByFaculty($idfacolta);
     }
 
     /**
      * Crea un nuovo corso
+     * @throws \Exception se i dati non sono validi
      */
-    public function createCourse(string $nome_corso, int $idfacolta): bool {
-        $course = new CourseEntity(
-            0,
-            $nome_corso,
-            $idfacolta
-        );
-        return $this->courseRepository->save($course);
+    public function createCourse(string $nome_corso, int $idfacolta): void {
+        if (empty($nome_corso)) {
+            throw new \Exception("Nome corso non può essere vuoto");
+        }
+
+        if ($idfacolta <= 0) {
+            throw new \Exception("Facoltà non valida");
+        }
+
+        $this->courseRepository->save($nome_corso, $idfacolta);
     }
 
     /**
      * Aggiorna i dati di un corso
+     * @throws \Exception se il corso non esiste o i dati non sono validi
      */
-    public function updateCourse(int $idcorso, string $nome_corso, int $idfacolta): bool {
-        $course = new CourseEntity(
-            $idcorso,
-            $nome_corso,
-            $idfacolta
-        );
-        return $this->courseRepository->update($course);
+    public function updateCourse(int $idcorso, string $nome_corso, int $idfacolta): void {
+        $course = $this->courseRepository->findById($idcorso);
+        if (!$course) {
+            throw new \Exception("Corso non trovato");
+        }
+
+        if (empty($nome_corso)) {
+            throw new \Exception("Nome corso non può essere vuoto");
+        }
+
+        if ($idfacolta <= 0) {
+            throw new \Exception("Facoltà non valida");
+        }
+
+        $this->courseRepository->update($idcorso, $nome_corso, $idfacolta);
     }
 
     /**
      * Elimina un corso
+     * @throws \Exception se il corso non esiste
      */
-    public function deleteCourse(int $idcorso): bool {
-        return $this->courseRepository->delete($idcorso);
+    public function deleteCourse(int $idcorso): void {
+        $course = $this->courseRepository->findById($idcorso);
+        if (!$course) {
+            throw new \Exception("Corso non trovato");
+        }
+
+        $this->courseRepository->delete($idcorso);
     }
 }
 
