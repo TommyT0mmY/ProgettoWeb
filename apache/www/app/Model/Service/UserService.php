@@ -58,6 +58,14 @@ class UserService {
             throw new \Exception("Facoltà non valida");
         }
 
+        if (empty($dto->nome) || empty($dto->cognome)) {
+            throw new \Exception("Nome e cognome non possono essere vuoti");
+        }
+
+        if (empty($dto->password)) {
+            throw new \Exception("La password non può essere vuota");
+        }
+
         $this->userRepository->save($dto);
     }
 
@@ -69,6 +77,14 @@ class UserService {
         $user = $this->userRepository->findByUserId($idutente);
         if (!$user) {
             throw new \Exception("Utente '$idutente' non trovato");
+        }
+
+        if (empty($nome) || empty($cognome)) {
+            throw new \Exception("Nome e cognome non possono essere vuoti");
+        }
+
+        if (empty($password)) {
+            throw new \Exception("La password non può essere vuota");
         }
 
         $this->userRepository->updateProfile($idutente, $password, $nome, $cognome);
