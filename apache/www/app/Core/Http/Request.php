@@ -16,7 +16,11 @@ class Request {
     
     public function __construct() {
         $this->method = $_SERVER['REQUEST_METHOD'];
-        $this->uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $parsedUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        if ($parsedUri === false) {
+            throw new \RuntimeException("Invalid request URI");
+        }
+        $this->uri = $parsedUri;
         $this->params = $_GET;
         $input = file_get_contents('php://input');
         $this->body = json_decode($input, true) ?? $_POST;
