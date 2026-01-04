@@ -331,7 +331,6 @@ class PostRepository {
             $idpost,
             $row['titolo'],
             $row['descrizione'],
-            $row['percorso_allegato'],
             $row['data_creazione'],
             (string)$row['idutente'],
             $row['idcorso'],
@@ -339,7 +338,8 @@ class PostRepository {
             $categorie,
             $likes,
             $dislikes,
-            $likedByCurrentUser
+            $likedByCurrentUser,
+            $row['percorso_allegato'] ?? null
         );
         return $dto;
     }
