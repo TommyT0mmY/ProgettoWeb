@@ -53,6 +53,10 @@ class UserService {
             throw new \Exception("Username '$dto->idutente' già utilizzato");
         }
 
+        if (empty($dto->idutente)) {
+            throw new \Exception("L'username non può essere vuoto");
+        }
+
         if ($dto->idfacolta <= 0) {
             throw new \Exception("Facoltà non valida");
         }
