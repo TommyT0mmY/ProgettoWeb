@@ -5,6 +5,7 @@ body,main,h1,ul{
 }
 body{
     padding-top: 50px;
+    padding-bottom: 10px;
 }
 /* Layout Generale */
 body {
@@ -241,7 +242,7 @@ main > article > p:nth-of-type(2){
 
 /* Header e Titolo */
 .Post header h3 {
-    color: #0757a9; /* Il tuo blu forte */
+    color: #0757a9; 
     margin: 0 0 8px 0;
     font-size: 1.6rem;
 }
@@ -430,9 +431,7 @@ main > form > section {
   align-items: center;
 }
 
-main > form > section fieldset {
-  width: 40%;
-}
+
 
 
 /* 2. MEDIA QUERY (DESKTOP) - navbar */
