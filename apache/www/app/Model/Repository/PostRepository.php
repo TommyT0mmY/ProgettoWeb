@@ -43,7 +43,7 @@ class PostRepository {
 
         // Join per categorie se filtrate
         if (!empty($filter->categorie)) {
-            $sql .= " LEFT JOIN castegorie_posts cp ON p.idpost = cp.idpost";
+            $sql .= " LEFT JOIN categorie_posts cp ON p.idpost = cp.idpost";
             $placeholders = array_fill(0, count($filter->categorie), '?');
             $conditions[] = "cp.idcategoria IN (" . implode(',', $placeholders) . ")";
             $params = array_merge($params, $filter->categorie);

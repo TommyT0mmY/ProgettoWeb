@@ -18,12 +18,12 @@ readonly class PostFilterDTO {
     public int $limit;
 
     public function __construct(
-        ?int $corso = null,
         array $categorie = [],
         array $tags = [],
         string $ordinamento = 'DESC',
         int $lastId = PHP_INT_MAX,
-        int $limit = 10
+        int $limit = 10,
+        ?int $corso = null
     ) {
         $this->corso = $corso;
         $this->categorie = $categorie;

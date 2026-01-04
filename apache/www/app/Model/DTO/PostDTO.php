@@ -18,13 +18,12 @@ readonly class PostDTO {
     public int $likes;
     public int $dislikes;
     /** @var bool value is 0 if disliked, 1 if liked, null if no action taken */ 
-    public ?bool $likedByCurrentUser;
+    public ?bool $likedByUser;
 
     public function __construct(
         int $idpost,
         string $titolo,
         string $descrizione,
-        ?string $percorso_allegato = null,
         string $data_creazione,
         string $idutente,
         int $idcorso,
@@ -32,7 +31,8 @@ readonly class PostDTO {
         array $categorie = [],
         int $likes = 0,
         int $dislikes = 0,
-        ?bool $likedByCurrentUser = null
+        ?bool $likedByUser = null,
+        ?string $percorso_allegato = null
     ) {
         $this->idpost = $idpost;
         $this->titolo = $titolo;
@@ -45,6 +45,6 @@ readonly class PostDTO {
         $this->categorie = $categorie;
         $this->likes = $likes;
         $this->dislikes = $dislikes;
-        $this->likedByCurrentUser = $likedByCurrentUser;
+        $this->likedByUser = $likedByUser;
     }
 }

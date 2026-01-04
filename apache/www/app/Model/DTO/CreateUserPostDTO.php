@@ -8,18 +8,18 @@ readonly class CreateUserPostDTO {
     public int $idcorso;
     public string $titolo;
     public string $descrizione;
-    public ?string $percorso_allegato;
     public array $tags;
     public array $categorie;
+    public ?string $percorso_allegato;
 
     public function __construct(
         string $idutente,
         int $idcorso,
         string $titolo,
         string $descrizione,
-        ?string $percorso_allegato = null,
         array $tags = [],
-        array $categorie = []
+        array $categorie = [],
+        ?string $percorso_allegato = null,
     ) {
         $this->idutente = $idutente;
         $this->idcorso = $idcorso;
