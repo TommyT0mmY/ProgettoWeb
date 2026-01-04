@@ -8,7 +8,7 @@ readonly class PostFilterDTO {
     public ?int $corso;
     /** @var string[] Array of category IDs */
     public array $categorie;
-    /** @var array[] Array of tags ['tipo' => string, 'idcorso' => int] (for course filtering) */
+    /** @var array[] Array of tags ['idtag' => int, 'idcorso' => int] (for course filtering) */
     public array $tags;
     /** Sort order: 'ASC' for ascending, 'DESC' for descending */
     public string $ordinamento;

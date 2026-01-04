@@ -103,7 +103,6 @@ Content-Type: application/json
       "like_count": 10,
       "dislike_count": 3,
       "liked_by_user": true,
-      "disliked_by_user": true,
       "comment_count": 5
     }, ...
   ]

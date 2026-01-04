@@ -54,8 +54,8 @@ class PostRepository {
             $sql .= " LEFT JOIN post_tags pt ON p.idpost = pt.idpost";
             $tagConditions = [];
             foreach ($filter->tags as $tag) {
-                $tagConditions[] = "(pt.tipo = ? AND pt.idcorso = ?)";
-                $params[] = $tag['tipo'];
+                $tagConditions[] = "(pt.idtag = ? AND pt.idcorso = ?)";
+                $params[] = $tag['idtag'];
                 $params[] = $tag['idcorso'];
             }
             if (!empty($tagConditions)) {

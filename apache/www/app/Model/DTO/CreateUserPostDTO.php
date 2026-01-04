@@ -8,7 +8,9 @@ readonly class CreateUserPostDTO {
     public int $idcorso;
     public string $titolo;
     public string $descrizione;
+    /** @var array<int> Array of tag IDs */
     public array $tags;
+    /** @var array<int> Array of category IDs */
     public array $categorie;
     public ?string $percorso_allegato;
 
