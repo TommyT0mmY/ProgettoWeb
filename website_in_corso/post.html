@@ -13,7 +13,7 @@
     <a href="profile.html"><img class="profile-container" src="./img/user-profile.svg" alt="user-profile" /></a>    
  </header>
 
- <div>
+ <div class="containerNavMain">
  <nav id="navbar">
   <div>
     <ul>
@@ -38,7 +38,7 @@
       <li><a href="register.html">Register</a></li>
       <li><a href="login.html">Login</a></li>
       <li><a href="userPreferences.html">Preferences</a></li>
-      <li><a href="posts.html">Posts</a></li>
+      
 
     </ul>
     </div>
@@ -48,14 +48,12 @@
 <main>
         <header>
             <h2 class="title-posts">Post</h2>
+            <li><a href="index.html">Go back to posts</a></li>
         </header>
         
-        
-        <article class="Post">
+    <div class="post_container">   
+         <article class="Post">
             <header>
-                <a href="index.html" id="close-button" >
-                <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#c9c9c9"><path d="m480-444.62-209.69 209.7q-7.23 7.23-17.5 7.42-10.27.19-17.89-7.42-7.61-7.62-7.61-17.7 0-10.07 7.61-17.69L444.62-480l-209.7-209.69q-7.23-7.23-7.42-17.5-.19-10.27 7.42-17.89 7.62-7.61 17.7-7.61 10.07 0 17.69 7.61L480-515.38l209.69-209.7q7.23-7.23 17.5-7.42 10.27-.19 17.89 7.42 7.61 7.62 7.61 17.7 0 10.07-7.61 17.69L515.38-480l209.7 209.69q7.23 7.23 7.42 17.5.19 10.27-7.42 17.89-7.62 7.61-17.7 7.61-10.07 0-17.69-7.61L480-444.62Z"/></svg>
-                </a>
                 <h3>Intro to  Web Technologies, Client Side</h3>
             </header>
             
@@ -68,79 +66,92 @@
                 <!--per tag topic si potrebbe usare un for-->
                 <!--javascript o php per filtrare in caso di clic-->
             </ul>
-
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit animi, ratione optio minus, ab, reprehenderit reiciendis quaerat illum excepturi voluptatibus totam est recusandae dolore quis? Porro ut optio ex repudiandae.</p>
+            <section>
+             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit animi, ratione optio minus, ab, reprehenderit reiciendis quaerat illum excepturi voluptatibus totam est recusandae dolore quis? Porro ut optio ex repudiandae.</p>
+             <p>if you want to download click here (if it exists)</p> 
+             <ul class="review">
+              <li class="reaction"><a href="#" download="first_lesson">Download</a></li>
+             </ul>              
+            </section>
+            
             <footer>    
-                <ul>
-                    <li><a href="#replyMain">Reply</a></li>
-                    <li><a href="#comments">Comments</a></li>
-                    <li>
+                <ul class="review">
+                    <li><a href="post.html#replyMain">Reply</a></li>
+                    <li><a href="post.html#comments">Comments</a></li>
+                    <li class="reaction">
                         <button><img src="img/like.svg" alt="like"></button>
                         <data value="0">0</data>
                     </li>
-                    <li>
+                    <li class="reaction">
                         <button><img src="img/dislike.svg" alt="dislike"></button>
                         <data value="0">0</data>
                     </li>
+                    <li><a href="#">Delete</a></li>
                 </ul>
             </footer>                          
         </article>
-        <section id="comments">
-            <header>
-                <h3>Comments</h3>
-            </header>
-        
+
+        <section class="Post comment" id="comments"> 
         <form id="replyMain">
-            <label> Add comment <br/>
-            <textarea rows="4" cols="50" placeholder="Write a comment..."></textarea>
+            <label> Add a comment <br/>
+            <textarea  placeholder="Write a comment..."></textarea>
             </label> <br/>
             <input type="submit" value="Submit"/>
         </form>
+        </section>
+
+
+        <section class="post_container comments">
+            <header>
+            <h3>Comments</h3>
+            </header>
         <!--in esempio 1 commento con 1 commento di tipo reply, secondo tipo-->
-        <ul>
-            <li>
+        <ul class="post_container comments">
+            <li class="Post comment">
                 <p>3rd January 2025 - Autor</p>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit animi, ratione optio minus, ab, reprehenderit reiciendis quaerat illum excepturi voluptatibus totam est recusandae dolore quis? Porro ut optio ex repudiandae.</p>
                     <footer>    
-                        <ul>
-                            <li><input type="button" value="ReplyType2">Reply</a></li>
+                        <ul class="review">
+                            <li><a href="#">Reply</a></li>
                             <!--con js/php form ReplyType2 con hidden @destinatario-->
                             <li>
-                                <button><img src="img/like.svg" alt="like"/></button>
+                                <button class="reaction"><img src="img/like.svg" alt="like"/></button>
                                 <data value="0">0</data>
                             </li>
                             <li>
-                                <button><img src="img/dislike.svg" alt="dislike"/></button>
+                                <button class="reaction"><img src="img/dislike.svg" alt="dislike"/></button>
                                 <data value="0">0</data>
                             </li>
                         </ul>
                     </footer>       
-                <li>
+            </li>
+            <li class="Post comment2">
                     <p>3rd January 2025 - Autor2</p>
-                    <p>@destinatario 
+                    <p>@destinatario -
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit animi, ratione optio minus, ab, reprehenderit reiciendis quaerat illum excepturi voluptatibus totam est recusandae dolore quis? Porro ut optio ex repudiandae.</p>
                     <footer>    
-                        <ul>
-                            <li><input type="button" value="ReplyType2">Reply</a></li>
+                        <ul class="review">
+                            <li><a href="#">Reply</a></li>
                             <!--con js/php form ReplyType2 con hidden @destinatario-->
-                            <li>
+                            <li class="reaction">
                                 <button><img src="img/like.svg" alt="like"/></button>
                                 <data value="0">0</data>
                             </li>
-                            <li>
+                            <li class="reaction">
                                 <button><img src="img/dislike.svg" alt="dislike"/></button>
                                 <data value="0">0</data>
                             </li>
                         </ul>
                     </footer>    
-                </li>
-            </li>           
+            </li>          
         </ul>
         </section>
-
-        
+     <!--per i commenti-->
+    </div> 
+    
 </main>
 
+ </div>
  <script src="./javascript/navbar.js" type="text/javascript"></script>
 </body>
 </html>

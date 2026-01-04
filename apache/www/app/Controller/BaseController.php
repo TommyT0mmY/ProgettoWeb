@@ -9,15 +9,15 @@ use Unibostu\Core\Http\Response;
 
 abstract class BaseController {
     protected Container $container;
-    protected RenderingEngine $view;
+    protected RenderingEngine $renderingEngine;
 
     public function __construct(Container $container) {
         $this->container = $container;
-        $this->view = $container->get(RenderingEngine::class);
+        $this->renderingEngine = $container->get(RenderingEngine::class);
     }
 
-    protected function render(string $template, array $data = []): Response {
-        $content = $this->view->render($template, $data);
+    protected function render(string $viewName, array $data = []): Response {
+        $content = $this->renderingEngine->render($viewName, $data);
         return new Response($content); 
     }
 }
