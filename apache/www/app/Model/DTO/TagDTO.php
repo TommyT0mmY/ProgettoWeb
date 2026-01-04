@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class TagDTO {
+readonly class TagDTO {
     public int $idtag;
     public string $tipo;
     public int $idcorso;

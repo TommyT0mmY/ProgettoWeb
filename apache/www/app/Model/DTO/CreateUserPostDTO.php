@@ -3,23 +3,25 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class CreateUserPostDTO {
+readonly class CreateUserPostDTO {
     public string $idutente;
     public int $idcorso;
     public string $titolo;
     public string $descrizione;
-    public ?string $percorso_allegato;
+    /** @var array<int> Array of tag IDs */
     public array $tags;
+    /** @var array<int> Array of category IDs */
     public array $categorie;
+    public ?string $percorso_allegato;
 
     public function __construct(
         string $idutente,
         int $idcorso,
         string $titolo,
         string $descrizione,
-        ?string $percorso_allegato = null,
         array $tags = [],
-        array $categorie = []
+        array $categorie = [],
+        ?string $percorso_allegato = null,
     ) {
         $this->idutente = $idutente;
         $this->idcorso = $idcorso;

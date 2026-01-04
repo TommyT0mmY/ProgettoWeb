@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class FacultyDTO {
+readonly class FacultyDTO {
     public int $idfacolta;
     public string $nome_facolta;
 

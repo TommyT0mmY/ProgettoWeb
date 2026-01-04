@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class CourseDTO {
+readonly class CourseDTO {
     public int $idcorso;
     public string $nome_corso;
     public int $idfacolta;

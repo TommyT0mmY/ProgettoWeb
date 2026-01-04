@@ -18,7 +18,7 @@ class PostCategoryRepository {
      */
     public function findCategoriesByPost(int $idpost): array {
         $stmt = $this->pdo->prepare(
-            "SELECT idcategoria FROM castegorie_posts WHERE idpost = :idpost"
+            "SELECT idcategoria FROM categorie_posts WHERE idpost = :idpost"
         );
         $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
         $stmt->execute();
@@ -67,7 +67,7 @@ class PostCategoryRepository {
      */
     public function removeAllCategoriesFromPost(int $idpost): bool {
         $stmt = $this->pdo->prepare(
-            "DELETE FROM castegorie_posts WHERE idpost = :idpost"
+            "DELETE FROM categorie_posts WHERE idpost = :idpost"
         );
         $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
         return $stmt->execute();

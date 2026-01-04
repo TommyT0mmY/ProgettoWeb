@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\UserRepository;
-use Unibostu\Model\DTO\PublicUserDTO;
-use Unibostu\Model\DTO\CreateUserDTO;
+use Unibostu\Model\DTO\UserDTO;
 
 class UserService {
     private UserRepository $userRepository;
@@ -17,8 +16,8 @@ class UserService {
     /**
      * Ottiene il profilo di un utente tramite ID
      */
-    public function getUserProfile(string $idutente): ?PublicUserDTO {
-        return $this->userRepository->findByUserIdPublic($idutente);
+    public function getUserProfile(string $idutente): ?UserDTO {
+        return $this->userRepository->findByUserId($idutente);
     }
 
     /**
@@ -26,7 +25,7 @@ class UserService {
      * @throws \Exception se le credenziali non sono valide
      */
     public function authenticate(string $idutente, string $password): bool {
-        $user = $this->userRepository->findByUserIdPrivate($idutente);
+        $user = $this->userRepository->findByUserId($idutente);
         
         if (!$user) {
             throw new \Exception("Utente non trovato");
@@ -47,9 +46,9 @@ class UserService {
      * Registra un nuovo utente
      * @throws \Exception se l'username è già preso o i dati sono invalidi
      */
-    public function registerUser(CreateUserDTO $dto): void {
+    public function registerUser(UserDTO $dto): void {
         // Verifica che l'username non esista già
-        $existingUser = $this->userRepository->findByUserIdPrivate($dto->idutente);
+        $existingUser = $this->userRepository->findByUserId($dto->idutente);
         if ($existingUser) {
             throw new \Exception("Username '$dto->idutente' già utilizzato");
         }
@@ -73,10 +72,10 @@ class UserService {
      * Aggiorna il profilo di un utente
      * @throws \Exception se l'utente non esiste o i dati non sono validi
      */
-    public function updateProfile(string $idutente, string $password, string $nome, string $cognome): void {
-        $user = $this->userRepository->findByUserIdPrivate($idutente);
+    public function updateProfile(UserDTO $dto): void {
+        $user = $this->userRepository->findByUserId($dto->idutente);
         if (!$user) {
-            throw new \Exception("Utente '$idutente' non trovato");
+            throw new \Exception("Utente '$dto->idutente' non trovato");
         }
 
         if (empty($nome) || empty($cognome)) {
@@ -87,7 +86,7 @@ class UserService {
             throw new \Exception("La password non può essere vuota");
         }
 
-        $this->userRepository->updateProfile($idutente, $password, $nome, $cognome);
+        $this->userRepository->updateProfile($dto);
     }
 
     /**
@@ -95,7 +94,7 @@ class UserService {
      * @throws \Exception se l'utente non esiste
      */
     public function suspendUser(string $idutente): void {
-        $user = $this->userRepository->findByUserIdPublic($idutente);
+        $user = $this->userRepository->findByUserId($idutente);
         if (!$user) {
             throw new \Exception("Utente '$idutente' non trovato");
         }

@@ -1,14 +1,29 @@
 <?php
 namespace Unibostu\Core;
-use Closure;
+
+use Unibostu\Core\Http\Response;
+use Unibostu\Core\Http\Request;
+use Unibostu\Controller\BaseController;
 
 /**
  * Prefix used to identify variable route segments (e.g. ":id").
- *
- * When a route segment starts with this prefix, the router stores it
- * inside {@see Node::$variables} instead of {@see Node::$children}.
  */
 const VARIABLE_PREFIX = ':';
+
+/** Callback information for a registered route.
+ *
+ * Contains:
+ * - {@see $controllerClassname}: Fully qualified class name of the controller.
+ * - {@see $action}: Method name to be invoked on the controller.
+ */
+readonly class Callback {
+    public function __construct(
+        /** @var class-string<\Unibostu\Controller\BaseController> */
+        public string $controllerClassname,
+        /** @var string */
+        public string $action
+    ) {}
+}
 
 /**
  * Node of the prefix tree (trie) used to store routes.
@@ -17,7 +32,7 @@ const VARIABLE_PREFIX = ':';
  * - concrete children in {@see $children}, indexed by literal segment names;
  * - variable children in {@see $variables}, indexed by variable names (without prefix);
  * - the {@see $isEnding} flag indicating whether the node represents the end of a valid route;
- * - a {@see $callback} closure associated with the terminating route.
+ * - the {@see $callback} associated with the route ending at this node.
  *
  * For debugging purposes, the class implements {@see JsonSerializable}
  */
@@ -25,7 +40,7 @@ class Node implements \JsonSerializable {
     public array $children = [];
     public array $variables = [];
     public bool $isEnding = false;
-    public ?Closure $callback = null;
+    public ?Callback $callback = null;
 
     public function jsonSerialize():mixed {
         return get_object_vars($this);
@@ -42,7 +57,7 @@ class Node implements \JsonSerializable {
  */
 class BacktrackingResult {
     public bool $found = false;
-    public ?Closure $callback = null;
+    public ?Callback $callback = null;
     public array $params = [];
 }
 
@@ -51,11 +66,13 @@ class BacktrackingResult {
  *
  * Register routes using HTTP method methods (get, post, etc.) and provide
  * a callback function. When a route matches an incoming request, the router
- * invokes the callback with route variables as an associative array.
+ * invokes the callback with route variables as an associative array and the
+ * request object.
  *
  * Variable routes are defined with a colon prefix (e.g., ":id").
+ *
  * Example: For route "/users/:id", matching "/users/123" invokes
- * $callback(['id' => '123']).
+ * the callback with $params = ['id' => '123'] and the request object.
  *
  * Usage:
  * $router = new Router();
@@ -77,97 +94,106 @@ class Router {
     /**
      * Registers a GET route.
      *
-     * @param string  $path     Route path (e.g. "/users/:id").
-     * @param Closure $callback Callback that receives route variables as an associative array.
-     *                          Example: For route "/users/:id", matching "/users/123" invokes
-     *                          $callback(['id' => '123']).
+     * @param string $path Route path.
+     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
+     * @param string $action Method name to be invoked on the controller.
      */
-    public function get(string $path, Closure $callback) {
-        $this->add("GET", $path, $callback);
+    public function get(string $path, string $controllerClassname, string $action) {
+        $this->add("GET", $path, $controllerClassname, $action);
     }
 
     /**
      * Registers a POST route.
      *
-     * @param string  $path     Route path.
-     * @param Closure $callback Callback that receives route variables as an associative array.
+     * @param string $path Route path.
+     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
+     * @param string $action Method name to be invoked on the controller.
      */
-    public function post(string $path, Closure $callback) {
-        $this->add("POST", $path, $callback);
+    public function post(string $path, string $controllerClassname, string $action) {
+        $this->add("POST", $path, $controllerClassname, $action);
     }
 
     /**
      * Registers a PUT route.
      *
-     * @param string  $path     Route path.
-     * @param Closure $callback Callback that receives route variables as an associative array.
+     * @param string $path Route path.
+     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
+     * @param string $action Method name to be invoked on the controller.
      */
-    public function put(string $path, Closure $callback) {
-        $this->add("PUT", $path, $callback);
+    public function put(string $path, string $controllerClassname, string $action) {
+        $this->add("PUT", $path, $controllerClassname, $action);
     }
 
     /**
      * Registers a DELETE route.
      *
-     * @param string  $path     Route path.
-     * @param Closure $callback Callback that receives route variables as an associative array.
+     * @param string $path Route path.
+     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
+     * @param string $action Method name to be invoked on the controller.
      */
-    public function delete(string $path, Closure $callback) {
-        $this->add("DELETE", $path, $callback);
+    public function delete(string $path, string $controllerClassname, string $action) {
+        $this->add("DELETE", $path, $controllerClassname, $action);
     }
 
     /**
      * Registers a PATCH route.
      *
-     * @param string  $path     Route path.
-     * @param Closure $callback Callback that receives route variables as an associative array.
+     * @param string $path Route path.
+     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
+     * @param string $action Method name to be invoked on the controller.
      */
-    public function patch(string $path, Closure $callback) {
-        $this->add("PATCH", $path, $callback);
+    public function patch(string $path, string $controllerClassname, string $action) {
+        $this->add("PATCH", $path, $controllerClassname, $action);
     }
 
     /**
-     * Registers a OPTIONS route.
+     * Registers an OPTIONS route.
      *
-     * @param string  $path     Route path.
-     * @param Closure $callback Callback that receives route variables as an associative array.
+     * @param string $path Route path.
+     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
+     * @param string $action Method name to be invoked on the controller.
      */
-    public function options(string $path, Closure $callback) {
-        $this->add("OPTIONS", $path, $callback);
+    public function options(string $path, string $controllerClassname, string $action) {
+        $this->add("OPTIONS", $path, $controllerClassname, $action);
     }
 
     /**
      * Adds a route to the router.
      *
      * Rules:
-     * - {@code $method} and {@code $path} must not be empty; otherwise the request
-     *   is ignored and logged as an error.
-     * - An empty segment after splitting by '/' triggers an error and the request
-     *   is ignored.
+     * - {@code $method} and {@code $path} must not be empty; otherwise an exception
+     *  is thrown.
+     * - Empty segments are not allowed and will throw a RuntimeException.
      * - Segments starting with {@see VARIABLE_PREFIX} are treated as variables.
-     * - Already defined routes cannot be redefined; attempting to do so will be
-     *   ignored and logged as an error.
+     * - Duplicate variable names in the same route are not allowed; attempting to do so
+     * will throw a RuntimeException.
+     * - Already defined routes cannot be redefined; attempting to do so will throw
+     *  a RuntimeException.
      *
      * @param string  $method   HTTP method (e.g. "GET", "POST").
      * @param string  $path     Route path (e.g. "/users/:id").
-     * @param Closure $callback Callback that will handle the matched route.
+     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
+     * @param string  $action   Method name to be invoked on the controller.
      */
-    private function add(string $method, string $path, Closure $callback) {
+    private function add(string $method, string $path, string $controllerClassname, string $action): void {
         if (empty($method) || empty($path)) {
-            return LogHelper::logError("Empty request method or path");
+            LogHelper::logError("Empty request method or path");
+            throw new \RuntimeException("Empty request method or path");
         }
         $seenVariables = []; // Tracking seen variables to prevent duplicates
         $node = &$this->routes;
         $route = Router::getRoute($method, $path);
         foreach(explode('/', $route) as $routeSegment) {
             if (empty($routeSegment)) {
-                return LogHelper::logError("Empty route segment");
+                LogHelper::logError("Empty route segment");
+                throw new \RuntimeException("Empty route segment");
             }
             $isVariable = $routeSegment[0] === VARIABLE_PREFIX;
             $key = $isVariable ? substr($routeSegment, 1) : $routeSegment;
             $bucket = $isVariable ? "variables" : "children";
             if (in_array($key, $seenVariables, true)) {
-                return LogHelper::logError("Duplicate variable name in route: '$key'");
+                LogHelper::logError("Duplicate variable name in route: '$key'");
+                throw new \RuntimeException("Duplicate variable name in route: '$key'");
             }
             if (!isset($node->{$bucket}[$key])) {
                 $node->{$bucket}[$key] = new Node();
@@ -176,41 +202,50 @@ class Router {
             $seenVariables[] = $key;
         }
         if ($node->isEnding) {
-            return LogHelper::logError("Duplicate routes");
+            LogHelper::logError("Duplicate routes");
+            throw new \RuntimeException("Duplicate routes");
         }
         $node->isEnding = true;
-        $node->callback = $callback;
+        $node->callback = new Callback($controllerClassname, $action);
     }
 
     /**
      * Dispatches a request to the matching route.
+     * Variables defined in the route (prefixed with {@see VARIABLE_PREFIX}) are
+     * passed to the controller action as an associative array {@code $params}.
      *
-     * Rules:
-     * - {@code $method} and {@code $path} must not be empty; otherwise the request
-     *   is ignored and logged as an error.
-     * - If the route matches, the associated callback is invoked.
-     * - Variables defined in the route (prefixed with {@see VARIABLE_PREFIX}) are
-     *   passed to the callback as an associative array {@code $params}, where keys
-     *   are variable names and values are the corresponding path segments.
+     * Example:
+     * - Registered route: "/users/:id"
+     * - Incoming request path: "/users/123"
+     * - The controller action is invoked with $params = ['id' => '123'] and the
+     * {@code $request} object.
      *
-     * @param string $method HTTP method of the request (e.g. "GET").
-     * @param string $path   Request path (e.g. "/users/123").
+     * @param Request   $request   Incoming HTTP request.
+     * @param Container $container Dependency injection container.
+     *
+     * @return Response The HTTP response generated by the controller.
+     *
+     * @throws \RuntimeException On empty parameters or if no matching route is found.
      */
-    public function dispatch(string $method, string $path) {
+    public function dispatch(Request $request, Container $container): Response {
+        $method = $request->getMethod();
+        $path = $request->getUri();
         if (empty($method) || empty($path)) {
-            return LogHelper::logError("Empty request method or path");
+            throw new \RuntimeException("Empty request method or URI");
         }
         $route = Router::getRoute($method, $path);
         $segments = explode('/', $route);
         if (empty($segments)) {
-            return LogHelper::logError("Empty route segments");
+            throw new \RuntimeException("Empty route segments");
         }
         $result = $this->dispatchDFS($this->routes, $segments, 0);
-        if ($result->found && isset($result->callback)) {
-            call_user_func($result->callback, $result->params);
-        } else {
-            echo "404 Not Found\n";
+        if (!$result->found || !isset($result->callback)) {
+            throw new \RuntimeException("404 Not Found\n");
         }
+        $controllerName = $result->callback->controllerClassname;
+        $action = $result->callback->action;
+        $controller = $this->istantiateController($controllerName, $container);
+        return $controller->$action($result->params, $request);
     }
 
     private function dispatchDFS(Node $node, array $segments, int $segmentIndex): BacktrackingResult {
@@ -240,11 +275,31 @@ class Router {
         return new BacktrackingResult(); // No match
     }
     
+    /**
+     * @return string Normalized route string.
+     */
     private static function getRoute(string $method, string $path): string {
         $route = $method . $path;
         $route = trim($route); // Whitespaces
         $route = rtrim($route, '/'); // Trailing slashes
         return $route;
+    }
+
+    /**
+     * Creates a controller instance using the provided container.
+     *
+     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
+     * @param Container $container           Dependency injection container.
+     *
+     * @return BaseController Instance of the requested controller.
+     *
+     * @throws \RuntimeException If the controller class does not exist or cannot be instantiated.
+     */
+    private function istantiateController(string $className, Container $container): BaseController {
+        if (!class_exists($className)) {
+            throw new \RuntimeException("Controller class '$className' does not exist");
+        }
+        return new $className($container);
     }
 }
 

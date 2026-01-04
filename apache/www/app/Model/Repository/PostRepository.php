@@ -35,17 +35,15 @@ class PostRepository {
 
     /**
      * Recupera post con filtri applicati
-     * per ora funziona con offset se vogliamo fare scroll infinito
-     * bisogna che cambiamo
      */     
-    public function findWithFilters(PostFilterDTO $filter): array {
+    public function findWithFilters(string $idutente, PostFilterDTO $filter): array {
         $sql = "SELECT DISTINCT p.* FROM posts p";
         $conditions = [];
         $params = [];
 
         // Join per categorie se filtrate
         if (!empty($filter->categorie)) {
-            $sql .= " LEFT JOIN castegorie_posts cp ON p.idpost = cp.idpost";
+            $sql .= " LEFT JOIN categorie_posts cp ON p.idpost = cp.idpost";
             $placeholders = array_fill(0, count($filter->categorie), '?');
             $conditions[] = "cp.idcategoria IN (" . implode(',', $placeholders) . ")";
             $params = array_merge($params, $filter->categorie);
@@ -56,8 +54,8 @@ class PostRepository {
             $sql .= " LEFT JOIN post_tags pt ON p.idpost = pt.idpost";
             $tagConditions = [];
             foreach ($filter->tags as $tag) {
-                $tagConditions[] = "(pt.tipo = ? AND pt.idcorso = ?)";
-                $params[] = $tag['tipo'];
+                $tagConditions[] = "(pt.idtag = ? AND pt.idcorso = ?)";
+                $params[] = $tag['idtag'];
                 $params[] = $tag['idcorso'];
             }
             if (!empty($tagConditions)) {
@@ -66,10 +64,14 @@ class PostRepository {
         }
 
         // Filtro per corsi
-        if (!empty($filter->corsi)) {
-            $placeholders = array_fill(0, count($filter->corsi), '?');
-            $conditions[] = "p.idcorso IN (" . implode(',', $placeholders) . ")";
-            $params = array_merge($params, $filter->corsi);
+        if (!empty($filter->corso)) {
+            $params[] = $filter->corso;
+            $conditions[] = " p.idcorso IN (?)";
+        } else {
+            $params[] = $idutente;
+            $conditions[] = " p.idcorso IN (
+                SELECT idcorso FROM utenti_corsi WHERE idutente = ?
+            )";
         }
 
         // Aggiungi WHERE clause se ci sono condizioni
@@ -77,13 +79,19 @@ class PostRepository {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
 
+        if ($filter->ordinamento === 'ASC') {
+            $sql .= " AND p.idpost > ?";
+        } else {
+            $sql .= " AND p.idpost < ?";
+        }
+        $params[] = $filter->lastId;
+
         // Ordinamento
         $sql .= " ORDER BY p.data_creazione " . $filter->ordinamento;
 
         // Limit e offset
-        $sql .= " LIMIT ? OFFSET ?";
+        $sql .= " LIMIT ?";
         $params[] = $filter->limit;
-        $params[] = $filter->offset;
 
         $stmt = $this->pdo->prepare($sql);
         foreach ($params as $key => $value) {
@@ -258,6 +266,47 @@ class PostRepository {
     }
 
     /**
+     * Conta i like di un post
+     */
+    public function countLikes(int $idpost): int {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND is_like = 1");
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'];
+    }
+
+    /**
+     * Conta i dislike di un post
+     */
+    public function countDislikes(int $idpost): int {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND is_like = 0");
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'];
+    }
+
+    /**
+     * Verifica che l'utente ha messo like o dislike
+     */
+    private function hasUserVoted(int $idpost, string $idutente): ?bool {
+        $stmt = $this->pdo->prepare(
+            "SELECT is_like FROM likes WHERE idpost = :idpost AND idutente = :idutente"
+        );
+        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result === false) {
+            return null;
+        }
+
+        return (bool)$result['is_like'];
+    }
+
+    /**
      * Elimina un post
      */
     public function delete(int $idpost): bool {
@@ -266,21 +315,31 @@ class PostRepository {
         return $stmt->execute();
     }
 
+    /**
+     * Verifica che l'utente ha messo like o dislike
+     */
+
     private function rowToDTO(array $row): PostDTO {
         $idpost = (int)$row['idpost'];
         $tags = $this->postTagRepository->findTagsByPost($idpost);
         $categorie = array_map(fn($cat) => $cat['idcategoria'], $this->postCategoryRepository->findCategoriesByPost($idpost));
+        $likes = $this->countLikes($idpost);
+        $dislikes = $this->countDislikes($idpost);
+        $likedByCurrentUser = $this->hasUserVoted($idpost, $row['idutente']);
 
         $dto = new PostDTO(
             $idpost,
             $row['titolo'],
             $row['descrizione'],
-            $row['percorso_allegato'],
             $row['data_creazione'],
             (string)$row['idutente'],
-            $row['idcorso'] ? (int)$row['idcorso'] : null,
+            $row['idcorso'],
             $tags,
-            $categorie
+            $categorie,
+            $likes,
+            $dislikes,
+            $likedByCurrentUser,
+            $row['percorso_allegato'] ?? null
         );
         return $dto;
     }

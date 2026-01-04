@@ -60,7 +60,7 @@ create table posts (
      titolo varchar(100) not null,
      descrizione text not null,
      percorso_allegato varchar(255) default null,
-     data_creazione date not null,
+     data_creazione timestamp not null,
      idutente varchar(60) not null,
      idcorso int not null,
      constraint IDposts primary key (idpost)
@@ -91,8 +91,19 @@ create table likes (
      constraint IDlikes primary key (idpost, idutente)
 );
 
+create table utenti_corsi (
+     idutente varchar(60) not null,
+     idcorso int not null,
+     constraint IDutenti_corsi primary key (idutente, idcorso)
+);
+
 -- Constraints Section
 -- ___________________ 
+
+alter table utenti_corsi add constraint FKutente_corso_utente
+     foreign key (idutente)
+     references utenti (idutente)
+     on delete cascade;
 
 alter table categorie_posts add constraint FKcas_cat
      foreign key (idcategoria)
@@ -125,8 +136,8 @@ alter table corsi add constraint FKcomposizione
      on delete cascade;
 
 alter table post_tags add constraint FKpos_tag
-     foreign key (idcorso, idtag)
-     references tags (idcorso, idtag)
+     foreign key (idtag, idcorso)
+     references tags (idtag, idcorso)
      on delete cascade;
 
 alter table post_tags add constraint FKpos_pos

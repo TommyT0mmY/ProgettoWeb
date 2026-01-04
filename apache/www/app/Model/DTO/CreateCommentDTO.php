@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-class CreateCommentDTO {
+readonly class CreateCommentDTO {
     public int $idpost;
     public string $testo;
     public string $idutente;
