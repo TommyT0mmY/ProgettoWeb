@@ -4,8 +4,13 @@ body,main,h1,ul{
     padding: 0;
 }
 body{
-    background-color: #dce5f0;
     padding-top: 50px;
+}
+/* Layout Generale */
+body {
+    background-color: #e3effa; /* Celeste ghiaccio */
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 img{
   width: 40px;
@@ -15,7 +20,7 @@ body > header {
     display: flex;
     width:100%;
     justify-content: space-between; 
-    height:33px;/**/
+    height:33px;/*50-33px rispetto all'header, position fixed*/
 
     align-items: center; 
     background-color: #ffffff; 
@@ -106,7 +111,11 @@ nav a{
 }
 
 /*  HOVER */
-nav ul li a:hover, main > article > a:hover, form input[type="submit"]:hover{
+nav ul li a,form input[type="submit"] {
+    background-color: #0757a9;
+    color: #fff;
+}
+nav ul li a:hover, article > a:hover, form input[type="submit"]:hover{
 
     color: #0757a9;
     background-color: #fff;
@@ -116,7 +125,7 @@ nav ul li a:hover, main > article > a:hover, form input[type="submit"]:hover{
 /*tags(topic)*/
 /* TAGS */
 .tags {
-  border: none;
+  border: solid;
 }
 
 fieldset.tags label {
@@ -135,24 +144,23 @@ fieldset.tags label {
 .tag-list label {
   display: flex;
   align-items:flex-start;
-  gap: 6px;
   cursor: pointer;
 }
 
 /* checkbox */
 .tag-list input[type="checkbox"] {
-  margin: 0;
+  margin: 1;
 }
 
+/*
 
-/*reply, comments like dislike*/
 main > .post  ul {
     list-style: none;
     display: flex;
     gap: 5px;
     flex-wrap: wrap;
     width: 100%;   
-}
+}*/
 
 
 body > main{
@@ -164,25 +172,22 @@ main > h2{
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 24px;
 }
-/*
-main > article, main > section, main > form{
+
+main > article{
     background-color: #fff;
     border: 1px solid #cacaca;
     text-align: center;
     margin-bottom: 20px;
     padding: 0 5% 20px;
-}*/
+}
+
 textarea{
-  width:85%;
+  width:90%;
   height: 100px;
 }
 
 /* HOME */
 
-main > article > img{
-    max-width: 100%;
-    max-height: 200px;
-}
 
 main > article > h3, main > article > p{
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -207,6 +212,152 @@ main > article > p:nth-of-type(2){
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
+/**********POST-list e POST*************/
+/*post container*/
+.post_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    gap: 30px;
+    padding: 40px 0;
+}
+
+/* La Card del Post */
+.Post {
+    width: 70%;
+    max-width: 850px;
+    margin: 0 auto; /* Centra orizzontalmente rispetto al contenitore */
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header e Titolo */
+.Post header h3 {
+    color: #0757a9; /* Il tuo blu forte */
+    margin: 0 0 8px 0;
+    font-size: 1.6rem;
+}
+
+/* Info Autore e Data */
+.Post > p:first-of-type {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* Stile dei Tag */
+.tag {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap:wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.tag li a {
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+/* Colori differenziati per tipo di tag */
+.tag.subject a { 
+  background: #d1e3f8; 
+  color: #0757a9; 
+  border: 1px solid #0757a9;
+ }
+.tag.type a { 
+  background: #fdf2d2; 
+  color: #9a6e12; 
+  border: 1px solid #9a6e12; 
+}
+.tag.topic a { 
+  background: #e0f2f1; 
+  color: #00695c; 
+  border: 1px solid #00695c; 
+}
+
+.tag li a:hover {
+    filter: brightness(0.9);
+}
+
+/* Contenuto Testuale */
+.Post p {
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Footer e Review (Bordi sui li) */
+.Post footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #d1dee7;
+}
+
+.review {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0;
+}
+
+.review li {
+    border: 1px solid #0757a9;
+    border-radius: 8px;
+    padding: 5px 12px;
+    background: white;
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.review li:hover {
+    background-color: #0757a9;
+}
+
+.review li a, .review li data {
+    color: #0757a9;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.review li:hover a, .review li:hover data {
+    color: white;
+}
+
+/* Pulsanti icone */
+.review button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 5px;
+    display: flex;
+}
+
+.review img {
+    width: 16px;
+    /* Filtro per rendere l'icona blu come il titolo */
+    filter: invert(24%) sepia(87%) saturate(2253%) hue-rotate(195deg) brightness(91%) contrast(101%);
+}
+
+.review li:hover img {
+    filter: brightness(0) invert(1); /* Bianca su hover */
+}
 
 
 /* LOGIN and REGISTER */
@@ -307,7 +458,7 @@ main > form > section fieldset {
 
   nav.show {
     display: flex;      /* Appare al click */
-    flex: 1;            /* Rapporto 1 */
+    flex: 2;            /* Rapporto 1 */
   }
 
   main {
