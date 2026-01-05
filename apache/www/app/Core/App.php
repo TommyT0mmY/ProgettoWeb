@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Unibostu\Core;
 
 use Unibostu\Controller as Ctrl;
+use Unibostu\Core\router\Router;
+use Unibostu\Core\router\RouteLoader;
 
 class App {
     private Router $router;
@@ -29,16 +31,12 @@ class App {
     }
 
     private function registerRoutes(): void {
-        $this->router->get('/', Ctrl\HomeController::class, 'index');
-
-        //Post controller
-        $this->router->post('/api/posts/create', Ctrl\PostController::class, 'createPost');
-        $this->router->post('/api/posts/search', Ctrl\PostController::class, 'searchPost');
-        $this->router->get('/api/posts/:postid/comments', Ctrl\PostController::class, 'showComments');
-        $this->router->post('/api/posts/:postid/comments', Ctrl\PostController::class, 'addComment');
-        $this->router->delete('/api/posts/:postid', Ctrl\PostController::class, 'deletePost');
-        $this->router->delete('/api/posts/:postid/comments/:commentid', Ctrl\PostController::class, 'deleteComment');
-        $this->router->post('/api/posts/:postid/like', Ctrl\PostController::class, 'likePost');
+        $routeLoader = new RouteLoader($this->router);
+        $routeLoader->load(
+            Ctrl\PostController::class,
+            Ctrl\HomeController::class,
+        );
+        return;
     }
 
     public function run(): void {

@@ -1,9 +1,11 @@
 <?php
-namespace Unibostu\Core;
+namespace Unibostu\Core\router;
 
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
 use Unibostu\Controller\BaseController;
+use Unibostu\Core\Container;
+use Unibostu\Core\LogHelper;
 
 /**
  * Prefix used to identify variable route segments (e.g. ":id").
@@ -74,12 +76,6 @@ class BacktrackingResult {
  * Example: For route "/users/:id", matching "/users/123" invokes
  * the callback with $params = ['id' => '123'] and the request object.
  *
- * Usage:
- * $router = new Router();
- * $router->get('/users/:id', function($params) {
- *     // $params is ['id' => '123'] for "/users/123"
- * });
- * $router->dispatch('GET', '/users/123');
  */
 class Router {
     /**
@@ -89,72 +85,6 @@ class Router {
     
     public function __construct() {
         $this->routes = new Node();
-    }
-
-    /**
-     * Registers a GET route.
-     *
-     * @param string $path Route path.
-     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
-     * @param string $action Method name to be invoked on the controller.
-     */
-    public function get(string $path, string $controllerClassname, string $action) {
-        $this->add("GET", $path, $controllerClassname, $action);
-    }
-
-    /**
-     * Registers a POST route.
-     *
-     * @param string $path Route path.
-     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
-     * @param string $action Method name to be invoked on the controller.
-     */
-    public function post(string $path, string $controllerClassname, string $action) {
-        $this->add("POST", $path, $controllerClassname, $action);
-    }
-
-    /**
-     * Registers a PUT route.
-     *
-     * @param string $path Route path.
-     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
-     * @param string $action Method name to be invoked on the controller.
-     */
-    public function put(string $path, string $controllerClassname, string $action) {
-        $this->add("PUT", $path, $controllerClassname, $action);
-    }
-
-    /**
-     * Registers a DELETE route.
-     *
-     * @param string $path Route path.
-     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
-     * @param string $action Method name to be invoked on the controller.
-     */
-    public function delete(string $path, string $controllerClassname, string $action) {
-        $this->add("DELETE", $path, $controllerClassname, $action);
-    }
-
-    /**
-     * Registers a PATCH route.
-     *
-     * @param string $path Route path.
-     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
-     * @param string $action Method name to be invoked on the controller.
-     */
-    public function patch(string $path, string $controllerClassname, string $action) {
-        $this->add("PATCH", $path, $controllerClassname, $action);
-    }
-
-    /**
-     * Registers an OPTIONS route.
-     *
-     * @param string $path Route path.
-     * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
-     * @param string $action Method name to be invoked on the controller.
-     */
-    public function options(string $path, string $controllerClassname, string $action) {
-        $this->add("OPTIONS", $path, $controllerClassname, $action);
     }
 
     /**
@@ -175,7 +105,7 @@ class Router {
      * @param class-string<BaseController> $controllerClassname    Fully qualified class name of the controller.
      * @param string  $action   Method name to be invoked on the controller.
      */
-    private function add(string $method, string $path, string $controllerClassname, string $action): void {
+    public function add(string $method, string $path, string $controllerClassname, string $action): void {
         if (empty($method) || empty($path)) {
             LogHelper::logError("Empty request method or path");
             throw new \RuntimeException("Empty request method or path");
