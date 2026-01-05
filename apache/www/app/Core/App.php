@@ -35,6 +35,8 @@ class App {
         $routeLoader->load(
             Ctrl\PostController::class,
             Ctrl\HomeController::class,
+            Ctrl\AuthController::class,
+            Ctrl\CommunityController::class
         );
         return;
     }
