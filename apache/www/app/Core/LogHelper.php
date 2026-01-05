@@ -9,6 +9,3 @@ class LogHelper {
         error_log(sprintf("%s [%s:%d]", $message, $trace[0]["file"] ?? "unknown", $trace[0]["line"] ?? -1));
     }
 }
-
-
-?>

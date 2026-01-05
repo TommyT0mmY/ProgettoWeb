@@ -36,7 +36,6 @@ class Container {
         }
         return $this->instances[$name];
     }
-    
 
     /**
      * Check if a service is registered
