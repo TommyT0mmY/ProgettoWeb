@@ -21,18 +21,8 @@ class CommentService {
     /**
      * Ottiene tutti i commenti di un post con gli autori
      */
-    public function getCommentsByPostId(int $postId): CommentsListDTO {
-        $comments = $this->commentRepository->findByPostId($postId);
-        $commetsList = array();
-
-        foreach ($comments as $comment) {
-            $author = $this->userRepository->findByUserId($comment->userId);
-            if ($author && !$author->suspended) {
-                $commetsList[] = new CommentWithAuthorDTO($comment, $author);
-            }
-        }
-
-        return new CommentsListDTO($commetsList);
+    public function getCommentsByPostId(int $postId): array {
+        return $this->commentRepository->findByPostId($postId);
     }
 
     /**
@@ -67,7 +57,7 @@ class CommentService {
             throw new \Exception("Commento non trovato");
         }
 
-        if ($comment->userId !== $userId) {
+        if ($comment->author->userId !== $userId) {
             throw new \Exception("Non sei il proprietario di questo commento");
         }
 

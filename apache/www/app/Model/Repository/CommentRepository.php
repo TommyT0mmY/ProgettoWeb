@@ -7,12 +7,15 @@ use Unibostu\Model\DTO\CommentDTO;
 use Unibostu\Model\DTO\CreateCommentDTO;
 use Unibostu\Core\Database;
 use PDO;
+use Unibostu\Model\DTO\UserDTO;
 
 class CommentRepository {
     private PDO $pdo;
+    private UserRepository $userRepository;
 
     public function __construct() {
         $this->pdo = Database::getConnection();
+        $this->userRepository = new UserRepository();
     }
 
     /**
@@ -85,14 +88,15 @@ class CommentRepository {
     }
 
     private function rowToDTO(array $row): CommentDTO {
+        $author = $this->userRepository->findByUserId($row['user_id']);
         $dto = new CommentDTO(
-            (int)$row['comment_id'],
-            (int)$row['post_id'],
-            $row['text'],
-            $row['created_at'],
-            (string)$row['user_id'],
-            (bool)$row['deleted'],
-            $row['parent_comment_id'] ? (int)$row['parent_comment_id'] : null
+            author: $author,
+            commentId: (int)$row['comment_id'],
+            postId: (int)$row['post_id'],
+            text: $row['text'],
+            createdAt: $row['created_at'],
+            deleted: (bool)$row['deleted'],
+            parentCommentId: $row['parent_comment_id'] !== null ? (int)$row['parent_comment_id'] : null
         );
         return $dto;
     }
