@@ -10,8 +10,8 @@ Implementare **IoC** e **componenti**.
 #### Layout
 Container principale della pagina.
 
-#### Template
-Template specifico per ogni pagina.
+#### View
+View specifico per ogni pagina.
 
 #### Component
 Componenti riutilizzabili  
@@ -99,7 +99,7 @@ Content-Type: application/json
       "community_id": 4,
       "created_at": "1767475873",
       "tags": ["tag1", "tag2"],
-      "categories": ["cat1", "cat2"],
+      "category": "news",
       "like_count": 10,
       "dislike_count": 3,
       "liked_by_user": true,
