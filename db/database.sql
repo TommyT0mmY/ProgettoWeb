@@ -14,12 +14,6 @@ create table amministratori (
      constraint IDamministratori primary key (idamministratore)
 );
 
-create table categorie_posts (
-     idpost int not null,
-     idcategoria int not null,
-     constraint IDcategorie_post primary key (idcategoria, idpost)
-);
-
 create table categorie (
      idcategoria int not null auto_increment,
      nome_categoria varchar(60) not null,
@@ -63,6 +57,7 @@ create table posts (
      data_creazione timestamp not null,
      idutente varchar(60) not null,
      idcorso int not null,
+     idcategoria int,
      constraint IDposts primary key (idpost)
 );
 
@@ -100,19 +95,14 @@ create table utenti_corsi (
 -- Constraints Section
 -- ___________________ 
 
+alter table utenti_corsi add constraint FKutente_corso_corso
+     foreign key (idcorso)
+     references corsi (idcorso)
+     on delete cascade;
+
 alter table utenti_corsi add constraint FKutente_corso_utente
      foreign key (idutente)
      references utenti (idutente)
-     on delete cascade;
-
-alter table categorie_posts add constraint FKcas_cat
-     foreign key (idcategoria)
-     references categorie (idcategoria)
-     on delete cascade;
-
-alter table categorie_posts add constraint FKcas_pos
-     foreign key (idpost)
-     references posts (idpost)
      on delete cascade;
 
 alter table commenti add constraint FKscrittura

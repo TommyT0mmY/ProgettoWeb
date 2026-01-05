@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Model\DTO;
 
 readonly class PostDTO {
+    public UserDTO $author;
     public int $idpost;
     public string $titolo;
     public string $descrizione;
@@ -11,10 +12,10 @@ readonly class PostDTO {
     public string $data_creazione;
     public string $idutente;
     public int $idcorso;
-    /** @var array Array of tag arrays with 'tipo' and 'idcorso' keys */
+    /** @var array Array of tag arrays with 'tipo' keys */
     public array $tags;
-    /** @var array Array of category IDs */
-    public array $categorie;
+    /** @var ?int  category id */
+    public ?int $category;
     public int $likes;
     public int $dislikes;
     /** @var bool value is 0 if disliked, 1 if liked, null if no action taken */ 
@@ -27,8 +28,8 @@ readonly class PostDTO {
         string $data_creazione,
         string $idutente,
         int $idcorso,
+        ?int $category,
         array $tags = [],
-        array $categorie = [],
         int $likes = 0,
         int $dislikes = 0,
         ?bool $likedByUser = null,
@@ -42,7 +43,7 @@ readonly class PostDTO {
         $this->idutente = $idutente;
         $this->idcorso = $idcorso;
         $this->tags = $tags;
-        $this->categorie = $categorie;
+        $this->category = $category;
         $this->likes = $likes;
         $this->dislikes = $dislikes;
         $this->likedByUser = $likedByUser;

@@ -8,10 +8,10 @@ readonly class CreateUserPostDTO {
     public int $idcorso;
     public string $titolo;
     public string $descrizione;
-    /** @var array<int> Array of tag IDs */
+    /** @var array Array of tag arrays with 'idtag' and 'idcorso' keys */
     public array $tags;
-    /** @var array<int> Array of category IDs */
-    public array $categorie;
+    /** @var int Array of category IDs */
+    public ?int $category;
     public ?string $percorso_allegato;
 
     public function __construct(
@@ -20,7 +20,7 @@ readonly class CreateUserPostDTO {
         string $titolo,
         string $descrizione,
         array $tags = [],
-        array $categorie = [],
+        ?int $category = null,
         ?string $percorso_allegato = null,
     ) {
         $this->idutente = $idutente;
@@ -29,6 +29,6 @@ readonly class CreateUserPostDTO {
         $this->descrizione = $descrizione;
         $this->percorso_allegato = $percorso_allegato;
         $this->tags = $tags;
-        $this->categorie = $categorie;
+        $this->category = $category;
     }
 }

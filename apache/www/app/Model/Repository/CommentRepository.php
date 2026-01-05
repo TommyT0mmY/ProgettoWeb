@@ -90,8 +90,8 @@ class CommentRepository {
             (int)$row['idpost'],
             $row['testo'],
             $row['data_creazione'],
-            (bool)$row['cancellato'],
             (string)$row['idutente'],
+            (bool)$row['cancellato'],
             $row['idcommento_genitore'] ? (int)$row['idcommento_genitore'] : null
         );
         return $dto;

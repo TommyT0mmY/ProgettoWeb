@@ -7,7 +7,6 @@ use Unibostu\Model\Repository\PostRepository;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\PostWithAuthorDTO;
-use Unibostu\Model\DTO\PostListDTO;
 use Unibostu\Model\DTO\PostFilterDTO;
 use Unibostu\Model\DTO\CreateUserPostDTO;
 
@@ -27,38 +26,8 @@ class PostService {
      * Se nessun filtro è fornito, carica tutti i post
      * Filtri disponibili: corsi, categorie, ordinamento
      */
-    public function getPostsWithFilters(string $idutente, PostFilterDTO $filter): PostListDTO {
-        $postDtos = $this->postRepository->findWithFilters($idutente, $filter);
-        $postsList = array();
-
-        foreach ($postDtos as $post) {
-            $author = $this->userRepository->findByUserId($post->idutente);
-            
-            if ($author && !$author->utente_sospeso) {
-                $postsList[] = new PostWithAuthorDTO($post, $author);
-            }
-        }
-
-        return new PostListDTO($postsList);
-    }
-
-    /**
-     * Ottiene tutti i post di un utente specifico con i relativi dati
-     */
-    public function getPostsWithAuthorByUserId(string $idutente): ?PostListDTO {
-        $user = $this->userRepository->findByUserId($idutente);
-        if (!$user || $user->utente_sospeso) {
-            return null;
-        }
-
-        $postDtos = $this->postRepository->findByUserId($idutente);
-        $postsList = array();
-
-        foreach ($postDtos as $post) {
-            $postsList[] = new PostWithAuthorDTO($post, $user);
-        }
-
-        return new PostListDTO($postsList);
+    public function getPostsWithFilters(string $idutente, ?PostFilterDTO $filter): array {
+        return $this->postRepository->findWithFilters($idutente, $filter);
     }
 
     /**
@@ -84,7 +53,7 @@ class PostService {
 
         // Verifica che tutti i tag appartengono al corso selezionato
         foreach ($dto->tags as $tag) {
-            if (!isset($tag['tipo']) || !isset($tag['idcorso'])) {
+            if (!isset($tag['idtag']) || !isset($tag['idcorso'])) {
                 throw new \Exception("Tag non valido");
             }
             if ($tag['idcorso'] !== $dto->idcorso) {

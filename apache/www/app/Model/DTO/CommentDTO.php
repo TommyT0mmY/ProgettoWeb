@@ -17,8 +17,8 @@ readonly class CommentDTO {
         int $idpost,
         string $testo,
         string $data_creazione,
-        bool $cancellato = false,
         string $idutente,
+        bool $cancellato = false,
         ?int $idcommento_genitore = null
     ) {
         $this->idcommento = $idcommento;

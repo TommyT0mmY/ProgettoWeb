@@ -13,12 +13,12 @@ use PDO;
 class PostRepository {
     private PDO $pdo;
     private PostTagRepository $postTagRepository;
-    private PostCategoryRepository $postCategoryRepository;
-
+    private UserRepository $userRepository;
+    
     public function __construct() {
         $this->pdo = Database::getConnection();
         $this->postTagRepository = new PostTagRepository();
-        $this->postCategoryRepository = new PostCategoryRepository();
+        $this->userRepository = new UserRepository();
     }
 
     /**
@@ -36,62 +36,69 @@ class PostRepository {
     /**
      * Recupera post con filtri applicati
      */     
-    public function findWithFilters(string $idutente, PostFilterDTO $filter): array {
+    public function findWithFilters(string $idutente, ?PostFilterDTO $filter): array {
         $sql = "SELECT DISTINCT p.* FROM posts p";
         $conditions = [];
         $params = [];
 
-        // Join per categorie se filtrate
-        if (!empty($filter->categorie)) {
-            $sql .= " LEFT JOIN categorie_posts cp ON p.idpost = cp.idpost";
-            $placeholders = array_fill(0, count($filter->categorie), '?');
-            $conditions[] = "cp.idcategoria IN (" . implode(',', $placeholders) . ")";
-            $params = array_merge($params, $filter->categorie);
-        }
-
-        // Join per tag se filtrati
-        if (!empty($filter->tags)) {
-            $sql .= " LEFT JOIN post_tags pt ON p.idpost = pt.idpost";
-            $tagConditions = [];
-            foreach ($filter->tags as $tag) {
-                $tagConditions[] = "(pt.idtag = ? AND pt.idcorso = ?)";
-                $params[] = $tag['idtag'];
-                $params[] = $tag['idcorso'];
+        // se filtro è null ritorna tutti i post
+        if ($filter !== null) {
+            // Filtro per categoria
+            if (!empty($filter->category)) {
+                $params[] = $filter->category;
+                $conditions[] = " p.idcategoria = ?";
             }
-            if (!empty($tagConditions)) {
-                $conditions[] = "(" . implode(" OR ", $tagConditions) . ")";
+
+            // Join per tag se filtrati
+            if (!empty($filter->tags)) {
+                $sql .= " LEFT JOIN post_tags pt ON p.idpost = pt.idpost";
+                $tagConditions = [];
+                foreach ($filter->tags as $tag) {
+                    $tagConditions[] = "(pt.idtag = ? AND pt.idcorso = ?)";
+                    $params[] = $tag['idtag'];
+                    $params[] = $tag['idcorso'];
+                }
+                if (!empty($tagConditions)) {
+                    $conditions[] = "(" . implode(" OR ", $tagConditions) . ")";
+                }
             }
+
+            // Filtro per corsi
+            if (!empty($filter->corso)) {
+                $params[] = $filter->corso;
+                $conditions[] = " p.idcorso IN (?)";
+            } else {
+                $params[] = $idutente;
+                $conditions[] = " p.idcorso IN (
+                    SELECT idcorso FROM utenti_corsi WHERE idutente = ?
+                )";
+            }
+
+            // Filtro per autore
+            if (!empty($filter->authorId)) {
+                $params[] = $filter->authorId;
+                $conditions[] = " p.idutente = ?";
+            }
+
+            // Aggiungi WHERE clause se ci sono condizioni
+            if (!empty($conditions)) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+
+            if ($filter->ordinamento === 'ASC') {
+                $sql .= " AND p.idpost > ?";
+            } else {
+                $sql .= " AND p.idpost < ?";
+            }
+            $params[] = $filter->lastPostId;
+
+            // Ordinamento
+            $sql .= " ORDER BY p.data_creazione " . $filter->ordinamento;
+
+            // Limit e offset
+            $sql .= " LIMIT ?";
+            $params[] = $filter->limit;
         }
-
-        // Filtro per corsi
-        if (!empty($filter->corso)) {
-            $params[] = $filter->corso;
-            $conditions[] = " p.idcorso IN (?)";
-        } else {
-            $params[] = $idutente;
-            $conditions[] = " p.idcorso IN (
-                SELECT idcorso FROM utenti_corsi WHERE idutente = ?
-            )";
-        }
-
-        // Aggiungi WHERE clause se ci sono condizioni
-        if (!empty($conditions)) {
-            $sql .= " WHERE " . implode(" AND ", $conditions);
-        }
-
-        if ($filter->ordinamento === 'ASC') {
-            $sql .= " AND p.idpost > ?";
-        } else {
-            $sql .= " AND p.idpost < ?";
-        }
-        $params[] = $filter->lastId;
-
-        // Ordinamento
-        $sql .= " ORDER BY p.data_creazione " . $filter->ordinamento;
-
-        // Limit e offset
-        $sql .= " LIMIT ?";
-        $params[] = $filter->limit;
 
         $stmt = $this->pdo->prepare($sql);
         foreach ($params as $key => $value) {
@@ -106,6 +113,10 @@ class PostRepository {
 
         $posts = [];
         foreach ($rows as $row) {
+            //Recupera autore post
+            $author = $this->userRepository->findByUserId($row['idutente']);
+            $row['author'] = $author;
+
             $posts[] = $this->rowToDTO($row);
         }
         return $posts;
@@ -160,8 +171,8 @@ class PostRepository {
 
             $stmt = $this->pdo->prepare(
                 "INSERT INTO posts 
-                (titolo, descrizione, percorso_allegato, data_creazione, idutente, idcorso)
-                VALUES (:titolo, :descrizione, :percorso_allegato, :data_creazione, :idutente, :idcorso)"
+                (titolo, descrizione, percorso_allegato, data_creazione, idutente, idcorso, idcategoria)
+                VALUES (:titolo, :descrizione, :percorso_allegato, :data_creazione, :idutente, :idcorso, :idcategoria)"
             );
             $stmt->bindValue(':titolo', $dto->titolo, PDO::PARAM_STR);
             $stmt->bindValue(':descrizione', $dto->descrizione, PDO::PARAM_STR);
@@ -169,23 +180,17 @@ class PostRepository {
             $stmt->bindValue(':data_creazione', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $stmt->bindValue(':idutente', $dto->idutente, PDO::PARAM_STR);
             $stmt->bindValue(':idcorso', $dto->idcorso ?? null, PDO::PARAM_INT);
+            $stmt->bindValue(':idcategoria', $dto->category ?? null, PDO::PARAM_INT);
             $stmt->execute();
             $idpost = (int)$this->pdo->lastInsertId();
 
             // Salva i tag
             if (!empty($dto->tags)) {
                 foreach ($dto->tags as $tag) {
-                    $this->postTagRepository->addTagToPost($idpost, $tag['tipo'], $tag['idcorso']);
+                    $this->postTagRepository->addTagToPost($idpost, $tag['idtag'], $tag['idcorso']);
                 }
             }
 
-            // Salva le categorie
-            if (!empty($dto->categorie)) {
-                foreach ($dto->categorie as $idcategoria) {
-                    $this->postCategoryRepository->addCategoryToPost($idpost, $idcategoria);
-                }
-            }
-            
             $this->pdo->commit();
         } catch (\Exception $e) {
             $this->pdo->rollBack();
@@ -322,24 +327,23 @@ class PostRepository {
     private function rowToDTO(array $row): PostDTO {
         $idpost = (int)$row['idpost'];
         $tags = $this->postTagRepository->findTagsByPost($idpost);
-        $categorie = array_map(fn($cat) => $cat['idcategoria'], $this->postCategoryRepository->findCategoriesByPost($idpost));
         $likes = $this->countLikes($idpost);
         $dislikes = $this->countDislikes($idpost);
         $likedByCurrentUser = $this->hasUserVoted($idpost, $row['idutente']);
 
         $dto = new PostDTO(
-            $idpost,
-            $row['titolo'],
-            $row['descrizione'],
-            $row['data_creazione'],
-            (string)$row['idutente'],
-            $row['idcorso'],
-            $tags,
-            $categorie,
-            $likes,
-            $dislikes,
-            $likedByCurrentUser,
-            $row['percorso_allegato'] ?? null
+            idpost: $idpost,
+            titolo: $row['titolo'],
+            descrizione: $row['descrizione'],
+            data_creazione: $row['data_creazione'],
+            idutente: $row['idutente'],
+            idcorso: (int)$row['idcorso'],
+            tags: $tags,
+            category: $row['idcategoria'],
+            likes: $likes,
+            dislikes: $dislikes,
+            likedByUser: $likedByCurrentUser,
+            percorso_allegato: $row['percorso_allegato'] ?? null
         );
         return $dto;
     }

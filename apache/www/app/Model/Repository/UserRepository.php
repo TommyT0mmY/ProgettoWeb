@@ -103,12 +103,12 @@ class UserRepository {
 
     private function rowToPrivateDTO(array $row): UserDTO {
         return new UserDTO(
-            $row['idutente'],
-            $row['nome'],
-            $row['cognome'],
-            (int)$row['idfacolta'],
-            (bool)$row['utente_sospeso'],
-            $row['password']
+            idutente: $row['idutente'],
+            nome: $row['nome'],
+            cognome: $row['cognome'],
+            idfacolta: (int)$row['idfacolta'],
+            password: $row['password'],
+            utente_sospeso: (bool)$row['utente_sospeso'],
         );
     }
 }
