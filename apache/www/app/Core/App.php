@@ -30,7 +30,15 @@ class App {
 
     private function registerRoutes(): void {
         $this->router->get('/', Ctrl\HomeController::class, 'index');
-        $this->router->get('/user/:id', Ctrl\HomeController::class, 'userid');
+
+        //Post controller
+        $this->router->post('/api/posts/create', Ctrl\PostController::class, 'createPost');
+        $this->router->post('/api/posts/search', Ctrl\PostController::class, 'searchPost');
+        $this->router->get('/api/posts/:postid/comments', Ctrl\PostController::class, 'showComments');
+        $this->router->post('/api/posts/:postid/comments', Ctrl\PostController::class, 'addComment');
+        $this->router->delete('/api/posts/:postid', Ctrl\PostController::class, 'deletePost');
+        $this->router->delete('/api/posts/:postid/comments/:commentid', Ctrl\PostController::class, 'deleteComment');
+        $this->router->post('/api/posts/:postid/like', Ctrl\PostController::class, 'likePost');
     }
 
     public function run(): void {
