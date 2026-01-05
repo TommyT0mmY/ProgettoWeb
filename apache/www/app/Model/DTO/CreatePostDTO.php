@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\DTO;
 
-readonly class CreateUserPostDTO {
+readonly class CreatePostDTO {
     public string $userId;
     public int $courseId;
     public string $title;

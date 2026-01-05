@@ -6,9 +6,8 @@ namespace Unibostu\Model\Service;
 use Unibostu\Model\Repository\PostRepository;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\Repository\CourseRepository;
-use Unibostu\Model\DTO\PostWithAuthorDTO;
 use Unibostu\Model\DTO\PostFilterDTO;
-use Unibostu\Model\DTO\CreateUserPostDTO;
+use Unibostu\Model\DTO\CreatePostDTO;
 
 class PostService {
     private PostRepository $postRepository;
@@ -38,7 +37,7 @@ class PostService {
      *
      * @throws \Exception se l'userId non è valido o il corso non appartiene all'utente
      */
-    public function createUserPost(CreateUserPostDTO $dto): void {
+    public function createPost(CreatePostDTO $dto): void {
         // Risolvi userId a utente
         $user = $this->userRepository->findByUserId($dto->userId);
         if (!$user) {

@@ -5,7 +5,7 @@ namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\PostDTO;
 use Unibostu\Model\DTO\PostFilterDTO;
-use Unibostu\Model\DTO\CreateUserPostDTO;
+use Unibostu\Model\DTO\CreatePostDTO;
 
 use Unibostu\Core\Database;
 use PDO;
@@ -165,7 +165,7 @@ class PostRepository {
     /**
      * Salva un nuovo post
      */
-    public function save(CreateUserPostDTO $dto): void {
+    public function save(CreatePostDTO $dto): void {
         try {
             $this->pdo->beginTransaction();
 
