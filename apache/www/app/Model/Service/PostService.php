@@ -69,11 +69,11 @@ class PostService {
     }
 
     /**
-     * Aggiunge un voto (like/dislike) a un post
+     * Reazione (like/dislike) a un post
      * 
      * @param int $idpost ID del post
      * @param string $idutente ID dell'utente
-     * @param bool $isLike true per like, false per dislike
+     * @param string $reaction "like", "dislike" o "remove"
      */
     public function setReaction(int $idpost, string $idutente, string $reaction): void {
         $post = $this->postRepository->findById($idpost);
