@@ -206,7 +206,7 @@ class PostRepository {
      * @param string $idutente ID dell'utente
      * @param bool $isLike true per like, false per dislike
      */
-    public function addVote(int $idpost, string $idutente, bool $isLike): bool {
+    public function setReaction(int $idpost, string $idutente, bool $isLike): void {
         // Verifica se l'utente ha già votato
         $stmt = $this->pdo->prepare(
             "SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND idutente = :idutente"
@@ -217,22 +217,28 @@ class PostRepository {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ((int)$result['count'] > 0) {
-            throw new \Exception("Hai già votato questo post");
+            $stmtUpdate = $this->pdo->prepare(
+                "UPDATE likes SET is_like = :is_like WHERE idpost = :idpost AND idutente = :idutente"
+            );
+            $stmtUpdate->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
+            $stmtUpdate->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+            $stmtUpdate->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+            if (!$stmtUpdate->execute()) {
+                throw new \Exception("Errore durante l'aggiornamento del voto");
+            }
+        } else {
+            // Inserisci il voto nella tabella likes
+            $stmtVote = $this->pdo->prepare(
+                "INSERT INTO likes (idpost, idutente, is_like) VALUES (:idpost, :idutente, :is_like)"
+            );
+            $stmtVote->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+            $stmtVote->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+            $stmtVote->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
+            
+            if (!$stmtVote->execute()) {
+                throw new \Exception("Errore durante il salvataggio del voto");
+            }
         }
-        
-        // Inserisci il voto nella tabella likes
-        $stmtVote = $this->pdo->prepare(
-            "INSERT INTO likes (idpost, idutente, is_like) VALUES (:idpost, :idutente, :is_like)"
-        );
-        $stmtVote->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-        $stmtVote->bindValue(':idutente', $idutente, PDO::PARAM_STR);
-        $stmtVote->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
-        
-        if (!$stmtVote->execute()) {
-            throw new \Exception("Errore durante il salvataggio del voto");
-        }
-        
-        return true;
     }
 
     /**
@@ -242,7 +248,7 @@ class PostRepository {
      * @param int $idpost ID del post
      * @param string $idutente ID dell'utente
      */
-    public function removeVote(int $idpost, string $idutente): bool {
+    public function removeReaction(int $idpost, string $idutente): bool {
         // Verifica se l'utente ha messo voto
         $stmt = $this->pdo->prepare(
             "SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND idutente = :idutente"

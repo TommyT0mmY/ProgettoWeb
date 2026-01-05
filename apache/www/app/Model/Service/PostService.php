@@ -75,28 +75,21 @@ class PostService {
      * @param string $idutente ID dell'utente
      * @param bool $isLike true per like, false per dislike
      */
-    public function votePost(int $idpost, string $idutente, bool $isLike): void {
+    public function setReaction(int $idpost, string $idutente, string $reaction): void {
         $post = $this->postRepository->findById($idpost);
         if (!$post) {
             throw new \Exception("Post non trovato");
         }
         
-        $this->postRepository->addVote($idpost, $idutente, $isLike);
-    }
-
-    /**
-     * Rimuove un voto (like/dislike) a un post
-     * 
-     * @param int $idpost ID del post
-     * @param string $idutente ID dell'utente
-     */
-    public function removeVote(int $idpost, string $idutente): void {
-        $post = $this->postRepository->findById($idpost);
-        if (!$post) {
-            throw new \Exception("Post non trovato");
+        if ($reaction === 'remove') {
+            $this->postRepository->removeReaction($idpost, $idutente);
+        } elseif ($reaction === 'like') {
+            $this->postRepository->setReaction($idpost, $idutente, true);
+        } elseif ($reaction === 'dislike') {
+            $this->postRepository->setReaction($idpost, $idutente, false);
+        } else {
+            throw new \Exception("Reazione non valida");
         }
-        
-        $this->postRepository->removeVote($idpost, $idutente);
     }
 
     /**
