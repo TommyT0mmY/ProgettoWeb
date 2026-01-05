@@ -20,12 +20,7 @@ class PostService {
         $this->courseRepository = new CourseRepository();
     }
 
-    /**
-     * Carica i post della homepage con filtri
-     * Se nessun filtro è fornito, carica tutti i post
-     * Filtri disponibili: corsi, categorie, ordinamento
-     */
-    public function getPostsWithFilters(string $userId, ?PostFilterDTO $filter): array {
+    public function getPosts(string $userId, ?PostFilterDTO $filter): array {
         return $this->postRepository->findWithFilters($userId, $filter);
     }
 

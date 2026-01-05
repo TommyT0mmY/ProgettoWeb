@@ -22,7 +22,9 @@ class PostRepository {
     }
 
     /**
-     * Recupera un post tramite ID
+     * Finds a post by its ID
+     *
+     * @param int $postId The ID of the post to find
      */
     public function findById(int $postId): ?PostDTO {
         $stmt = $this->pdo->prepare("SELECT * FROM posts WHERE post_id = :postId");
@@ -34,8 +36,11 @@ class PostRepository {
     }
 
     /**
-     * Recupera post con filtri applicati
-     */     
+     * Finds posts with optional filters
+     *
+     * @param string $userId The ID of the user requesting the posts
+     * @param PostFilterDTO|null $filter The filter criteria
+     */
     public function findWithFilters(string $userId, ?PostFilterDTO $filter): array {
         $sql = "SELECT DISTINCT p.* FROM posts p";
         $conditions = [];
@@ -45,8 +50,8 @@ class PostRepository {
         if ($filter !== null) {
             // Filtro per categoria
             if (!empty($filter->category)) {
-                $params[] = $filter->category;
                 $conditions[] = " p.category_id = ?";
+                $params[] = $filter->category;
             }
 
             // Join per tag se filtrati
