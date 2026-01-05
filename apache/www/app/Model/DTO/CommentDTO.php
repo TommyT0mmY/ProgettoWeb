@@ -4,29 +4,29 @@ declare(strict_types=1);
 namespace Unibostu\Model\DTO;
 
 readonly class CommentDTO {
-    public int $idcommento;
-    public int $idpost;
-    public string $testo;
-    public string $data_creazione;
-    public bool $cancellato;
-    public string $idutente;
-    public ?int $idcommento_genitore;
+    public int $commentId;
+    public int $postId;
+    public string $text;
+    public string $createdAt;
+    public bool $deleted;
+    public string $userId;
+    public ?int $parentCommentId;
 
     public function __construct(
-        int $idcommento,
-        int $idpost,
-        string $testo,
-        string $data_creazione,
-        string $idutente,
-        bool $cancellato = false,
-        ?int $idcommento_genitore = null
+        int $commentId,
+        int $postId,
+        string $text,
+        string $createdAt,
+        string $userId,
+        bool $deleted = false,
+        ?int $parentCommentId = null
     ) {
-        $this->idcommento = $idcommento;
-        $this->idpost = $idpost;
-        $this->testo = $testo;
-        $this->data_creazione = $data_creazione;
-        $this->cancellato = $cancellato;
-        $this->idutente = $idutente;
-        $this->idcommento_genitore = $idcommento_genitore;
+        $this->commentId = $commentId;
+        $this->postId = $postId;
+        $this->text = $text;
+        $this->createdAt = $createdAt;
+        $this->deleted = $deleted;
+        $this->userId = $userId;
+        $this->parentCommentId = $parentCommentId;
     }
 }

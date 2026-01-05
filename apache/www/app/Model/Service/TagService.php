@@ -15,62 +15,62 @@ class TagService {
     /**
      * Recupera tutti i tag di un corso
      */
-    public function getTagsByCourse(int $idcorso): array {
-        return $this->tagRepository->findByCourse($idcorso);
+    public function getTagsByCourse(int $courseId): array {
+        return $this->tagRepository->findByCourse($courseId);
     }
 
     /**
      * Crea un nuovo tag
      * @throws \Exception se i dati non sono validi
      */
-    public function createTag(string $tipo, int $idcorso): void {
-        if (empty($tipo)) {
+    public function createTag(string $type, int $courseId): void {
+        if (empty($type)) {
             throw new \Exception("Tipo tag non può essere vuoto");
         }
 
-        if ($idcorso <= 0) {
+        if ($courseId <= 0) {
             throw new \Exception("Corso non valido");
         }
 
-        $existing = $this->tagRepository->findByTypeAndCourse($tipo, $idcorso);
+        $existing = $this->tagRepository->findByTypeAndCourse($type, $courseId);
         if ($existing) {
-            throw new \Exception("Tag '$tipo' per questo corso esiste già");
+            throw new \Exception("Tag '$type' per questo corso esiste già");
         }
 
-        $this->tagRepository->save($tipo, $idcorso);
+        $this->tagRepository->save($type, $courseId);
     }
 
     /**
      * Aggiorna un tag
      * @throws \Exception se il tag non esiste o i dati non sono validi
      */
-    public function updateTag(int $idtag, string $tipo, int $idcorso): void {
-        if (empty($tipo)) {
+    public function updateTag(int $tagId, string $type, int $courseId): void {
+        if (empty($type)) {
             throw new \Exception("Tipo tag non può essere vuoto");
         }
 
-        if ($idcorso <= 0) {
+        if ($courseId <= 0) {
             throw new \Exception("Corso non valido");
         }
 
-        $tag = $this->tagRepository->findByIdAndCourse($idtag, $idcorso);
+        $tag = $this->tagRepository->findByIdAndCourse($tagId, $courseId);
         if (!$tag) {
             throw new \Exception("Tag non trovato");
         }
 
-        $this->tagRepository->update($idtag, $tipo);
+        $this->tagRepository->update($tagId, $type);
     }
 
     /**
      * Elimina un tag
      * @throws \Exception se il tag non esiste
      */
-    public function deleteTag(int $idtag, int $idcorso): void {
-        $tag = $this->tagRepository->findByIdAndCourse($idtag, $idcorso);
+    public function deleteTag(int $tagId, int $courseId): void {
+        $tag = $this->tagRepository->findByIdAndCourse($tagId, $courseId);
         if (!$tag) {
             throw new \Exception("Tag non trovato");
         }
 
-        $this->tagRepository->delete($idtag, $idcorso);
+        $this->tagRepository->delete($tagId, $courseId);
     }
 }

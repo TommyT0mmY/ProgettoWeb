@@ -16,8 +16,8 @@ class FacultyService {
     /**
      * Ottiene i dettagli di una facolta tramite ID
      */
-    public function getFacultyDetails(int $idfacolta): ?FacultyDTO {
-        return $this->facultyRepository->findById($idfacolta);
+    public function getFacultyDetails(int $facultyId): ?FacultyDTO {
+        return $this->facultyRepository->findById($facultyId);
     }
 
     /**
@@ -31,42 +31,42 @@ class FacultyService {
      * Crea una nuova facolta
      * @throws \Exception se i dati non sono validi
      */
-    public function createFaculty(string $nome_facolta): void {
-        if (empty($nome_facolta)) {
+    public function createFaculty(string $facultyName): void {
+        if (empty($facultyName)) {
             throw new \Exception("Nome facoltà non può essere vuoto");
         }
 
-        $this->facultyRepository->save($nome_facolta);
+        $this->facultyRepository->save($facultyName);
     }
 
     /**
      * Aggiorna i dati di una facolta
      * @throws \Exception se la facoltà non esiste o i dati non sono validi
      */
-    public function updateFaculty(int $idfacolta, string $nome_facolta): void {
-        $faculty = $this->facultyRepository->findById($idfacolta);
+    public function updateFaculty(int $facultyId, string $facultyName): void {
+        $faculty = $this->facultyRepository->findById($facultyId);
         if (!$faculty) {
             throw new \Exception("Facoltà non trovata");
         }
 
-        if (empty($nome_facolta)) {
+        if (empty($facultyName)) {
             throw new \Exception("Nome facoltà non può essere vuoto");
         }
 
-        $this->facultyRepository->update($idfacolta, $nome_facolta);
+        $this->facultyRepository->update($facultyId, $facultyName);
     }
 
     /**
      * Elimina una facolta
      * @throws \Exception se la facoltà non esiste
      */
-    public function deleteFaculty(int $idfacolta): void {
-        $faculty = $this->facultyRepository->findById($idfacolta);
+    public function deleteFaculty(int $facultyId): void {
+        $faculty = $this->facultyRepository->findById($facultyId);
         if (!$faculty) {
             throw new \Exception("Facoltà non trovata");
         }
 
-        $this->facultyRepository->delete($idfacolta);
+        $this->facultyRepository->delete($facultyId);
     }
 }
 

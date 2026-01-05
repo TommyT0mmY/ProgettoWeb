@@ -17,14 +17,27 @@ class CategoryRepository {
     /**
      * Recupera una categoria tramite ID
      */
-    public function findById(int $idcategoria): ?CategoryDTO {
+    public function findById(int $categoryId): ?CategoryDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM categorie WHERE idcategoria = :idcategoria"
+            "SELECT * FROM categories WHERE category_id = :categoryId"
         );
-        $stmt->bindValue(':idcategoria', $idcategoria, PDO::PARAM_INT);
+        $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        return $row ? $this->rowToDTO($row) : null;
+    }
+
+    /**
+     * Recupera una categoria tramite nome
+     */
+    public function findByName(string $categoryName): ?CategoryDTO {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM categories WHERE category_name = :categoryName"
+        );
+        $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $this->rowToDTO($row) : null;
     }
 
@@ -33,7 +46,7 @@ class CategoryRepository {
      */
     public function findAll(): array {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM categorie ORDER BY idcategoria"
+            "SELECT * FROM categories ORDER BY category_id"
         );
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -45,12 +58,12 @@ class CategoryRepository {
      * Salva una nuova categoria
      * @throws \Exception in caso di errore
      */
-    public function save(string $nome_categoria): void {
+    public function save(string $categoryName): void {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO categorie (nome_categoria)
-             VALUES (:nome_categoria)"
+            "INSERT INTO categories (category_name)
+             VALUES (:categoryName)"
         );
-        $stmt->bindValue(':nome_categoria', $nome_categoria, PDO::PARAM_STR);
+        $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante il salvataggio della categoria");
@@ -61,12 +74,12 @@ class CategoryRepository {
      * Aggiorna una categoria
      * @throws \Exception in caso di errore
      */
-    public function update(int $idcategoria, string $nome_categoria): void {
+    public function update(int $categoryId, string $categoryName): void {
         $stmt = $this->pdo->prepare(
-            "UPDATE categorie SET nome_categoria = :nome_categoria WHERE idcategoria = :idcategoria"
+            "UPDATE categories SET category_name = :categoryName WHERE category_id = :categoryId"
         );
-        $stmt->bindValue(':idcategoria', $idcategoria, PDO::PARAM_INT);
-        $stmt->bindValue(':nome_categoria', $nome_categoria, PDO::PARAM_STR);
+        $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
 
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'aggiornamento della categoria");
@@ -77,11 +90,11 @@ class CategoryRepository {
      * Elimina una categoria
      * @throws \Exception in caso di errore
      */
-    public function delete(int $idcategoria): void {
+    public function delete(int $categoryId): void {
         $stmt = $this->pdo->prepare(
-            "DELETE FROM categorie WHERE idcategoria = :idcategoria"
+            "DELETE FROM categories WHERE category_id = :categoryId"
         );
-        $stmt->bindValue(':idcategoria', $idcategoria, PDO::PARAM_INT);
+        $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'eliminazione della categoria");
@@ -90,8 +103,8 @@ class CategoryRepository {
 
     private function rowToDTO(array $row): CategoryDTO {
         return new CategoryDTO(
-            (int)$row['idcategoria'],
-            $row['nome_categoria']
+            (int)$row['category_id'],
+            $row['category_name']
         );
     }
 }

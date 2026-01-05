@@ -17,11 +17,11 @@ class UserRepository {
     /**
      * Recupera un utente tramite ID utente
      */
-    public function findByUserId(string $idutente): ?UserDTO {
+    public function findByUserId(string $userId): ?UserDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM utenti WHERE idutente = :idutente"
+            "SELECT * FROM users WHERE user_id = :userId"
         );
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -29,13 +29,13 @@ class UserRepository {
     }
 
     /**
-     * Verifica se un utente esiste per idutente
+     * Verifica se un utente esiste per userId
      */
-    public function isUser(string $idutente): bool {
+    public function isUser(string $userId): bool {
         $stmt = $this->pdo->prepare(
-            "SELECT COUNT(*) as count FROM utenti WHERE idutente = :idutente"
+            "SELECT COUNT(*) as count FROM users WHERE user_id = :userId"
         );
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int)$result['count'] > 0;
@@ -47,16 +47,16 @@ class UserRepository {
      */
     public function save(UserDTO $dto): void {
         $stmtUtenti = $this->pdo->prepare(
-            "INSERT INTO utenti 
-                (idutente, password, nome, cognome, idfacolta, utente_sospeso)
-                VALUES (:idutente, :password, :nome, :cognome, :idfacolta, :utente_sospeso)"
+            "INSERT INTO users 
+                (user_id, password, first_name, last_name, faculty_id, suspended)
+                VALUES (:userId, :password, :firstName, :lastName, :facultyId, :suspended)"
         );
-        $stmtUtenti->bindValue(':idutente', $dto->idutente, PDO::PARAM_STR);
+        $stmtUtenti->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
         $stmtUtenti->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
-        $stmtUtenti->bindValue(':nome', $dto->nome, PDO::PARAM_STR);
-        $stmtUtenti->bindValue(':cognome', $dto->cognome, PDO::PARAM_STR);
-        $stmtUtenti->bindValue(':idfacolta', $dto->idfacolta, PDO::PARAM_INT);
-        $stmtUtenti->bindValue(':utente_sospeso', false, PDO::PARAM_BOOL);
+        $stmtUtenti->bindValue(':firstName', $dto->firstName, PDO::PARAM_STR);
+        $stmtUtenti->bindValue(':lastName', $dto->lastName, PDO::PARAM_STR);
+        $stmtUtenti->bindValue(':facultyId', $dto->facultyId, PDO::PARAM_INT);
+        $stmtUtenti->bindValue(':suspended', false, PDO::PARAM_BOOL);
         $success = $stmtUtenti->execute();
 
         if (!$success) {
@@ -70,14 +70,14 @@ class UserRepository {
      */
     public function updateProfile(UserDTO $dto): void {
         $stmt = $this->pdo->prepare(
-            "UPDATE utenti 
-             SET nome = :nome, cognome = :cognome, password = :password
-             WHERE idutente = :idutente"
+            "UPDATE users 
+             SET first_name = :firstName, last_name = :lastName, password = :password
+             WHERE user_id = :userId"
         );
-        $stmt->bindValue(':nome', $dto->nome, PDO::PARAM_STR);
-        $stmt->bindValue(':cognome', $dto->cognome, PDO::PARAM_STR);
+        $stmt->bindValue(':firstName', $dto->firstName, PDO::PARAM_STR);
+        $stmt->bindValue(':lastName', $dto->lastName, PDO::PARAM_STR);
         $stmt->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
-        $stmt->bindValue(':idutente', $dto->idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
 
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'aggiornamento del profilo");
@@ -88,13 +88,13 @@ class UserRepository {
      * Sospende un utente
      * @throws \Exception in caso di errore
      */
-    public function suspendUser(string $idutente): void {
+    public function suspendUser(string $userId): void {
         $stmt = $this->pdo->prepare(
-            "UPDATE utenti 
-             SET utente_sospeso = true
-             WHERE idutente = :idutente"
+            "UPDATE users 
+             SET suspended = true
+             WHERE user_id = :userId"
         );
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante la sospensione dell'utente");
@@ -103,12 +103,12 @@ class UserRepository {
 
     private function rowToPrivateDTO(array $row): UserDTO {
         return new UserDTO(
-            idutente: $row['idutente'],
-            nome: $row['nome'],
-            cognome: $row['cognome'],
-            idfacolta: (int)$row['idfacolta'],
+            userId: $row['user_id'],
+            firstName: $row['first_name'],
+            lastName: $row['last_name'],
+            facultyId: (int)$row['faculty_id'],
             password: $row['password'],
-            utente_sospeso: (bool)$row['utente_sospeso'],
+            suspended: (bool)$row['suspended'],
         );
     }
 }

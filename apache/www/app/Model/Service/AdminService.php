@@ -17,8 +17,8 @@ class AdminService {
      * Verifica le credenziali di un amministratore
      * @throws \Exception se le credenziali non sono valide
      */
-    public function authenticate(string $idamministratore, string $password): void {
-        $admin = $this->adminRepository->findByAdminId($idamministratore);
+    public function authenticate(string $adminId, string $password): void {
+        $admin = $this->adminRepository->findByAdminId($adminId);
         
         if (!$admin) {
             throw new \Exception("Amministratore non trovato");

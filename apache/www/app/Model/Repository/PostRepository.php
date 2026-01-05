@@ -24,9 +24,9 @@ class PostRepository {
     /**
      * Recupera un post tramite ID
      */
-    public function findById(int $idpost): ?PostDTO {
-        $stmt = $this->pdo->prepare("SELECT * FROM posts WHERE idpost = :idpost");
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+    public function findById(int $postId): ?PostDTO {
+        $stmt = $this->pdo->prepare("SELECT * FROM posts WHERE post_id = :postId");
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -36,7 +36,7 @@ class PostRepository {
     /**
      * Recupera post con filtri applicati
      */     
-    public function findWithFilters(string $idutente, ?PostFilterDTO $filter): array {
+    public function findWithFilters(string $userId, ?PostFilterDTO $filter): array {
         $sql = "SELECT DISTINCT p.* FROM posts p";
         $conditions = [];
         $params = [];
@@ -46,17 +46,17 @@ class PostRepository {
             // Filtro per categoria
             if (!empty($filter->category)) {
                 $params[] = $filter->category;
-                $conditions[] = " p.idcategoria = ?";
+                $conditions[] = " p.category_id = ?";
             }
 
             // Join per tag se filtrati
             if (!empty($filter->tags)) {
-                $sql .= " LEFT JOIN post_tags pt ON p.idpost = pt.idpost";
+                $sql .= " LEFT JOIN post_tags pt ON p.post_id = pt.post_id";
                 $tagConditions = [];
                 foreach ($filter->tags as $tag) {
-                    $tagConditions[] = "(pt.idtag = ? AND pt.idcorso = ?)";
-                    $params[] = $tag['idtag'];
-                    $params[] = $tag['idcorso'];
+                    $tagConditions[] = "(pt.tag_id = ? AND pt.course_id = ?)";
+                    $params[] = $tag['tagId'];
+                    $params[] = $tag['courseId'];
                 }
                 if (!empty($tagConditions)) {
                     $conditions[] = "(" . implode(" OR ", $tagConditions) . ")";
@@ -64,20 +64,20 @@ class PostRepository {
             }
 
             // Filtro per corsi
-            if (!empty($filter->corso)) {
-                $params[] = $filter->corso;
-                $conditions[] = " p.idcorso IN (?)";
+            if (!empty($filter->courseId)) {
+                $params[] = $filter->courseId;
+                $conditions[] = " p.course_id IN (?)";
             } else {
-                $params[] = $idutente;
-                $conditions[] = " p.idcorso IN (
-                    SELECT idcorso FROM utenti_corsi WHERE idutente = ?
+                $params[] = $userId;
+                $conditions[] = " p.course_id IN (
+                    SELECT course_id FROM user_courses WHERE user_id = ?
                 )";
             }
 
             // Filtro per autore
             if (!empty($filter->authorId)) {
                 $params[] = $filter->authorId;
-                $conditions[] = " p.idutente = ?";
+                $conditions[] = " p.user_id = ?";
             }
 
             // Aggiungi WHERE clause se ci sono condizioni
@@ -85,15 +85,15 @@ class PostRepository {
                 $sql .= " WHERE " . implode(" AND ", $conditions);
             }
 
-            if ($filter->ordinamento === 'ASC') {
-                $sql .= " AND p.idpost > ?";
+            if ($filter->sortOrder === 'ASC') {
+                $sql .= " AND p.post_id > ?";
             } else {
-                $sql .= " AND p.idpost < ?";
+                $sql .= " AND p.post_id < ?";
             }
             $params[] = $filter->lastPostId;
 
             // Ordinamento
-            $sql .= " ORDER BY p.data_creazione " . $filter->ordinamento;
+            $sql .= " ORDER BY p.created_at " . $filter->sortOrder;
 
             // Limit e offset
             $sql .= " LIMIT ?";
@@ -114,7 +114,7 @@ class PostRepository {
         $posts = [];
         foreach ($rows as $row) {
             //Recupera autore post
-            $author = $this->userRepository->findByUserId($row['idutente']);
+            $author = $this->userRepository->findByUserId($row['user_id']);
             $row['author'] = $author;
 
             $posts[] = $this->rowToDTO($row);
@@ -125,13 +125,13 @@ class PostRepository {
     /**
      * Recupera i post di un utente
      */
-    public function findByUserId(string $idutente): array {
+    public function findByUserId(string $userId): array {
         $stmt = $this->pdo->prepare(
             "SELECT * FROM posts 
-             WHERE idutente = :idutente
-             ORDER BY data_creazione DESC"
+             WHERE user_id = :userId
+             ORDER BY created_at DESC"
         );
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -145,13 +145,13 @@ class PostRepository {
     /**
      * Recupera i post di un corso
      */
-    public function findByCourseId(int $idcorso): array {
+    public function findByCourseId(int $courseId): array {
         $stmt = $this->pdo->prepare(
             "SELECT * FROM posts 
-             WHERE idcorso = :idcorso
-             ORDER BY data_creazione DESC"
+             WHERE course_id = :courseId
+             ORDER BY created_at DESC"
         );
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -171,23 +171,23 @@ class PostRepository {
 
             $stmt = $this->pdo->prepare(
                 "INSERT INTO posts 
-                (titolo, descrizione, percorso_allegato, data_creazione, idutente, idcorso, idcategoria)
-                VALUES (:titolo, :descrizione, :percorso_allegato, :data_creazione, :idutente, :idcorso, :idcategoria)"
+                (title, description, attachment_path, created_at, user_id, course_id, category_id)
+                VALUES (:title, :description, :attachmentPath, :createdAt, :userId, :courseId, :category)"
             );
-            $stmt->bindValue(':titolo', $dto->titolo, PDO::PARAM_STR);
-            $stmt->bindValue(':descrizione', $dto->descrizione, PDO::PARAM_STR);
-            $stmt->bindValue(':percorso_allegato', $dto->percorso_allegato ?? null, PDO::PARAM_STR);
-            $stmt->bindValue(':data_creazione', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-            $stmt->bindValue(':idutente', $dto->idutente, PDO::PARAM_STR);
-            $stmt->bindValue(':idcorso', $dto->idcorso ?? null, PDO::PARAM_INT);
-            $stmt->bindValue(':idcategoria', $dto->category ?? null, PDO::PARAM_INT);
+            $stmt->bindValue(':title', $dto->title, PDO::PARAM_STR);
+            $stmt->bindValue(':description', $dto->description, PDO::PARAM_STR);
+            $stmt->bindValue(':attachmentPath', $dto->attachmentPath ?? null, PDO::PARAM_STR);
+            $stmt->bindValue(':createdAt', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
+            $stmt->bindValue(':courseId', $dto->courseId ?? null, PDO::PARAM_INT);
+            $stmt->bindValue(':category', $dto->category ?? null, PDO::PARAM_INT);
             $stmt->execute();
-            $idpost = (int)$this->pdo->lastInsertId();
+            $postId = (int)$this->pdo->lastInsertId();
 
             // Salva i tag
             if (!empty($dto->tags)) {
                 foreach ($dto->tags as $tag) {
-                    $this->postTagRepository->addTagToPost($idpost, $tag['idtag'], $tag['idcorso']);
+                    $this->postTagRepository->addTagToPost($postId, $tag['tagId'], $tag['courseId']);
                 }
             }
 
@@ -202,37 +202,37 @@ class PostRepository {
      * Aggiunge un voto (like/dislike) da parte di un utente a un post
      * Usa la tabella likes per tracciare chi ha votato
      * 
-     * @param int $idpost ID del post
-     * @param string $idutente ID dell'utente
+     * @param int $postId ID del post
+     * @param string $userId ID dell'utente
      * @param bool $isLike true per like, false per dislike
      */
-    public function setReaction(int $idpost, string $idutente, bool $isLike): void {
+    public function setReaction(int $postId, string $userId, bool $isLike): void {
         // Verifica se l'utente ha già votato
         $stmt = $this->pdo->prepare(
-            "SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND idutente = :idutente"
+            "SELECT COUNT(*) as count FROM likes WHERE post_id = :postId AND user_id = :userId"
         );
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ((int)$result['count'] > 0) {
             $stmtUpdate = $this->pdo->prepare(
-                "UPDATE likes SET is_like = :is_like WHERE idpost = :idpost AND idutente = :idutente"
+                "UPDATE likes SET is_like = :is_like WHERE post_id = :postId AND user_id = :userId"
             );
             $stmtUpdate->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
-            $stmtUpdate->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-            $stmtUpdate->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+            $stmtUpdate->bindValue(':postId', $postId, PDO::PARAM_INT);
+            $stmtUpdate->bindValue(':userId', $userId, PDO::PARAM_STR);
             if (!$stmtUpdate->execute()) {
                 throw new \Exception("Errore durante l'aggiornamento del voto");
             }
         } else {
             // Inserisci il voto nella tabella likes
             $stmtVote = $this->pdo->prepare(
-                "INSERT INTO likes (idpost, idutente, is_like) VALUES (:idpost, :idutente, :is_like)"
+                "INSERT INTO likes (post_id, user_id, is_like) VALUES (:postId, :userId, :is_like)"
             );
-            $stmtVote->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-            $stmtVote->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+            $stmtVote->bindValue(':postId', $postId, PDO::PARAM_INT);
+            $stmtVote->bindValue(':userId', $userId, PDO::PARAM_STR);
             $stmtVote->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
             
             if (!$stmtVote->execute()) {
@@ -245,16 +245,16 @@ class PostRepository {
      * Rimuove un voto (like/dislike) da parte di un utente da un post
      * Usa la tabella likes per tracciare chi ha tolto il voto
      * 
-     * @param int $idpost ID del post
-     * @param string $idutente ID dell'utente
+     * @param int $postId ID del post
+     * @param string $userId ID dell'utente
      */
-    public function removeReaction(int $idpost, string $idutente): bool {
+    public function removeReaction(int $postId, string $userId): bool {
         // Rimuovi il voto dalla tabella likes
         $stmtDelete = $this->pdo->prepare(
-            "DELETE FROM likes WHERE idpost = :idpost AND idutente = :idutente"
+            "DELETE FROM likes WHERE post_id = :postId AND user_id = :userId"
         );
-        $stmtDelete->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-        $stmtDelete->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmtDelete->bindValue(':postId', $postId, PDO::PARAM_INT);
+        $stmtDelete->bindValue(':userId', $userId, PDO::PARAM_STR);
         
         if (!$stmtDelete->execute()) {
             throw new \Exception("Errore durante la rimozione del voto");
@@ -266,9 +266,9 @@ class PostRepository {
     /**
      * Conta i like di un post
      */
-    public function countLikes(int $idpost): int {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND is_like = 1");
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+    public function countLikes(int $postId): int {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE post_id = :postId AND is_like = 1");
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int)$result['count'];
@@ -277,9 +277,9 @@ class PostRepository {
     /**
      * Conta i dislike di un post
      */
-    public function countDislikes(int $idpost): int {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND is_like = 0");
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+    public function countDislikes(int $postId): int {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE post_id = :postId AND is_like = 0");
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int)$result['count'];
@@ -288,12 +288,12 @@ class PostRepository {
     /**
      * Verifica che l'utente ha messo like o dislike
      */
-    private function hasUserVoted(int $idpost, string $idutente): ?bool {
+    private function hasUserVoted(int $postId, string $userId): ?bool {
         $stmt = $this->pdo->prepare(
-            "SELECT is_like FROM likes WHERE idpost = :idpost AND idutente = :idutente"
+            "SELECT is_like FROM likes WHERE post_id = :postId AND user_id = :userId"
         );
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -307,9 +307,9 @@ class PostRepository {
     /**
      * Elimina un post
      */
-    public function delete(int $idpost): bool {
-        $stmt = $this->pdo->prepare("DELETE FROM posts WHERE idpost = :idpost");
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+    public function delete(int $postId): bool {
+        $stmt = $this->pdo->prepare("DELETE FROM posts WHERE post_id = :postId");
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
@@ -318,25 +318,25 @@ class PostRepository {
      */
 
     private function rowToDTO(array $row): PostDTO {
-        $idpost = (int)$row['idpost'];
-        $tags = $this->postTagRepository->findTagsByPost($idpost);
-        $likes = $this->countLikes($idpost);
-        $dislikes = $this->countDislikes($idpost);
-        $likedByCurrentUser = $this->hasUserVoted($idpost, $row['idutente']);
+        $postId = (int)$row['post_id'];
+        $tags = $this->postTagRepository->findTagsByPost($postId);
+        $likes = $this->countLikes($postId);
+        $dislikes = $this->countDislikes($postId);
+        $likedByCurrentUser = $this->hasUserVoted($postId, $row['user_id']);
 
         $dto = new PostDTO(
-            idpost: $idpost,
-            titolo: $row['titolo'],
-            descrizione: $row['descrizione'],
-            data_creazione: $row['data_creazione'],
-            idutente: $row['idutente'],
-            idcorso: (int)$row['idcorso'],
+            postId: $postId,
+            title: $row['title'],
+            description: $row['description'],
+            createdAt: $row['created_at'],
+            userId: $row['user_id'],
+            courseId: (int)$row['course_id'],
             tags: $tags,
-            category: $row['idcategoria'],
+            category: $row['category_id'],
             likes: $likes,
             dislikes: $dislikes,
             likedByUser: $likedByCurrentUser,
-            percorso_allegato: $row['percorso_allegato'] ?? null
+            attachmentPath: $row['attachment_path'] ?? null
         );
         return $dto;
     }

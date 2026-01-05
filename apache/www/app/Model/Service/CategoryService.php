@@ -16,8 +16,8 @@ class CategoryService {
     /**
      * Recupera una categoria tramite ID
      */
-    public function getCategory(int $idcategoria): ?CategoryDTO {
-        return $this->categoryRepository->findById($idcategoria);
+    public function getCategory(int $categoryId): ?CategoryDTO {
+        return $this->categoryRepository->findById($categoryId);
     }
 
     /**
@@ -31,40 +31,43 @@ class CategoryService {
      * Crea una nuova categoria
      * @throws \Exception se i dati non sono validi
      */
-    public function createCategory(string $nome_categoria): void {
-        if (empty($nome_categoria)) {
+    public function createCategory(string $categoryName): void {
+        if (empty($categoryName)) {
             throw new \Exception("Nome categoria non può essere vuoto");
         }
+        if ($this->categoryRepository->findByName($categoryName)) {
+            throw new \Exception("Categoria '$categoryName' già esistente");
+        }
 
-        $this->categoryRepository->save($nome_categoria);
+        $this->categoryRepository->save($categoryName);
     }
 
     /**
      * Aggiorna i dati di una categoria
      * @throws \Exception se la categoria non esiste o i dati non sono validi
      */
-    public function updateCategory(int $idcategoria, string $nome_categoria): void {
-        $category = $this->categoryRepository->findById($idcategoria);
+    public function updateCategory(int $categoryId, string $categoryName): void {
+        $category = $this->categoryRepository->findById($categoryId);
         if (!$category) {
             throw new \Exception("Categoria non trovata");
         }
 
-        if (empty($nome_categoria)) {
+        if (empty($categoryName)) {
             throw new \Exception("Nome categoria non può essere vuoto");
         }
-        $this->categoryRepository->update($idcategoria, $nome_categoria);
+        $this->categoryRepository->update($categoryId, $categoryName);
     }
 
     /**
      * Elimina una categoria
      * @throws \Exception se la categoria non esiste
      */
-    public function deleteCategory(int $idcategoria): void {
-        $category = $this->categoryRepository->findById($idcategoria);
+    public function deleteCategory(int $categoryId): void {
+        $category = $this->categoryRepository->findById($categoryId);
         if (!$category) {
-            throw new \Exception("Categoria '$idcategoria' non trovata");
+            throw new \Exception("Categoria '$categoryId' non trovata");
         }
 
-        $this->categoryRepository->delete($idcategoria);
+        $this->categoryRepository->delete($categoryId);
     }
 }

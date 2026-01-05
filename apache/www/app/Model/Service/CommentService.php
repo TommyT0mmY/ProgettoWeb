@@ -21,13 +21,13 @@ class CommentService {
     /**
      * Ottiene tutti i commenti di un post con gli autori
      */
-    public function getCommentsByPostId(int $postid): CommentsListDTO {
-        $comments = $this->commentRepository->findByPostId($postid);
+    public function getCommentsByPostId(int $postId): CommentsListDTO {
+        $comments = $this->commentRepository->findByPostId($postId);
         $commetsList = array();
 
         foreach ($comments as $comment) {
-            $author = $this->userRepository->findByUserId($comment->idutente);
-            if ($author && !$author->utente_sospeso) {
+            $author = $this->userRepository->findByUserId($comment->userId);
+            if ($author && !$author->suspended) {
                 $commetsList[] = new CommentWithAuthorDTO($comment, $author);
             }
         }
@@ -37,20 +37,20 @@ class CommentService {
 
     /**
      * Crea un nuovo commento
-     * @throws \Exception se l'idutente non è valido o non esiste
+     * @throws \Exception se l'userId non è valido o non esiste
      */
     public function createComment(CreateCommentDTO $dto): void {
         // Verifica che l'utente esista
-        $user = $this->userRepository->findByUserId($dto->idutente);
+        $user = $this->userRepository->findByUserId($dto->userId);
         if (!$user) {
             throw new \Exception("Utente non trovato");
         }
 
-        if ($user->utente_sospeso) {
+        if ($user->suspended) {
             throw new \Exception("Utente sospeso, non può creare commenti");
         }
 
-        if (empty($dto->testo)) {
+        if (empty($dto->text)) {
             throw new \Exception("Il testo del commento non può essere vuoto");
         }
 
@@ -59,18 +59,18 @@ class CommentService {
 
     /**
      * Cancella un commento
-     * @throws \Exception se l'idutente non esiste o non è proprietario del commento
+     * @throws \Exception se l'userId non esiste o non è proprietario del commento
      */
-    public function deleteComment(int $idcommento, int $idpost, string $idutente): void {
-        $comment = $this->commentRepository->findById($idcommento, $idpost);
+    public function deleteComment(int $commentId, int $postId, string $userId): void {
+        $comment = $this->commentRepository->findById($commentId, $postId);
         if (!$comment) {
             throw new \Exception("Commento non trovato");
         }
 
-        if ($comment->idutente !== $idutente) {
+        if ($comment->userId !== $userId) {
             throw new \Exception("Non sei il proprietario di questo commento");
         }
 
-        $this->commentRepository->delete($idcommento, $idpost);
+        $this->commentRepository->delete($commentId, $postId);
     }
 }

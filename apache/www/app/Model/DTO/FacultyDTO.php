@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace Unibostu\Model\DTO;
 
 readonly class FacultyDTO {
-    public int $idfacolta;
-    public string $nome_facolta;
+    public int $facultyId;
+    public string $facultyName;
 
     public function __construct(
-        int $idfacolta,
-        string $nome_facolta
+        int $facultyId,
+        string $facultyName
     ) {
-        $this->idfacolta = $idfacolta;
-        $this->nome_facolta = $nome_facolta;
+        $this->facultyId = $facultyId;
+        $this->facultyName = $facultyName;
     }
 }
 

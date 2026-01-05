@@ -4,20 +4,20 @@ declare(strict_types=1);
 namespace Unibostu\Model\DTO;
 
 readonly class CreateCommentDTO {
-    public int $idpost;
-    public string $testo;
-    public string $idutente;
-    public ?int $idcommento_genitore;
+    public int $postId;
+    public string $text;
+    public string $userId;
+    public ?int $parentCommentId;
 
     public function __construct(
-        int $idpost,
-        string $testo,
-        string $idutente,
-        ?int $idcommento_genitore = null
+        int $postId,
+        string $text,
+        string $userId,
+        ?int $parentCommentId = null
     ) {
-        $this->idpost = $idpost;
-        $this->testo = $testo;
-        $this->idutente = $idutente;
-        $this->idcommento_genitore = $idcommento_genitore;
+        $this->postId = $postId;
+        $this->text = $text;
+        $this->userId = $userId;
+        $this->parentCommentId = $parentCommentId;
     }
 }

@@ -4,26 +4,26 @@ declare(strict_types=1);
 namespace Unibostu\Model\DTO;
 
 readonly class UserDTO {
-    public string $idutente;
-    public bool $utente_sospeso;
-    public ?string $nome;
-    public ?string $cognome;
-    public ?int $idfacolta;
+    public string $userId;
+    public bool $suspended;
+    public ?string $firstName;
+    public ?string $lastName;
+    public ?int $facultyId;
     public ?string $password;
 
     public function __construct(
-        string $idutente,
-        ?string $nome,
-        ?string $cognome,
-        ?int $idfacolta,
+        string $userId,
+        ?string $firstName,
+        ?string $lastName,
+        ?int $facultyId,
         ?string $password,
-        bool $utente_sospeso = false,
+        bool $suspended = false,
     ) {
-        $this->idutente = $idutente;
-        $this->nome = $nome;
-        $this->cognome = $cognome;
-        $this->idfacolta = $idfacolta;
-        $this->utente_sospeso = $utente_sospeso;
+        $this->userId = $userId;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->facultyId = $facultyId;
+        $this->suspended = $suspended;
         $this->password = $password;
     }
 }

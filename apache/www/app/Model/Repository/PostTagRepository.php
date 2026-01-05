@@ -16,11 +16,11 @@ class PostTagRepository {
     /**
      * Recupera tutti i tag di un post
      */
-    public function findTagsByPost(int $idpost): array {
+    public function findTagsByPost(int $postId): array {
         $stmt = $this->pdo->prepare(
-            "SELECT idtag, idcorso FROM post_tags WHERE idpost = :idpost"
+            "SELECT tag_id, course_id FROM post_tags WHERE post_id = :postId"
         );
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -28,11 +28,11 @@ class PostTagRepository {
     /**
      * Recupera i post di un tag specifico
      */
-    public function findPostsByTag(int $idtag): array {
+    public function findPostsByTag(int $tagId): array {
         $stmt = $this->pdo->prepare(
-            "SELECT idpost FROM post_tags WHERE idtag = :idtag"
+            "SELECT post_id FROM post_tags WHERE tag_id = :tagId"
         );
-        $stmt->bindValue(':idtag', $idtag, PDO::PARAM_INT);
+        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -40,26 +40,26 @@ class PostTagRepository {
     /**
      * Aggiunge un tag a un post
      */
-    public function addTagToPost(int $idpost, int $idtag, int $idcorso): bool {
+    public function addTagToPost(int $postId, int $tagId, int $courseId): bool {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO post_tags (idpost, idtag, idcorso)
-             VALUES (:idpost, :idtag, :idcorso)"
+            "INSERT INTO post_tags (post_id, tag_id, course_id)
+             VALUES (:postId, :tagId, :courseId)"
         );
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-        $stmt->bindValue(':idtag', $idtag, PDO::PARAM_INT);
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
+        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
     /**
      * Rimuove un tag da un post
      */
-    public function removeTagFromPost(int $idpost, int $idtag): bool {
+    public function removeTagFromPost(int $postId, int $tagId): bool {
         $stmt = $this->pdo->prepare(
-            "DELETE FROM post_tags WHERE idpost = :idpost AND idtag = :idtag"
+            "DELETE FROM post_tags WHERE post_id = :postId AND tag_id = :tagId"
         );
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-        $stmt->bindValue(':idtag', $idtag, PDO::PARAM_INT);
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
+        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
         return $stmt->execute();
     }
 }

@@ -18,14 +18,14 @@ class UserCoursesRepository {
      * Recupera i corsi di un utente
      * @return CourseDTO[]
      */
-    public function findCoursesByUser(string $idutente): array {
+    public function findCoursesByUser(string $userId): array {
         $stmt = $this->pdo->prepare(
-            "SELECT c.* FROM corsi c
-                JOIN utenti_corsi uc ON c.idcorso = uc.idcorso
-                WHERE uc.idutente = :idutente
-                ORDER BY c.nome_corso"
+            "SELECT c.* FROM courses c
+                JOIN user_courses uc ON c.course_id = uc.course_id
+                WHERE uc.user_id = :userId
+                ORDER BY c.course_name"
         );
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -38,27 +38,29 @@ class UserCoursesRepository {
 
     /**
      * Salva i corsi di un utente
+     * @param string $userId
+     * @param int[] $courseIds
      * @throws \Exception in caso di errore
      */
-    public function saveUserCourses(string $idutente, array $courseIds): void {
+    public function saveUserCourses(string $userId, array $courseIds): void {
         // Inizia una transazione
         $this->pdo->beginTransaction();
 
         try {
             // Rimuovi i corsi esistenti per l'utente
             $deleteStmt = $this->pdo->prepare(
-                "DELETE FROM utenti_corsi WHERE idutente = :idutente"
+                "DELETE FROM user_courses WHERE user_id = :userId"
             );
-            $deleteStmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
+            $deleteStmt->bindValue(':userId', $userId, PDO::PARAM_STR);
             $deleteStmt->execute();
 
             // Aggiungi i nuovi corsi
             $insertStmt = $this->pdo->prepare(
-                "INSERT INTO utenti_corsi (idutente, idcorso) VALUES (:idutente, :idcorso)"
+                "INSERT INTO user_courses (user_id, course_id) VALUES (:userId, :courseId)"
             );
-            foreach ($courseIds as $idcorso) {
-                $insertStmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
-                $insertStmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+            foreach ($courseIds as $courseId) {
+                $insertStmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+                $insertStmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
                 $insertStmt->execute();
             }
 
@@ -73,9 +75,9 @@ class UserCoursesRepository {
 
     private function rowToDTO(array $row): CourseDTO {
         return new CourseDTO(
-            (int)$row['idcorso'],
-            $row['nome_corso'],
-            (int)$row['idfacolta']
+            (int)$row['course_id'],
+            $row['course_name'],
+            (int)$row['faculty_id']
         );
     }
 }

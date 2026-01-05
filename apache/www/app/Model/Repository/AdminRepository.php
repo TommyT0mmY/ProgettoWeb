@@ -18,11 +18,11 @@ class AdminRepository {
     /**
      * Recupera un amministratore tramite ID
      */
-    public function findByAdminId(string $idamministratore): ?AdminDTO {
+    public function findByAdminId(string $adminId): ?AdminDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM amministratori WHERE idamministratore = :idamministratore"
+            "SELECT * FROM administrators WHERE admin_id = :adminId"
         );
-        $stmt->bindValue(':idamministratore', $idamministratore, PDO::PARAM_STR);
+        $stmt->bindValue(':adminId', $adminId, PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -31,7 +31,7 @@ class AdminRepository {
 
     private function rowToDTO(array $row): AdminDTO {
         return new AdminDTO(
-            $row['idamministratore'],
+            $row['admin_id'],
             $row['password']
         );
     }

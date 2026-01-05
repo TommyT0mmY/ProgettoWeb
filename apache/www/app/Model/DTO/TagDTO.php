@@ -4,17 +4,17 @@ declare(strict_types=1);
 namespace Unibostu\Model\DTO;
 
 readonly class TagDTO {
-    public int $idtag;
-    public string $tipo;
-    public int $idcorso;
+    public int $tagId;
+    public string $type;
+    public int $courseId;
 
     public function __construct(
-        int $idtag,
-        string $tipo,
-        int $idcorso
+        int $tagId,
+        string $type,
+        int $courseId
     ) {
-        $this->idtag = $idtag;
-        $this->tipo = $tipo;
-        $this->idcorso = $idcorso;
+        $this->tagId = $tagId;
+        $this->type = $type;
+        $this->courseId = $courseId;
     }
 }

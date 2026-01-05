@@ -5,14 +5,14 @@ namespace Unibostu\Model\DTO;
 
 readonly class PostDTO {
     public UserDTO $author;
-    public int $idpost;
-    public string $titolo;
-    public string $descrizione;
-    public ?string $percorso_allegato;
-    public string $data_creazione;
-    public string $idutente;
-    public int $idcorso;
-    /** @var array Array of tag arrays with 'tipo' keys */
+    public int $postId;
+    public string $title;
+    public string $description;
+    public ?string $attachmentPath;
+    public string $createdAt;
+    public string $userId;
+    public int $courseId;
+    /** @var array Array of tag arrays with 'type' keys */
     public array $tags;
     /** @var ?int  category id */
     public ?int $category;
@@ -22,26 +22,26 @@ readonly class PostDTO {
     public ?bool $likedByUser;
 
     public function __construct(
-        int $idpost,
-        string $titolo,
-        string $descrizione,
-        string $data_creazione,
-        string $idutente,
-        int $idcorso,
+        int $postId,
+        string $title,
+        string $description,
+        string $createdAt,
+        string $userId,
+        int $courseId,
         ?int $category,
         array $tags = [],
         int $likes = 0,
         int $dislikes = 0,
         ?bool $likedByUser = null,
-        ?string $percorso_allegato = null
+        ?string $attachmentPath = null
     ) {
-        $this->idpost = $idpost;
-        $this->titolo = $titolo;
-        $this->descrizione = $descrizione;
-        $this->percorso_allegato = $percorso_allegato;
-        $this->data_creazione = $data_creazione;
-        $this->idutente = $idutente;
-        $this->idcorso = $idcorso;
+        $this->postId = $postId;
+        $this->title = $title;
+        $this->description = $description;
+        $this->attachmentPath = $attachmentPath;
+        $this->createdAt = $createdAt;
+        $this->userId = $userId;
+        $this->courseId = $courseId;
         $this->tags = $tags;
         $this->category = $category;
         $this->likes = $likes;

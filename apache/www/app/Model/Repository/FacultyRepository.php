@@ -17,11 +17,11 @@ class FacultyRepository {
     /**
      * Recupera una facolta tramite ID
      */
-    public function findById(int $idfacolta): ?FacultyDTO {
+    public function findById(int $facultyId): ?FacultyDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM facolta WHERE idfacolta = :idfacolta"
+            "SELECT * FROM faculties WHERE faculty_id = :facultyId"
         );
-        $stmt->bindValue(':idfacolta', $idfacolta, PDO::PARAM_INT);
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -33,7 +33,7 @@ class FacultyRepository {
      */
     public function findAll(): array {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM facolta ORDER BY nome_facolta"
+            "SELECT * FROM faculties ORDER BY faculty_name"
         );
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -45,12 +45,12 @@ class FacultyRepository {
      * Salva una nuova facolta
      * @throws \Exception in caso di errore
      */
-    public function save(string $nome_facolta): void {
+    public function save(string $facultyName): void {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO facolta (nome_facolta)
-             VALUES (:nome_facolta)"
+            "INSERT INTO faculties (faculty_name)
+             VALUES (:facultyName)"
         );
-        $stmt->bindValue(':nome_facolta', $nome_facolta, PDO::PARAM_STR);
+        $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante il salvataggio della facoltà");
@@ -61,14 +61,14 @@ class FacultyRepository {
      * Aggiorna i dati di una facolta
      * @throws \Exception in caso di errore
      */
-    public function update(int $idfacolta, string $nome_facolta): void {
+    public function update(int $facultyId, string $facultyName): void {
         $stmt = $this->pdo->prepare(
-            "UPDATE facolta 
-             SET nome_facolta = :nome_facolta
-             WHERE idfacolta = :idfacolta"
+            "UPDATE faculties 
+             SET faculty_name = :facultyName
+             WHERE faculty_id = :facultyId"
         );
-        $stmt->bindValue(':nome_facolta', $nome_facolta, PDO::PARAM_STR);
-        $stmt->bindValue(':idfacolta', $idfacolta, PDO::PARAM_INT);
+        $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'aggiornamento della facoltà");
@@ -79,11 +79,11 @@ class FacultyRepository {
      * Elimina una facolta
      * @throws \Exception in caso di errore
      */
-    public function delete(int $idfacolta): void {
+    public function delete(int $facultyId): void {
         $stmt = $this->pdo->prepare(
-            "DELETE FROM facolta WHERE idfacolta = :idfacolta"
+            "DELETE FROM faculties WHERE faculty_id = :facultyId"
         );
-        $stmt->bindValue(':idfacolta', $idfacolta, PDO::PARAM_INT);
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'eliminazione della facoltà");
@@ -92,8 +92,8 @@ class FacultyRepository {
 
     private function rowToDTO(array $row): FacultyDTO {
         return new FacultyDTO(
-            (int)$row['idfacolta'],
-            $row['nome_facolta']
+            (int)$row['faculty_id'],
+            $row['faculty_name']
         );
     }
 }

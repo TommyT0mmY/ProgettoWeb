@@ -17,11 +17,11 @@ class CourseRepository {
     /**
      * Recupera un corso tramite ID
      */
-    public function findById(int $idcorso): ?CourseDTO {
+    public function findById(int $courseId): ?CourseDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM corsi WHERE idcorso = :idcorso"
+            "SELECT * FROM courses WHERE course_id = :courseId"
         );
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -33,7 +33,7 @@ class CourseRepository {
      */
     public function findAll(): array {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM corsi ORDER BY nome_corso"
+            "SELECT * FROM courses ORDER BY course_name"
         );
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -44,11 +44,11 @@ class CourseRepository {
     /**
      * Recupera i corsi di una facolta
      */
-    public function findByFaculty(int $idfacolta): array {
+    public function findByFaculty(int $facultyId): array {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM corsi WHERE idfacolta = :idfacolta ORDER BY nome_corso"
+            "SELECT * FROM courses WHERE faculty_id = :facultyId ORDER BY course_name"
         );
-        $stmt->bindValue(':idfacolta', $idfacolta, PDO::PARAM_INT);
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -59,13 +59,13 @@ class CourseRepository {
      * Salva un nuovo corso
      * @throws \Exception in caso di errore
      */
-    public function save(string $nome_corso, int $idfacolta): void {
+    public function save(string $courseName, int $facultyId): void {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO corsi (nome_corso, idfacolta)
-             VALUES (:nome_corso, :idfacolta)"
+            "INSERT INTO courses (course_name, faculty_id)
+             VALUES (:courseName, :facultyId)"
         );
-        $stmt->bindValue(':nome_corso', $nome_corso, PDO::PARAM_STR);
-        $stmt->bindValue(':idfacolta', $idfacolta, PDO::PARAM_INT);
+        $stmt->bindValue(':courseName', $courseName, PDO::PARAM_STR);
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante il salvataggio del corso");
@@ -76,15 +76,15 @@ class CourseRepository {
      * Aggiorna i dati di un corso
      * @throws \Exception in caso di errore
      */
-    public function update(int $idcorso, string $nome_corso, int $idfacolta): void {
+    public function update(int $courseId, string $courseName, int $facultyId): void {
         $stmt = $this->pdo->prepare(
-            "UPDATE corsi 
-             SET nome_corso = :nome_corso, idfacolta = :idfacolta
-             WHERE idcorso = :idcorso"
+            "UPDATE courses 
+             SET course_name = :courseName, faculty_id = :facultyId
+             WHERE course_id = :courseId"
         );
-        $stmt->bindValue(':nome_corso', $nome_corso, PDO::PARAM_STR);
-        $stmt->bindValue(':idfacolta', $idfacolta, PDO::PARAM_INT);
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':courseName', $courseName, PDO::PARAM_STR);
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'aggiornamento del corso");
@@ -95,11 +95,11 @@ class CourseRepository {
      * Elimina un corso
      * @throws \Exception in caso di errore
      */
-    public function delete(int $idcorso): void {
+    public function delete(int $courseId): void {
         $stmt = $this->pdo->prepare(
-            "DELETE FROM corsi WHERE idcorso = :idcorso"
+            "DELETE FROM courses WHERE course_id = :courseId"
         );
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'eliminazione del corso");
@@ -108,9 +108,9 @@ class CourseRepository {
 
     private function rowToDTO(array $row): CourseDTO {
         return new CourseDTO(
-            (int)$row['idcorso'],
-            $row['nome_corso'],
-            (int)$row['idfacolta']
+            (int)$row['course_id'],
+            $row['course_name'],
+            (int)$row['faculty_id']
         );
     }
 }

@@ -17,12 +17,12 @@ class TagRepository {
     /**
      * Recupera un tag tramite tipo e corso
      */
-    public function findByIdAndCourse(int $idtag, int $idcorso): ?TagDTO {
+    public function findByIdAndCourse(int $tagId, int $courseId): ?TagDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM tags WHERE idtag = :idtag AND idcorso = :idcorso"
+            "SELECT * FROM tags WHERE tag_id = :tagId AND course_id = :courseId"
         );
-        $stmt->bindValue(':idtag', $idtag, PDO::PARAM_INT);
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -32,12 +32,12 @@ class TagRepository {
     /**
      * Recupera un tag tramite tipo e corso
      */
-    public function findByTypeAndCourse(string $tipo, int $idcorso): ?TagDTO {
+    public function findByTypeAndCourse(string $type, int $courseId): ?TagDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM tags WHERE tipo = :tipo AND idcorso = :idcorso"
+            "SELECT * FROM tags WHERE type = :type AND course_id = :courseId"
         );
-        $stmt->bindValue(':tipo', $tipo, PDO::PARAM_STR);
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -47,11 +47,11 @@ class TagRepository {
     /**
      * Recupera tutti i tag di un corso
      */
-    public function findByCourse(int $idcorso): array {
+    public function findByCourse(int $courseId): array {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM tags WHERE idcorso = :idcorso ORDER BY tipo"
+            "SELECT * FROM tags WHERE course_id = :courseId ORDER BY type"
         );
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -62,13 +62,13 @@ class TagRepository {
      * Salva un nuovo tag
      * @throws \Exception in caso di errore
      */
-    public function save(string $tipo, int $idcorso): void {
+    public function save(string $type, int $courseId): void {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO tags (tipo, idcorso)
-             VALUES (:tipo, :idcorso)"
+            "INSERT INTO tags (type, course_id)
+             VALUES (:type, :courseId)"
         );
-        $stmt->bindValue(':tipo', $tipo, PDO::PARAM_STR);
-        $stmt->bindValue(':idcorso', $idcorso, PDO::PARAM_INT);
+        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante il salvataggio del tag");
@@ -79,12 +79,12 @@ class TagRepository {
      * Aggiorna un tag
      * @throws \Exception in caso di errore
      */
-    public function update(int $idtag, string $tipo): void {
+    public function update(int $tagId, string $type): void {
         $stmt = $this->pdo->prepare(
-            "UPDATE tags SET tipo = :tipo WHERE idtag = :idtag"
+            "UPDATE tags SET type = :type WHERE tag_id = :tagId"
         );
-        $stmt->bindValue(':idtag', $idtag, PDO::PARAM_INT);
-        $stmt->bindValue(':tipo', $tipo, PDO::PARAM_STR);
+        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
+        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
 
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'aggiornamento del tag");
@@ -95,11 +95,11 @@ class TagRepository {
      * Elimina un tag
      * @throws \Exception in caso di errore
      */
-    public function delete(int $idtag): void {
+    public function delete(int $tagId): void {
         $stmt = $this->pdo->prepare(
-            "DELETE FROM tags WHERE idtag = :idtag"
+            "DELETE FROM tags WHERE tag_id = :tagId"
         );
-        $stmt->bindValue(':idtag', $idtag, PDO::PARAM_INT);
+        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'eliminazione del tag");
@@ -108,9 +108,9 @@ class TagRepository {
 
     private function rowToDTO(array $row): TagDTO {
         return new TagDTO(
-            (int)$row['idtag'],
-            $row['tipo'],
-            (int)$row['idcorso']
+            (int)$row['tag_id'],
+            $row['type'],
+            (int)$row['course_id']
         );
     }
 }

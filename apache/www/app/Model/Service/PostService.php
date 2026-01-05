@@ -26,8 +26,8 @@ class PostService {
      * Se nessun filtro è fornito, carica tutti i post
      * Filtri disponibili: corsi, categorie, ordinamento
      */
-    public function getPostsWithFilters(string $idutente, ?PostFilterDTO $filter): array {
-        return $this->postRepository->findWithFilters($idutente, $filter);
+    public function getPostsWithFilters(string $userId, ?PostFilterDTO $filter): array {
+        return $this->postRepository->findWithFilters($userId, $filter);
     }
 
     /**
@@ -36,32 +36,32 @@ class PostService {
      * I tag devono essere dello stesso corso
      * Le categorie sono facoltative
      *
-     * @throws \Exception se l'idutente non è valido o il corso non appartiene all'utente
+     * @throws \Exception se l'userId non è valido o il corso non appartiene all'utente
      */
     public function createUserPost(CreateUserPostDTO $dto): void {
-        // Risolvi idutente a utente
-        $user = $this->userRepository->findByUserId($dto->idutente);
+        // Risolvi userId a utente
+        $user = $this->userRepository->findByUserId($dto->userId);
         if (!$user) {
             throw new \Exception("Utente non trovato");
         }
 
         // Verifica che l'utente sia iscritto al corso
-        $course = $this->courseRepository->findById($dto->idcorso);
-        if (!$course || $course->idfacolta !== $user->idfacolta) {
+        $course = $this->courseRepository->findById($dto->courseId);
+        if (!$course || $course->facultyId !== $user->facultyId) {
             throw new \Exception("L'utente non è iscritto a questo corso");
         }
 
         // Verifica che tutti i tag appartengono al corso selezionato
         foreach ($dto->tags as $tag) {
-            if (!isset($tag['idtag']) || !isset($tag['idcorso'])) {
+            if (!isset($tag['tagId']) || !isset($tag['courseId'])) {
                 throw new \Exception("Tag non valido");
             }
-            if ($tag['idcorso'] !== $dto->idcorso) {
+            if ($tag['courseId'] !== $dto->courseId) {
                 throw new \Exception("I tag devono appartenere al corso selezionato");
             }
         }
 
-        if (empty($dto->titolo) || empty($dto->descrizione)) {
+        if (empty($dto->title) || empty($dto->description)) {
             throw new \Exception("Titolo e descrizione non possono essere vuoti");
         }
 
@@ -71,22 +71,22 @@ class PostService {
     /**
      * Reazione (like/dislike) a un post
      * 
-     * @param int $idpost ID del post
-     * @param string $idutente ID dell'utente
+     * @param int $postId ID del post
+     * @param string $userId ID dell'utente
      * @param string $reaction "like", "dislike" o "remove"
      */
-    public function setReaction(int $idpost, string $idutente, string $reaction): void {
-        $post = $this->postRepository->findById($idpost);
+    public function setReaction(int $postId, string $userId, string $reaction): void {
+        $post = $this->postRepository->findById($postId);
         if (!$post) {
             throw new \Exception("Post non trovato");
         }
         
         if ($reaction === 'remove') {
-            $this->postRepository->removeReaction($idpost, $idutente);
+            $this->postRepository->removeReaction($postId, $userId);
         } elseif ($reaction === 'like') {
-            $this->postRepository->setReaction($idpost, $idutente, true);
+            $this->postRepository->setReaction($postId, $userId, true);
         } elseif ($reaction === 'dislike') {
-            $this->postRepository->setReaction($idpost, $idutente, false);
+            $this->postRepository->setReaction($postId, $userId, false);
         } else {
             throw new \Exception("Reazione non valida");
         }
@@ -95,21 +95,21 @@ class PostService {
     /**
      * Elimina un post (solo il creatore)
      * 
-     * @param int $idpost ID del post da eliminare
-     * @param string $idutente ID dell'utente che richiede l'eliminazione
+     * @param int $postId ID del post da eliminare
+     * @param string $userId ID dell'utente che richiede l'eliminazione
      */
-    public function deletePost(int $idpost, string $idutente): void {
-        $post = $this->postRepository->findById($idpost);
+    public function deletePost(int $postId, string $userId): void {
+        $post = $this->postRepository->findById($postId);
         if (!$post) {
             throw new \Exception("Post non trovato");
         }
 
         // Verifica che l'utente sia il creatore del post
-        if ($post->idutente !== $idutente) {
+        if ($post->userId !== $userId) {
             throw new \Exception("Non hai i permessi per eliminare questo post");
         }
 
-        $this->postRepository->delete($idpost);
+        $this->postRepository->delete($postId);
     }
 }
 

@@ -4,23 +4,23 @@ declare(strict_types=1);
 namespace Unibostu\Model\DTO;
 
 readonly class CreateUserDTO {
-    public string $idutente;
+    public string $userId;
     public string $password;
-    public string $nome;
-    public string $cognome;
-    public int $idfacolta;
+    public string $firstName;
+    public string $lastName;
+    public int $facultyId;
 
     public function __construct(
-        string $idutente,
+        string $userId,
         string $password,
-        string $nome,
-        string $cognome,
-        int $idfacolta
+        string $firstName,
+        string $lastName,
+        int $facultyId
     ) {
-        $this->idutente = $idutente;
+        $this->userId = $userId;
         $this->password = $password;
-        $this->nome = $nome;
-        $this->cognome = $cognome;
-        $this->idfacolta = $idfacolta;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->facultyId = $facultyId;
     }
 }
