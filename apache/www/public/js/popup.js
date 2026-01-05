@@ -9,16 +9,17 @@ class Popup {
     static #isOpened = false;
 
     static init() {
+        let template = document.querySelector('#popup-template');
+        document.body.appendChild(template.content.cloneNode(true));
         this.#popup = document.querySelector('.popup');
-        this.#popupText = this.#popup.querySelector('.popuptext');
-        this.#popupClose = this.#popup.querySelector('.popupclose');
+        this.#popupText = this.#popup.querySelector('.popup__text');
+        this.#popupClose = this.#popup.querySelector('.popup__close');
         this.#popupClose.addEventListener('click', () => this.#close());
         this.#popup.addEventListener('mouseenter', () => clearTimeout(this.#closeTimeout));
         this.#popup.addEventListener('mouseleave', () => this.#closeTimeout = setTimeout(() => this.#close(), this.POPUP_TIMEOUT));
     }
 
     static throwError(errorMessage) {
-        console.warn(errorMessage);
         if (this.#closeTimeout) {
             clearTimeout(this.#closeTimeout);
             this.#closeTimeout = null;
@@ -44,3 +45,7 @@ class Popup {
         this.#isOpened = false;
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    Popup.init();
+});
