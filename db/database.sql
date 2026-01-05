@@ -57,7 +57,7 @@ create table posts (
      created_at timestamp not null,
      user_id varchar(60) not null,
      course_id int not null,
-     category_id int,
+     category_id int not null,
      constraint ID_posts primary key (post_id)
 );
 
@@ -145,6 +145,11 @@ alter table posts add constraint FK_post_course
      references courses (course_id)
      on delete cascade;
 
+alter table posts add constraint FK_post_category
+        foreign key (category_id)
+        references categories (category_id)
+        on delete set null;
+
 alter table tags add constraint FK_tag_course
      foreign key (course_id)
      references courses (course_id)
@@ -172,3 +177,8 @@ create index IDX_likes_post on likes (post_id);
 create index IDX_posts_course on posts (course_id);
 create index IDX_comments_post on comments (post_id);
 create index IDX_posts_user on posts (user_id);
+
+
+-- Mock Data Section
+
+
