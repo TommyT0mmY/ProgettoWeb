@@ -8,7 +8,6 @@
 </head>
 <body>
     <main>
-        <button type="button" onclick="Popup.throwError('Errore! Non hai inserito il nome utente corretto');">Show popup</button>
         <?= $content ?>
     </main>
     <!-- Popup Template -->
