@@ -249,19 +249,6 @@ class PostRepository {
      * @param string $idutente ID dell'utente
      */
     public function removeReaction(int $idpost, string $idutente): bool {
-        // Verifica se l'utente ha messo voto
-        $stmt = $this->pdo->prepare(
-            "SELECT COUNT(*) as count FROM likes WHERE idpost = :idpost AND idutente = :idutente"
-        );
-        $stmt->bindValue(':idpost', $idpost, PDO::PARAM_INT);
-        $stmt->bindValue(':idutente', $idutente, PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ((int)$result['count'] === 0) {
-            throw new \Exception("Non hai votato questo post");
-        }
-        
         // Rimuovi il voto dalla tabella likes
         $stmtDelete = $this->pdo->prepare(
             "DELETE FROM likes WHERE idpost = :idpost AND idutente = :idutente"
