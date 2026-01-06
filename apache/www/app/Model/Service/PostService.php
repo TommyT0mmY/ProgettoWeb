@@ -6,7 +6,7 @@ namespace Unibostu\Model\Service;
 use Unibostu\Model\Repository\PostRepository;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\Repository\CourseRepository;
-use Unibostu\Model\DTO\PostFilterDTO;
+use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Model\DTO\CreatePostDTO;
 
 class PostService {
@@ -20,8 +20,8 @@ class PostService {
         $this->courseRepository = new CourseRepository();
     }
 
-    public function getPosts(string $userId, ?PostFilterDTO $filter): array {
-        return $this->postRepository->findWithFilters($userId, $filter);
+    public function getPosts(PostQuery $postQuery): array {
+        return $this->postRepository->findWithFilters($postQuery);
     }
 
     /**

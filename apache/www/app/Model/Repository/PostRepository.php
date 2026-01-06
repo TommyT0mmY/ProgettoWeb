@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\PostDTO;
-use Unibostu\Model\DTO\PostFilterDTO;
+use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Model\DTO\CreatePostDTO;
 
 use Unibostu\Core\Database;
@@ -41,13 +41,13 @@ class PostRepository {
      * @param string $userId The ID of the user requesting the posts
      * @param PostFilterDTO|null $filter The filter criteria
      */
-    public function findWithFilters(string $userId, ?PostFilterDTO $filter): array {
+    public function findWithFilters(PostQuery $postQuery): array {
         $sql = "SELECT DISTINCT p.* FROM posts p";
         $conditions = [];
         $params = [];
 
         // se filtro è null ritorna tutti i post
-        if ($filter !== null) {
+        if ($postQuery->getIsAdminView() !== null) {
             // Filtro per categoria
             if (!empty($filter->category)) {
                 $conditions[] = " p.category_id = ?";
@@ -55,10 +55,10 @@ class PostRepository {
             }
 
             // Join per tag se filtrati
-            if (!empty($filter->tags)) {
+            if (!empty($postQuery->getTags())) {
                 $sql .= " LEFT JOIN post_tags pt ON p.post_id = pt.post_id";
                 $tagConditions = [];
-                foreach ($filter->tags as $tag) {
+                foreach ($postQuery->getTags() as $tag) {
                     $tagConditions[] = "(pt.tag_id = ? AND pt.course_id = ?)";
                     $params[] = $tag['tagId'];
                     $params[] = $tag['courseId'];
@@ -69,11 +69,11 @@ class PostRepository {
             }
 
             // Filtro per corsi
-            if (!empty($filter->courseId)) {
-                $params[] = $filter->courseId;
+            if (!empty($postQuery->getCourseId())) {
+                $params[] = $postQuery->getCourseId();
                 $conditions[] = " p.course_id IN (?)";
             } else {
-                $params[] = $userId;
+                $params[] = $postQuery->getUserId();
                 $conditions[] = " p.course_id IN (
                     SELECT course_id FROM user_courses WHERE user_id = ?
                 )";
@@ -89,21 +89,21 @@ class PostRepository {
             if (!empty($conditions)) {
                 $sql .= " WHERE " . implode(" AND ", $conditions);
             }
-
-            if ($filter->sortOrder === 'ASC') {
-                $sql .= " AND p.post_id > ?";
-            } else {
-                $sql .= " AND p.post_id < ?";
-            }
-            $params[] = $filter->lastPostId;
-
-            // Ordinamento
-            $sql .= " ORDER BY p.created_at " . $filter->sortOrder;
-
-            // Limit e offset
-            $sql .= " LIMIT ?";
-            $params[] = $filter->limit;
         }
+        // Paginazione
+        if ($postQuery->getSortOrder() === 'ASC') {
+            $sql .= " AND p.post_id > ?";
+        } else {
+            $sql .= " AND p.post_id < ?";
+        }
+        $params[] = $postQuery->getLastPostId();
+
+        // Ordinamento
+        $sql .= " ORDER BY p.created_at " . $postQuery->getSortOrder();
+
+        // Limit e offset
+        $sql .= " LIMIT ?";
+        $params[] = $postQuery->getLimit();
 
         $stmt = $this->pdo->prepare($sql);
         foreach ($params as $key => $value) {
