@@ -28,9 +28,8 @@
       <li><a href="userPreferences.html">Preferences</a></li><!--solo se utente-->
       <li><a href="admin.html">Dashboard</a></li><!--solo se admin-->
       <!--segue lista community/courses in caso si è utenti-->
-      </hr>
-      <h2 class="h2-navbar">Choosen courses</h2>
-      <ul>
+      
+        <li><h2 class="h2-navbar">Choosen courses</h2></li>     
         <li><a href="index.html?subject=algoritmi">Algoritmi e Strutture Dati</a></li>
         <li><a href="index.html?subject=architetture">Architetture degli Elaboratori</a></li>
         <li><a href="index.html?subject=fisica">Fisica</a></li>
@@ -40,7 +39,7 @@
         <li><a href="index.html?subject=ricerca_operativa">Ricerca Operativa</a></li>
         <li><a href="index.html?subject=tecnologie_web">Tecnolgie Web</a></li>
         <li><a href="index.html?subject=tirocinio">Tirocinio</a></li>
-      </ul>
+      
     </ul>
   </div>
   </nav> 
@@ -48,172 +47,100 @@
 
 
  <main> 
-  <section>
-    <a href="creaPost.html">Create Post</a>
-  
-  <section class="post-filters">
-        <!-- TYPE -->
-        <label for="filter-type">Type</label>
-        <select id="filter-type">
-          <option value="">All types</option>
-          <option value="post">Post</option>
-          <option value="question">Questions</option>
-          <option value="bulletin">Bulletin</option>
-        </select>
-
-        <!-- TAGS -->
-
-         <li>
-        <fieldset class="tagsFieldset">
-            <legend>Topic tags (optional)</legend>
-
-            <!-- questi vengono generati dal backend -->
-            <label>
-            <input type="checkbox" name="tags[]" value="arrays"/>
-            Arrays
-            </label>
-
-            <label>
-            <input type="checkbox" name="tags[]" value="sorting"/>
-            Sorting
-            </label>
-
-            <label>
-            <input type="checkbox" name="tags[]" value="complexity"/>
-            Complexity
-            </label>
-        </fieldset>
-     </li> 
-        
-  </section>
 
         <header>
-          <!--se non admin disactive link/button delete-->
-          <h2 class="title-posts">Latest Posts or  most disliked posts if admin
-            <!--if admin from more disliked posts--></h2>
-        </header>   
-      <div class="post_container">
+            <h2>Actions</h2>
+        </header>
 
-        <article class="Post">
+        <a href="creaPost.html">Create Post</a>
+    
+      <section class="post-filters">
+        <header>
+            <h3>Filters</h3>
+        </header>
+            <!-- TYPE -->
+            <label for="filter-type">Type</label>
+            <select id="filter-type">
+            <option value="">All types</option>
+            <option value="post">Post</option>
+            <option value="question">Questions</option>
+            <option value="bulletin">Bulletin</option>
+            </select>
+
+            <!-- TAGS -->
+
+            <fieldset class="tagsFieldset">
+                <legend>Topic tags (optional)</legend>
+
+                <!-- questi vengono generati dal backend -->
+                 <!--causa achecker.org i label sono stati messi dopo e non so se usare div-->
+                <input type="checkbox" id="tag_arrays" name="tags[]" value="arrays">
+                <label for="tag_arrays">Arrays</label>
+
+                <input type="checkbox" id="tag_sorting" name="tags[]" value="sorting">
+                <label for="tag_sorting">Arrays</label>
+
+
+            </fieldset>
+            
+            <input type="submit" value="Filter"/>
+        </section>
+
             <header>
-                <h3>Intro to  Web Technologies, Client Side</h3>
-            </header>
-            
-            <p>3rd January 2025 - Autor</p>
+            <!--se non admin disactive link/button delete-->
+            <h2 class="title-posts">Latest Posts or  most disliked posts if admin
+                <!--if admin from more disliked posts--></h2>
+            </header>  
 
-            <ul class="tag">
-                <li class="tag subject"><a href="#">#physics</a></li>
-                <li class="tag type"><a href="#">#question</a></li>
-                <li class="tag topic"><a href="#">#first_lesson</a></li>
-                <!--per tag topic si potrebbe usare un for-->
-                <!--javascript o php per filtrare in caso di clic-->
-            </ul>
-            <section>
-             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit animi, ratione optio minus, ab, reprehenderit reiciendis quaerat illum excepturi voluptatibus totam est recusandae dolore quis? Porro ut optio ex repudiandae.</p>
-             <p>if you want to download click here (if it exists)</p> 
-             <ul class="review">
-              <li class="reaction"><a href="#" download="first_lesson">Download</a></li>
-             </ul>              
-            </section>
-            
-            <footer>    
-                <ul class="review">
-                    <li><a href="post.html#replyMain">Reply</a></li>
-                    <li><a href="post.html#comments">Comments</a></li>
-                    <li class="reaction">
-                        <button><img src="img/like.svg" alt="like"></button>
-                        <data value="0">0</data>
-                    </li>
-                    <li class="reaction">
-                        <button><img src="img/dislike.svg" alt="dislike"></button>
-                        <data value="0">0</data>
-                    </li>
-                    <li><a href="#">Delete</a></li>
+        <div class="post_container">
+
+            <article class="Post">
+                <header>
+                    <h3>Intro to  Web Technologies, Client Side</h3>
+                </header>
+                
+                <p>3rd January 2025 - Autor</p>
+
+                <ul class="tag">
+                    <li class="tag subject"><a href="#">#physics</a></li>
+                    <li class="tag type"><a href="#">#question</a></li>
+                    <li class="tag topic"><a href="#">#first_lesson</a></li>
+                    <!--per tag topic si potrebbe usare un for-->
+                    <!--javascript o php per filtrare in caso di clic-->
                 </ul>
-            </footer>                          
-        </article>
-
-        <article class="Post">
-            <header>
-                <h3>Intro to  Web Technologies, Client Side</h3>
-            </header>
-            
-            <p>3rd January 2025 - Autor</p>
-
-            <ul class="tag">
-                <li class="tag subject"><a href="#">#physics</a></li>
-                <li class="tag type"><a href="#">#question</a></li>
-                <li class="tag topic"><a href="#">#first_lesson</a></li>
-                <!--per tag topic si potrebbe usare un for-->
-                <!--javascript o php per filtrare in caso di clic-->
-            </ul>
-            <section>
-             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit animi, ratione optio minus, ab, reprehenderit reiciendis quaerat illum excepturi voluptatibus totam est recusandae dolore quis? Porro ut optio ex repudiandae.</p>
-             <p>if you want to download click here (if it exists)</p> 
-             <ul class="review">
-              <li class="reaction"><a href="#" download="first_lesson">Download</a></li>
-             </ul>              
-            </section>
-            
-            <footer>    
+                <section>
+                    <header>
+                        <h4>Notes/Question</h4>
+                    </header>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit animi, ratione optio minus, ab, reprehenderit reiciendis quaerat illum excepturi voluptatibus totam est recusandae dolore quis? Porro ut optio ex repudiandae.</p>
                 <ul class="review">
-                    <li><a href="post.html#replyMain">Reply</a></li>
-                    <li><a href="post.html#comments">Comments</a></li>
-                    <li class="reaction">
-                        <button><img src="img/like.svg" alt="like"></button>
-                        <data value="0">0</data>
-                    </li>
-                    <li class="reaction">
-                        <button><img src="img/dislike.svg" alt="dislike"></button>
-                        <data value="0">0</data>
-                    </li>
-                    <li><a href="#">Delete</a></li>
+                <li class="reaction">
+                    <p>if you want to <strong>download notes</strong> click here (if it exists): </p>
+                    <a class="btn" href="#" download="first_lesson">Download</a></li>
                 </ul>
-            </footer>                          
-        </article>
-
-        <article class="Post">
-            <header>
-                <h3>Intro to  Web Technologies, Client Side</h3>
-            </header>
+                </section>             
+                
+                
+                    <footer>    
+                        <ul class="review">
+                            <li><a href="post.html#replyMain">Reply</a></li>
+                            <li><a href="post.html#comments">Comments</a></li>
+                            <li class="reaction">
+                                <button><img src="img/like.svg" alt="like"></button>
+                                <data value="0">0</data>
+                            </li>
+                            <li class="reaction">
+                                <button><img src="img/dislike.svg" alt="dislike"></button>
+                                <data value="0">0</data>
+                            </li>
+                            <li><a href="#">Delete</a></li>
+                        </ul>
+                    </footer>                          
+            </article>
             
-            <p>3rd January 2025 - Autor</p>
-
-            <ul class="tag">
-                <li class="tag subject"><a href="#">#physics</a></li>
-                <li class="tag type"><a href="#">#question</a></li>
-                <li class="tag topic"><a href="#">#first_lesson</a></li>
-                <!--per tag topic si potrebbe usare un for-->
-                <!--javascript o php per filtrare in caso di clic-->
-            </ul>
-            <section>
-             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit animi, ratione optio minus, ab, reprehenderit reiciendis quaerat illum excepturi voluptatibus totam est recusandae dolore quis? Porro ut optio ex repudiandae.</p>
-             <p>if you want to download click here (if it exists)</p> 
-             <ul class="review">
-              <li class="reaction"><a href="#" download="first_lesson">Download</a></li>
-             </ul>              
-            </section>
-            
-            <footer>    
-                <ul class="review">
-                    <li><a href="post.html#replyMain">Reply</a></li>
-                    <li><a href="post.html#comments">Comments</a></li>
-                    <li class="reaction">
-                        <button><img src="img/like.svg" alt="like"></button>
-                        <data value="0">0</data>
-                    </li>
-                    <li class="reaction">
-                        <button><img src="img/dislike.svg" alt="dislike"></button>
-                        <data value="0">0</data>
-                    </li>
-                    <li><a href="#">Delete</a></li>
-                </ul>
-            </footer>                          
-        </article>
-        
-       </div><!--per il post container--> 
+        </div><!--per il post container--> 
     </main>
-</div>
+</div><!--per navbar del desktop-->
 <script src="./javascript/navbar.js" type="text/javascript"></script>
 </body>
 </html>
