@@ -5,16 +5,16 @@ namespace Unibostu\Model\DTO;
 
 readonly class TagDTO {
     public int $tagId;
-    public string $type;
+    public string $tag_name;
     public int $courseId;
 
     public function __construct(
         int $tagId,
-        string $type,
+        string $tag_name,
         int $courseId
     ) {
         $this->tagId = $tagId;
-        $this->type = $type;
+        $this->tag_name = $tag_name;
         $this->courseId = $courseId;
     }
 }

@@ -63,10 +63,10 @@ create table posts (
 
 create table tags (
      tag_id int not null auto_increment,
-     type varchar(30) not null,
+     tag_name varchar(30) not null,
      course_id int not null,
-     constraint ID_tags primary key (tag_id, course_id),
-     constraint UDX_type_course unique (type, course_id)
+     constraint ID_tags primary key (tag_id),
+     constraint UDX_tag_name_course unique (tag_name, course_id)
 );
 
 create table users (
@@ -197,7 +197,7 @@ INSERT INTO `categories` (`category_id`, `category_name`) VALUES
 (3, 'Notizie'),
 (4, 'Informazioni Esami');
 
-INSERT INTO `tags` (`tag_id`, `type`, `course_id`) VALUES 
+INSERT INTO `tags` (`tag_id`, `tag_name`, `course_id`) VALUES 
 (1, 'Matrici', 1),
 (2, 'Spazi vettoriali', 1),
 (3, 'Applicazioni lineari', 1),

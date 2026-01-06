@@ -12,7 +12,7 @@ readonly class PostDTO {
     public string $createdAt;
     public string $userId;
     public int $courseId;
-    /** @var array Array of tag arrays with 'type' keys */
+    /** @var array Array of tag arrays with 'tag_name' keys */
     public array $tags;
     /** @var ?int  category id */
     public ?int $category;

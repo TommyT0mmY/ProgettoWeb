@@ -23,8 +23,8 @@ class TagService {
      * Crea un nuovo tag
      * @throws \Exception se i dati non sono validi
      */
-    public function createTag(string $type, int $courseId): void {
-        if (empty($type)) {
+    public function createTag(string $tag_name, int $courseId): void {
+        if (empty($tag_name)) {
             throw new \Exception("Tipo tag non può essere vuoto");
         }
 
@@ -32,20 +32,20 @@ class TagService {
             throw new \Exception("Corso non valido");
         }
 
-        $existing = $this->tagRepository->findByTypeAndCourse($type, $courseId);
+        $existing = $this->tagRepository->findByTypeAndCourse($tag_name, $courseId);
         if ($existing) {
-            throw new \Exception("Tag '$type' per questo corso esiste già");
+            throw new \Exception("Tag '$tag_name' per questo corso esiste già");
         }
 
-        $this->tagRepository->save($type, $courseId);
+        $this->tagRepository->save($tag_name, $courseId);
     }
 
     /**
      * Aggiorna un tag
      * @throws \Exception se il tag non esiste o i dati non sono validi
      */
-    public function updateTag(int $tagId, string $type, int $courseId): void {
-        if (empty($type)) {
+    public function updateTag(int $tagId, string $tag_name, int $courseId): void {
+        if (empty($tag_name)) {
             throw new \Exception("Tipo tag non può essere vuoto");
         }
 
@@ -58,7 +58,7 @@ class TagService {
             throw new \Exception("Tag non trovato");
         }
 
-        $this->tagRepository->update($tagId, $type);
+        $this->tagRepository->update($tagId, $tag_name);
     }
 
     /**

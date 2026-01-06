@@ -32,11 +32,11 @@ class TagRepository {
     /**
      * Recupera un tag tramite tipo e corso
      */
-    public function findByTypeAndCourse(string $type, int $courseId): ?TagDTO {
+    public function findByTypeAndCourse(string $tag_name, int $courseId): ?TagDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM tags WHERE type = :type AND course_id = :courseId"
+            "SELECT * FROM tags WHERE tag_name = :tag_name AND course_id = :courseId"
         );
-        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+        $stmt->bindValue(':tag_name', $tag_name, PDO::PARAM_STR);
         $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -49,7 +49,7 @@ class TagRepository {
      */
     public function findByCourse(int $courseId): array {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM tags WHERE course_id = :courseId ORDER BY type"
+            "SELECT * FROM tags WHERE course_id = :courseId ORDER BY tag_name"
         );
         $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
@@ -62,12 +62,12 @@ class TagRepository {
      * Salva un nuovo tag
      * @throws \Exception in caso di errore
      */
-    public function save(string $type, int $courseId): void {
+    public function save(string $tag_name, int $courseId): void {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO tags (type, course_id)
-             VALUES (:type, :courseId)"
+            "INSERT INTO tags (tag_name, course_id)
+             VALUES (:tag_name, :courseId)"
         );
-        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+        $stmt->bindValue(':tag_name', $tag_name, PDO::PARAM_STR);
         $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
@@ -79,12 +79,12 @@ class TagRepository {
      * Aggiorna un tag
      * @throws \Exception in caso di errore
      */
-    public function update(int $tagId, string $type): void {
+    public function update(int $tagId, string $tag_name): void {
         $stmt = $this->pdo->prepare(
-            "UPDATE tags SET type = :type WHERE tag_id = :tagId"
+            "UPDATE tags SET tag_name = :tag_name WHERE tag_id = :tagId"
         );
         $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
-        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+        $stmt->bindValue(':tag_name', $tag_name, PDO::PARAM_STR);
 
         if (!$stmt->execute()) {
             throw new \Exception("Errore durante l'aggiornamento del tag");
@@ -109,7 +109,7 @@ class TagRepository {
     private function rowToDTO(array $row): TagDTO {
         return new TagDTO(
             (int)$row['tag_id'],
-            $row['type'],
+            $row['tag_name'],
             (int)$row['course_id']
         );
     }
