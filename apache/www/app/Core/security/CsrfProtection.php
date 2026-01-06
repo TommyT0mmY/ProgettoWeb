@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Unibostu\Core;
+namespace Unibostu\Core\security;
+
+use Unibostu\Core\SessionManager;
 
 /**
  * Class CsrfProtection
