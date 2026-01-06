@@ -126,8 +126,8 @@ alter table courses add constraint FK_course_faculty
      on delete cascade;
 
 alter table post_tags add constraint FK_post_tag_tag
-     foreign key (tag_id, course_id)
-     references tags (tag_id, course_id)
+     foreign key (tag_id)
+     references tags (tag_id)
      on delete cascade;
 
 alter table post_tags add constraint FK_post_tag_post
