@@ -170,7 +170,7 @@ class Router {
         }
         $result = $this->dispatchDFS($this->routes, $segments, 0);
         if (!$result->found || !isset($result->callback)) {
-            throw new \RuntimeException("404 Not Found\n");
+            throw new \RuntimeException("404 Not Found\n", 404);
         }
         $controllerName = $result->callback->controllerClassname;
         $action = $result->callback->action;
