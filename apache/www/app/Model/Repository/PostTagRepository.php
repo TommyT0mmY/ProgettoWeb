@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Core\Database;
+use Unibostu\Model\DTO\TagDTO;
 use PDO;
 
 class PostTagRepository {
@@ -15,10 +16,15 @@ class PostTagRepository {
 
     /**
      * Recupera tutti i tag di un post
+     * @return array Array di array con chiavi TagDTO
      */
     public function findTagsByPost(int $postId): array {
         $stmt = $this->pdo->prepare(
-            "SELECT tag_id, course_id FROM post_tags WHERE post_id = :postId"
+            "SELECT t.tag_id, t.tag_name, t.course_id
+             FROM tags t
+             JOIN post_tags pt ON t.tag_id = pt.tag_id
+             WHERE pt.post_id = :postId
+             ORDER BY t.tag_name"
         );
         $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         $stmt->execute();
@@ -61,5 +67,13 @@ class PostTagRepository {
         $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
         return $stmt->execute();
+    }
+
+    private function rowToDTO(array $row): TagDTO {
+        return new TagDTO(
+            (int)$row['tag_id'],
+            $row['tag_name'],
+            (int)$row['course_id']
+        );
     }
 }

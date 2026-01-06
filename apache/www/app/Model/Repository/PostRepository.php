@@ -14,11 +14,15 @@ class PostRepository {
     private PDO $pdo;
     private PostTagRepository $postTagRepository;
     private UserRepository $userRepository;
+    private CourseRepository $courseRepository;
+    private CategoryRepository $categoryRepository;
     
     public function __construct() {
         $this->pdo = Database::getConnection();
         $this->postTagRepository = new PostTagRepository();
         $this->userRepository = new UserRepository();
+        $this->courseRepository = new CourseRepository();
+        $this->categoryRepository = new CategoryRepository();
     }
 
     /**
@@ -326,6 +330,8 @@ class PostRepository {
     private function rowToDTO(array $row): PostDTO {
         $postId = (int)$row['post_id'];
         $tags = $this->postTagRepository->findTagsByPost($postId);
+        $course = $this->courseRepository->findById((int)$row['course_id']);
+        $category = $this->categoryRepository->findById((int)$row['category_id']);
         $likes = $this->countLikes($postId);
         $dislikes = $this->countDislikes($postId);
         $likedByCurrentUser = $this->hasUserVoted($postId, $row['user_id']);
@@ -337,9 +343,9 @@ class PostRepository {
             description: $row['description'],
             createdAt: $row['created_at'],
             userId: $row['user_id'],
-            courseId: (int)$row['course_id'],
+            course: $course,
             tags: $tags,
-            category: $row['category_id'],
+            category: $category,
             likes: $likes,
             dislikes: $dislikes,
             likedByUser: $likedByCurrentUser,

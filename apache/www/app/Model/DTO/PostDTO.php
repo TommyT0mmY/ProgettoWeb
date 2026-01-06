@@ -11,11 +11,11 @@ readonly class PostDTO {
     public ?string $attachmentPath;
     public string $createdAt;
     public string $userId;
-    public int $courseId;
-    /** @var array Array of tag arrays with 'tag_name' keys */
+    public CourseDTO $course;
+    /** @var array Array of tag arrays with TagDTO keys */
     public array $tags;
-    /** @var ?int  category id */
-    public ?int $category;
+    /** @var ?CategoryDTO  category */
+    public ?CategoryDTO $category;
     public int $likes;
     public int $dislikes;
     /** @var bool value is 0 if disliked, 1 if liked, null if no action taken */ 
@@ -28,8 +28,8 @@ readonly class PostDTO {
         string $description,
         string $createdAt,
         string $userId,
-        int $courseId,
-        ?int $category,
+        CourseDTO $course,
+        ?CategoryDTO $category,
         array $tags = [],
         int $likes = 0,
         int $dislikes = 0,
@@ -43,7 +43,7 @@ readonly class PostDTO {
         $this->attachmentPath = $attachmentPath;
         $this->createdAt = $createdAt;
         $this->userId = $userId;
-        $this->courseId = $courseId;
+        $this->course = $course;
         $this->tags = $tags;
         $this->category = $category;
         $this->likes = $likes;

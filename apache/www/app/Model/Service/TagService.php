@@ -4,12 +4,17 @@ declare(strict_types=1);
 namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\TagRepository;
+use Unibostu\Model\DTO\TagDTO;
+use Unibostu\Core\PostRepository;
+use Unibostu\Model\Repository\PostTagRepository;
 
 class TagService {
     private TagRepository $tagRepository;
+    private PostTagRepository $postTagRepository;
 
     public function __construct() {
         $this->tagRepository = new TagRepository();
+        $this->postTagRepository = new PostTagRepository();
     }
 
     /**
@@ -21,11 +26,12 @@ class TagService {
 
     /**
      * Recupera i tag di un post
+     * @return array Array di array con chiavi TagDTO
      */
     public function getTagsByPost(int $postId): array {
-        return $this->tagRepository->findByPost($postId);
+        return $this->postTagRepository->findTagsByPost($postId);
     }
-    
+
     /**
      * Crea un nuovo tag
      * @throws \Exception se i dati non sono validi
