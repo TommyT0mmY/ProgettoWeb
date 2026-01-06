@@ -31,48 +31,50 @@ class PostQuery {
         return new self();
     }
 
-    public function forAdmin(bool $isAdminView): self {
-        $this->isAdminView = $isAdminView;
+    public function forAdmin(?bool $isAdminView): self {
+        if ($isAdminView !== null) $this->isAdminView = $isAdminView;
         return $this;
     }
 
-    public function forUser(string $userId): self {
-        $this->userId = $userId;
+    public function forUser(?string $userId): self {
+        if ($userId !== null) $this->userId = $userId;
         return $this;
     }
 
-    public function authoredBy(string $authorId): self {
-        $this->authorId = $authorId;
+    public function authoredBy(?string $authorId): self {
+        if ($authorId !== null) $this->authorId = $authorId;
         return $this;
     }
 
-    public function inCourse(int $courseId): self {
-        $this->courseId = $courseId;
+    public function inCourse(?int $courseId): self {
+        if ($courseId !== null) $this->courseId = $courseId;
         return $this;
     }
 
-    public function inCategory(int $categoryId): self {
-        $this->category = $categoryId;
+    public function inCategory(?int $categoryId): self {
+        if ($categoryId !== null) $this->category = $categoryId;
         return $this;
     }
 
-    public function withTags(array $tags): self {
-        $this->tags = $tags;
+    public function withTags(?array $tags): self {
+        if ($tags !== null && count($tags) > 0) $this->tags = $tags;
         return $this;
     }
 
-    public function sortedBy(string $sortOrder): self {
-        $this->sortOrder = in_array($sortOrder, ['ASC', 'DESC']) ? $sortOrder : 'DESC';
+    public function sortedBy(?string $sortOrder): self {
+        if ($sortOrder !== null) {
+            $this->sortOrder = in_array($sortOrder, ['ASC', 'DESC']) ? $sortOrder : 'DESC';
+        }
         return $this;
     }
 
-    public function afterPost(int $lastPostId): self {
-        $this->lastPostId = $lastPostId;
+    public function afterPost(?int $lastPostId): self {
+        if ($lastPostId !== null) $this->lastPostId = $lastPostId;
         return $this;
     }
 
-    public function withLimit(int $limit): self {
-        $this->limit = $limit;
+    public function withLimit(?int $limit): self {
+        if ($limit !== null) $this->limit = $limit;
         return $this;
     }
 
