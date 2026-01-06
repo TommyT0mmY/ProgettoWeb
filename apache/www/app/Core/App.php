@@ -6,6 +6,7 @@ namespace Unibostu\Core;
 use Unibostu\Controller as Ctrl;
 use Unibostu\Core\router\Router;
 use Unibostu\Core\router\RouteLoader;
+use Unibostu\Core\security\Auth;
 use Unibostu\Core\security\CsrfProtection;
 
 class App {
@@ -28,6 +29,9 @@ class App {
         });
         $this->container->register(RenderingEngine::class, function(Container $container) {
             return new RenderingEngine($container->get(CsrfProtection::class));
+        });
+        $this->container->register(Auth::class, function(Container $container) {
+            return new Auth($container->get(SessionManager::class));
         });
     }
 

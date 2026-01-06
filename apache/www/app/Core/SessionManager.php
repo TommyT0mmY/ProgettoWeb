@@ -23,7 +23,7 @@ final class SessionManager {
     private function __clone() {
     }
 
-    private function start(): void {
+    public function start(): void {
         $this->assertHeadersNotSent();
         if ($this->started) {
             return;
