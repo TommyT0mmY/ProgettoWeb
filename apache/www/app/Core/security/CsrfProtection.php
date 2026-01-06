@@ -4,15 +4,10 @@ declare(strict_types=1);
 namespace Unibostu\Core;
 
 /**
- * Utility class for Cross-Site Request Forgery (CSRF) protection.
+ * Class CsrfProtection
  *
- * This class manages the generation and validation of security tokens
- * stored in the user's session. It prevents unauthorized commands from 
- * being transmitted from a user that the web application trusts.
- *
- * Each token is tied to a specific form ID and has a limited lifetime.
- * For security, tokens are "one-time use" and are destroyed upon 
- * successful validation.
+ * Manages CSRF token generation and validation to protect against 
+ * Cross-Site Request Forgery attacks.
  */
 final class CsrfProtection {
     private const CSRF_TOKEN_LIFETIME = 3600;           // 1 hour
@@ -23,49 +18,42 @@ final class CsrfProtection {
     ) {}
 
     /**
-     * Generates a unique CSRF token for a specific form.
+     * Generates a CSRF token for a given key.
      *
-     * The generated token is stored in the session along with its 
-     * creation and expiration timestamps.
-     *
-     * @param string $formId Unique identifier for the form (e.g., "login_form").
-     * @return string The generated 64-character hexadecimal token.
+     * @param string $key Identifier for the token (e.g., form name).
+     * @param bool $multiUse Whether the token can be used multiple times.
+     * @return string The generated CSRF token.
      */
-    public function generateToken(string $formId): string {
+    public function generateToken(string $key, bool $multiUse = false): string {
         $token = bin2hex(random_bytes(32));
-        self::getTokens()[$formId] = [
+        self::getTokens()[$key] = [
             'token' => $token,
             'created' => time(),
-            'expires' => time() + self::CSRF_TOKEN_LIFETIME
+            'expires' => time() + self::CSRF_TOKEN_LIFETIME,
+            'multiUse' => $multiUse
         ];
         return $token;
-    } 
+    }
 
     /**
-     * Validates a CSRF token against session records.
+     * Validates a CSRF token for a given key.
      *
-     * Rules:
-     * - Returns {@code false} if no token exists for the given {@code $formId};
-     * - Returns {@code false} and clears the record if the token has expired;
-     * - Uses {@see hash_equals()} for timing-safe comparison to prevent side-channel attacks;
-     * - If validation succeeds, the token is destroyed (One-Time Token logic).
-     *
-     * @param string $token  The token string to verify.
-     * @param string $formId The identifier of the form that issued the token.
-     * @return bool True if the token is valid and not expired.
+     * @param string $key Identifier for the token (e.g., form name).
+     * @param string $token The token to validate.
+     * @return bool True if the token is valid, false otherwise.
      */
-    public function validateToken(string $token, string $formId): bool {
-        if (!isset(self::getTokens()[$formId])) {
+    public function validateToken(string $key, string $token): bool {
+        if (!isset(self::getTokens()[$key])) {
             return false;
         }
-        $stored = self::getTokens()[$formId];
+        $stored = self::getTokens()[$key];
         if (time() > $stored['expires']) {
-            unset(self::getTokens()[$formId]);
+            unset(self::getTokens()[$key]);
             return false;
         }
         $isValid = hash_equals($stored['token'], $token);
-        if ($isValid) {
-            unset(self::getTokens()[$formId]);
+        if ($isValid && !$stored['multiUse']) {
+            unset(self::getTokens()[$key]);
         }
         return $isValid;
     }
