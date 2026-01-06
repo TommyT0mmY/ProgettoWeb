@@ -43,6 +43,19 @@ class UserService {
     }
 
     /**
+     * Checks if a user is suspended
+     * @throws \Exception if the user is not found
+     * @return bool true if the user is suspended, false otherwise
+     */
+    public function isUserSuspended(string $userId): bool {
+        $user = $this->userRepository->findByUserId($userId);
+        if (!$user) {
+            throw new \Exception("Utente non trovato");
+        }
+        return $user->suspended;
+    }
+
+    /**
      * Registra un nuovo utente
      * @throws \Exception se l'username è già preso o i dati sono invalidi
      */
