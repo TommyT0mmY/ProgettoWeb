@@ -47,7 +47,7 @@ class PostRepository {
         $params = [];
 
         // se filtro è null ritorna tutti i post
-        if ($postQuery->getIsAdminView() !== null) {
+        if ($postQuery->getIsAdminView() === false) {
             // Filtro per categoria
             if (!empty($filter->category)) {
                 $conditions[] = " p.category_id = ?";
@@ -84,17 +84,18 @@ class PostRepository {
                 $params[] = $filter->authorId;
                 $conditions[] = " p.user_id = ?";
             }
-
-            // Aggiungi WHERE clause se ci sono condizioni
-            if (!empty($conditions)) {
-                $sql .= " WHERE " . implode(" AND ", $conditions);
-            }
         }
+
+        $sql .= " WHERE ";
+        if (!empty($conditions)) {
+            $sql .= implode(" AND ", $conditions) . " AND ";
+        }
+
         // Paginazione
         if ($postQuery->getSortOrder() === 'ASC') {
-            $sql .= " AND p.post_id > ?";
+            $sql .= " p.post_id > ?";
         } else {
-            $sql .= " AND p.post_id < ?";
+            $sql .= " p.post_id < ?";
         }
         $params[] = $postQuery->getLastPostId();
 
@@ -331,6 +332,7 @@ class PostRepository {
 
         $dto = new PostDTO(
             postId: $postId,
+            author: $row['author'],
             title: $row['title'],
             description: $row['description'],
             createdAt: $row['created_at'],

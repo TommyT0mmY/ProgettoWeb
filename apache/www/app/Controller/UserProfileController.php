@@ -3,24 +3,22 @@ declare(strict_types=1);
 
 namespace Unibostu\Controller;
 
-use Unibostu\Core\Http\Request;
 use Unibostu\Core\Http\Response;
-use Unibostu\Core\SessionManager;
+use Unibostu\Core\Http\Request;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Model\Service\PostService;
 
-class CommunityController extends BaseController {
+class UserProfileController extends BaseController {
     private $postService;
     
-    /** get Community posts */
-    #[Get('/community')]
-    public function getCommunityPosts(array $params, Request $request): Response {
+    /** get Homepage posts */
+    #[Get('/user-profile')]
+    public function getUserProfilePosts(array $params, Request $request): Response {
         $postQuery = PostQuery::create()
             ->forUser("giulia_verdi")
-            ->inCourse($request->get('courseId'))
+            ->authoredBy($request->get('authorId'))
             ->inCategory($request->get('categoryId'))
-            ->withTags($request->get('tags'))
             ->sortedBy($request->get('sortOrder'))
             ->afterPost((int)$request->get('lastPostId'))
             ->withLimit((int)$request->get('limit'));
@@ -28,6 +26,5 @@ class CommunityController extends BaseController {
         $this->postService = new PostService();
         return $this->render("home", [$this->postService->getPosts($postQuery)]);
     }
-
 }
 

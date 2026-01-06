@@ -23,6 +23,7 @@ readonly class PostDTO {
 
     public function __construct(
         int $postId,
+        UserDTO $author,
         string $title,
         string $description,
         string $createdAt,
@@ -36,6 +37,7 @@ readonly class PostDTO {
         ?string $attachmentPath = null
     ) {
         $this->postId = $postId;
+        $this->author = $author;
         $this->title = $title;
         $this->description = $description;
         $this->attachmentPath = $attachmentPath;
