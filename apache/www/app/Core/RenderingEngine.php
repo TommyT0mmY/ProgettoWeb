@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Unibostu\Core;
 
+use Unibostu\Core\security\CsrfProtection;
+
 /**
  * Class RenderingEngine
  *
@@ -23,6 +25,10 @@ class RenderingEngine {
     private ?string $layout = null;
     private array $layoutData = [];
     private bool $isRendering = false;
+
+    public function __construct(
+        private CsrfProtection $csrfProtection
+    ) {}
 
     /** 
      * Render a View with optional data.
@@ -76,5 +82,13 @@ class RenderingEngine {
     public function extend(string $layout, array $data = []): void {
         $this->layout = $layout;
         $this->layoutData = $data;
+    }
+
+    public function generateCsrfPair(bool $multiUse = false): array {
+        $key = bin2hex(random_bytes(16));
+        return [
+            'csrfKey' => $key,
+            'csrfToken' => $this->csrfProtection->generateToken($key, $multiUse)
+        ];
     }
 }

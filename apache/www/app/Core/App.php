@@ -6,6 +6,7 @@ namespace Unibostu\Core;
 use Unibostu\Controller as Ctrl;
 use Unibostu\Core\router\Router;
 use Unibostu\Core\router\RouteLoader;
+use Unibostu\Core\security\CsrfProtection;
 
 class App {
     private Router $router;
@@ -19,14 +20,14 @@ class App {
     }
 
     private function registerServices(): void {
-        $this->container->register(RenderingEngine::class, function() {
-            return new RenderingEngine();
-        });
         $this->container->register(SessionManager::class, function() {
             return new SessionManager();
         });
         $this->container->register(CsrfProtection::class, function(Container $container) {
             return new CsrfProtection($container->get(SessionManager::class));
+        });
+        $this->container->register(RenderingEngine::class, function(Container $container) {
+            return new RenderingEngine($container->get(CsrfProtection::class));
         });
     }
 
@@ -52,7 +53,8 @@ class App {
     }
 
     public function handleError(\Exception $e): void {
-        http_response_code(500);
+        $code = $e->getCode() ?: 500;
+        http_response_code($code);
         echo "An error occurred: " . htmlspecialchars($e->getMessage()); 
     }
 }
