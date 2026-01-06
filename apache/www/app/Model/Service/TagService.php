@@ -20,6 +20,13 @@ class TagService {
     }
 
     /**
+     * Recupera i tag di un post
+     */
+    public function getTagsByPost(int $postId): array {
+        return $this->tagRepository->findByPost($postId);
+    }
+    
+    /**
      * Crea un nuovo tag
      * @throws \Exception se i dati non sono validi
      */

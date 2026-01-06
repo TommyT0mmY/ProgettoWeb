@@ -59,6 +59,23 @@ class TagRepository {
     }
 
     /**
+     * Recupera i tag di un post
+     */
+    public function findByPost(int $postId): array {
+        $stmt = $this->pdo->prepare(
+            "SELECT t.* FROM tags t
+             JOIN post_tags pt ON t.tag_id = pt.tag_id
+             WHERE pt.post_id = :postId
+             ORDER BY t.tag_name"
+        );
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([$this, 'rowToDTO'], $rows);
+    }
+
+    /**
      * Salva un nuovo tag
      * @throws \Exception in caso di errore
      */
