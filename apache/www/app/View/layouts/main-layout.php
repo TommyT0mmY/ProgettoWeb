@@ -5,6 +5,11 @@
     <title><?= $title ?? 'Default' ?></title>
     <link rel="stylesheet" href="/css/popup.css">
     <script src="js/popup.js" defer></script>
+    <?php if (!empty($additionalHeadCode)): ?>
+        <?php foreach ($additionalHeadCode as $code): ?>
+            <?= $code ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </head>
 <body>
     <main>

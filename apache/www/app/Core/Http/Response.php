@@ -15,7 +15,11 @@ class Response {
         private array $headers = []
     ) {}
 
+    public static function create(): self {
+        return new self();
+    }
     /**
+     *
      * Set the response content.
      *
      * @param string $content The content to set.

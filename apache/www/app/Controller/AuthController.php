@@ -6,6 +6,8 @@ use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
+use Unibostu\Core\security\Auth;
+use Unibostu\Core\security\CsrfProtection;
 
 class AuthController extends BaseController {
     #[Get("/login")]
@@ -20,16 +22,78 @@ class AuthController extends BaseController {
 
     #[Post("/api/auth/login")]
     public function login(array $params, Request $request): Response {
-        return new Response("todo");
+        $username = $request->post("username");
+        $password = $request->post("password");
+        $csrfKey = $request->post("csrf-key");
+        $csrfToken = $request->post("csrf-token");
+        /** @var Auth $auth */
+        $auth = $this->container->get(Auth::class);
+        /** @var CsrfProtection $csrfProtection */
+        $csrfProtection = $this->container->get(CsrfProtection::class);
+        $success = true;
+        if (!$csrfProtection->validateToken($csrfKey, $csrfToken)) {
+            $success = false; 
+        }
+        if ($success && !$auth->loginAsUser($username, $password)) {
+            $success = false;
+        }
+        $resultMessage = [];
+        if ($success) {
+            $csrfProtection->invalidateToken($csrfKey);
+            $resultMessage = [
+                "success" => true,
+                "redirect" => "/",
+            ];
+        } else {
+            $resultMessage = [
+                "success" => false,
+                "generalError" => "Invalid username or password.",
+            ];
+        }
+        return Response::create()->json($resultMessage);
     } 
 
     #[Post("/api/auth/register")]
     public function register(array $params, Request $request): Response {
-        return new Response("todo");
+        $username = $request->post("username");
+        $password = $request->post("password");
+        $csrfKey = $request->post("csrf-key");
+        $csrfToken = $request->post("csrf-token");
+        /** @var Auth $auth */
+        $auth = $this->container->get(Auth::class);
+        /** @var CsrfProtection $csrfProtection */
+        $csrfProtection = $this->container->get(CsrfProtection::class);
+        $success = true;
+        if (!$csrfProtection->validateToken($csrfKey, $csrfToken)) {
+            $success = false; 
+        }
+        if ($success && !$auth->registerUser($username, $password)) {
+            $success = false;
+        }
+        $resultMessage = [];
+        if ($success) {
+            $csrfProtection->invalidateToken($csrfKey);
+            $resultMessage = [
+                "success" => true,
+                "redirect" => "/",
+            ];
+        } else {
+            $resultMessage = [
+                "success" => false,
+                "generalError" => "Registration failed. Username may already be taken.",
+            ];
+        }
+        return Response::create()->json($resultMessage);
     }
 
     #[Post("/api/auth/logout")]
     public function logout(array $params, Request $request): Response {
-        return new Response("todo");
+        /** @var Auth $auth */
+        $auth = $this->container->get(Auth::class);
+        $auth->logout();
+        return Response::create()->json([
+            "success" => true,
+            "redirect" => "/login",
+        ]);
     }
 }

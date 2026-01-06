@@ -60,6 +60,10 @@ final class CsrfProtection {
         return $isValid;
     }
 
+    public function invalidateToken(string $key): void {
+        unset(self::getTokens()[$key]);
+    }
+
     /**
      * Internal helper to access session storage.
      *
