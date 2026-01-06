@@ -29,6 +29,19 @@ class AdminRepository {
         return $row ? $this->rowToDTO($row) : null;
     }
 
+    /**
+     * Verifies if the admin exists 
+     */
+    public function adminExists(string $adminId): bool {
+        $stmt = $this->pdo->prepare(
+            "SELECT COUNT(*) as count FROM administrators WHERE admin_id = :adminId"
+        );
+        $stmt->bindValue(':adminId', $adminId, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'] > 0;
+    }
+
     private function rowToDTO(array $row): AdminDTO {
         return new AdminDTO(
             $row['admin_id'],

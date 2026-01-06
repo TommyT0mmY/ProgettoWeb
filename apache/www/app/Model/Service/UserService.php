@@ -42,6 +42,10 @@ class UserService {
         return true;
     }
 
+    public function userExists(string $userId): bool {
+        return $this->userRepository->userExists($userId);
+    }
+
     /**
      * Checks if a user is suspended
      * @throws \Exception if the user is not found

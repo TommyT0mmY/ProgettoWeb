@@ -28,5 +28,9 @@ class AdminService {
             throw new \Exception("Password errata");
         }
     }
+
+    public function adminExists(string $adminId): bool {
+        return $this->adminRepository->adminExists($adminId);
+    }
 }
 
