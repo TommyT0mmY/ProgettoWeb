@@ -20,4 +20,8 @@ abstract class BaseController {
         $content = $this->renderingEngine->render($viewName, $data);
         return new Response($content); 
     }
+
+    public function getContainer(): Container {
+        return $this->container;
+    }
 }
