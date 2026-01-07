@@ -42,22 +42,22 @@ class PostQuery {
     }
 
     public function authoredBy(?string $authorId): self {
-        if ($authorId !== null) $this->authorId = $authorId;
+        $this->authorId = $this->typeCorrection($authorId, string::class);
         return $this;
     }
 
-    public function inCourse(?int $courseId): self {
-        if ($courseId !== null) $this->courseId = $courseId;
+    public function inCourse(null|int|string $courseId): self {
+        $this->courseId = $this->typeCorrection($courseId, 'int');
         return $this;
     }
 
-    public function inCategory(?int $categoryId): self {
-        if ($categoryId !== null) $this->category = $categoryId;
+    public function inCategory(null|int|string $categoryId): self {
+        $this->category = $this->typeCorrection($categoryId, 'int');
         return $this;
     }
 
     public function withTags(?array $tags): self {
-        if ($tags !== null && count($tags) > 0) $this->tags = $tags;
+        $this->tags = $this->typeCorrection($tags, 'array');
         return $this;
     }
 
@@ -68,13 +68,13 @@ class PostQuery {
         return $this;
     }
 
-    public function afterPost(?int $lastPostId): self {
-        if ($lastPostId !== null) $this->lastPostId = $lastPostId;
+    public function afterPost(int|string $lastPostId): self {
+        $this->lastPostId = $this->typeCorrection($lastPostId, 'int');
         return $this;
     }
 
-    public function withLimit(?int $limit): self {
-        if ($limit !== null) $this->limit = $limit;
+    public function withLimit(int|string $limit): self {
+        $this->limit = $this->typeCorrection($limit, 'int');
         return $this;
     }
 
@@ -112,5 +112,23 @@ class PostQuery {
 
     public function getLimit(): int {
         return $this->limit;
+    }
+
+    private function typeCorrection(mixed $value,  $type): mixed {
+        if ($value === null) {
+            return null;
+        }
+        switch ($type) {
+            case 'int':
+                return (int)$value;
+            case 'string':
+                return (string)$value;
+            case 'bool':
+                return (bool)$value;
+            case 'array':
+                return (array)$value;
+            default:
+                return $value;
+        }
     }
 }
