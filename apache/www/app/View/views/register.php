@@ -1,6 +1,7 @@
 <?php 
 /** @var \Unibostu\Dto\FacultyDto $faculty */
-/*tempory view , da migliorare con select dinamica delle facoltà dal DB*/
+/** @var \Unibostu\Dto\FacultyDto[] $faculties */
+
 $this->extend('main-layout', ['title' => 'Register Unibostu']); 
 ?>
 
@@ -35,14 +36,13 @@ $this->extend('main-layout', ['title' => 'Register Unibostu']);
                     <li>
                     <label for="faculty" >Faculty:</label>
                     <select id="faculty" name="faculty" required>
-                    <?/* if (!empty($faculties)): ?>
+                    <?php if (!empty($faculties)): ?>
                         <?php foreach ($faculties as $faculty): ?>
                             <option value="<?= htmlspecialchars($faculty->facultyId) ?>">
                             <?= htmlspecialchars($faculty->facultyName) ?>
                             </option>
                         <?php endforeach; ?>
-                    <?php endif; */?>
-                    <option value="cs">Computer Science</option> <!--da sostituire con le facoltà del DB-->
+                    <?php endif; ?>                
                     </select>
                     </li>
                     <li>
