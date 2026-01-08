@@ -13,6 +13,8 @@ use Unibostu\Model\Service\FacultyService;
 use Unibostu\Model\DTO\FacultyDTO;
 
 class AuthController extends BaseController {
+   private $facultyService; /*aggiunto per view register #Aya*/
+
     #[Get("/login")]
     public function loginIndex(): Response {
         return $this->render("login", []);
