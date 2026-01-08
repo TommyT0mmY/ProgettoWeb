@@ -41,6 +41,15 @@ header > button{
     border:#fff;
 
 } 
+header > .profile-container{
+    width:30px;
+    height:30px;
+    border:#fff;
+}
+header > .title_with_logo{
+    display: flex; 
+    flex-direction: row;
+}
 /*NAVBAR*/
 
 nav{
@@ -153,15 +162,7 @@ fieldset.tags label {
   margin: 1;
 }
 
-/*
 
-main > .post  ul {
-    list-style: none;
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    width: 100%;   
-}*/
 
 
 body > main{
