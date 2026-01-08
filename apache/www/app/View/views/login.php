@@ -11,19 +11,26 @@ $this->extend('main-layout', [
 <form id="login-form" method="post">
     <fieldset>
         <legend>Login to Unibostu</legend>
-        <label for="username">Username:</label>
-        <span>
-            <input type="text" name="username" id="username" required aria-required="true">
-            <span class="field-error-message" id="username-error" aria-live="polite"></span>
-        </span>
-        <label for="password">Password:</label>
-        <span>
-            <input type="password" name="password" id="password" required aria-required="true">
-            <span class="field-error-message" id="password-error" aria-live="polite"></span>
-        </span>
-        <input type="hidden" name="csrf-token" id="csrf-token" value="<?php echo $csrfToken; ?>">
-        <input type="hidden" name="csrf-key" id="csrf-key" value="<?php echo $csrfKey; ?>">
-        <button type="submit" id="login-form_submit">Login</button>
+        <ul>
+            <li>
+            <label for="username">Username:</label>
+            
+                <input type="text" name="username" id="username" required aria-required="true"/>
+                <span class="field-error-message" id="username-error" aria-live="polite"></span>
+                <!--Warning: Attribute aria-required is unnecessary for elements that have attribute required.-->
+            </li>
+            <li>
+            <label for="password">Password:</label>            
+                <input type="password" name="password" id="password" required aria-required="true"/>
+                <span class="field-error-message" id="password-error" aria-live="polite"></span>
+            <input type="hidden" name="csrf-token" id="csrf-token" value="<?php echo $csrfToken; ?>"/>
+            <input type="hidden" name="csrf-key" id="csrf-key" value="<?php echo $csrfKey; ?>"/>
+            </li>
+            <li>
+            <button type="submit" id="login-form_submit">Login</button>
+            </li>
+        </ul>
     </fieldset>
 </form>
+
 
