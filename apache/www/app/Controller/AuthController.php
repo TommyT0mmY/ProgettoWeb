@@ -8,6 +8,9 @@ use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\security\Auth;
 use Unibostu\Core\security\CsrfProtection;
+/*questi 2 sotto li ho aggiunti per view register #Aya*/
+use Unibostu\Model\Service\FacultyService;
+use Unibostu\Model\DTO\FacultyDTO;
 
 class AuthController extends BaseController {
     #[Get("/login")]
@@ -17,8 +20,10 @@ class AuthController extends BaseController {
 
     #[Get("/register")]
     public function registerIndex(): Response {
-        return $this->render("register", []);
-    }
+        $this->facultyService = new FacultyService();
+        $faculties = $this->facultyService->getAllFaculties();
+        return $this->render("register", ['faculties' => $faculties]);
+    } /*modificato per passare le facoltà alla view register, non so se va bene #Aya*/
 
     #[Post("/api/auth/login")]
     public function login(array $params, Request $request): Response {
