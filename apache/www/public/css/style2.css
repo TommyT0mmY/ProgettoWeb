@@ -184,7 +184,7 @@ textarea{
 .Post {
     width: 100%;
     /*max-width: 850px;*/
-    margin: 0 auto; /* Centra orizzontalmente rispetto al contenitore */
+    /*margin: 0 auto;*/ /* Centra orizzontalmente rispetto al contenitore */
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -193,11 +193,12 @@ textarea{
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
+    gap: 3px;
 }
 
 
 .Post footer {
-    margin-top: 18px;
+    margin-top: 33px;
     padding-top: 8px;
     border-top: 1px solid #0757a9;
 }
@@ -205,27 +206,26 @@ textarea{
 /* Header e Titolo */
 .Post header h3 {
     color: #0757a9; 
-    margin: 0 0 5px 0;
-    font-size: 1.6rem;
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
 }
 
 
 /* Stile dei Tag */
-ul.tag {
+ul.tags {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    inset: 0;
-    
+    gap: 3px;   
 }
 
 
-.tag li a {
+.tags li a {
+    padding: 2px 6px;
     text-decoration: none;
     font-size: 0.8rem;
     font-weight: 600;
-    border-radius: 20px;
+    border-radius: 8px;
     transition: 0.3s;
 }
 
@@ -246,7 +246,7 @@ ul.tag {
   border: 1px solid #00695c; 
 }
 
-.tag li a:hover {
+.tags li a:hover {
     filter: brightness(0.9);
 }
 
@@ -254,7 +254,7 @@ ul.tag {
 /* Footer e Review (Bordi sui li) */
 .Post footer {
     margin-top: 0px;
-    padding-top: 0px;
+    padding-top: 5px;
     border-top: 1px solid #d1dee7;
 }
 
