@@ -22,13 +22,16 @@ class RenderingEngine {
     private const viewsPath = self::basePath . 'views/';
     private const componentsPath = self::basePath . 'components/';
 
+    private CsrfProtection $csrfProtection;
     private ?string $layout = null;
     private array $layoutData = [];
     private bool $isRendering = false;
 
     public function __construct(
-        private CsrfProtection $csrfProtection
-    ) {}
+        private Container $container
+    ) {
+        $this->csrfProtection = $this->container->get(CsrfProtection::class); 
+    }
 
     /** 
      * Render a View with optional data.
