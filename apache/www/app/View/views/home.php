@@ -1,8 +1,7 @@
 <?php 
 /** @var \Unibostu\Dto\PostDto[] $posts */
 
-$this->extend('main-layout', ['title' => 'Unibostu - Homepage'
-]); 
+$this->extend('main-layout', ['title' => 'Unibostu - Homepage']); 
 ?>
 
 <div class="post_container">

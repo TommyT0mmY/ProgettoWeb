@@ -28,7 +28,7 @@ class App {
             return new CsrfProtection($container->get(SessionManager::class));
         });
         $this->container->register(RenderingEngine::class, function(Container $container) {
-            return new RenderingEngine($container->get(CsrfProtection::class));
+            return new RenderingEngine($container);
         });
         $this->container->register(Auth::class, function(Container $container) {
             return new Auth($container->get(SessionManager::class));

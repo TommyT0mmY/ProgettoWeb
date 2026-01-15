@@ -3,34 +3,29 @@
 $this->extend('main-layout', [
     'title' => 'Login Unibostu',
     'additionalHeadCode' => [
-        '<script src="js/login.js" defer></script>',
+        '<script type="module" src="js/login.js"></script>',
     ],
 ]);
 ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true);
 ?>
-<form id="login-form" method="post">
+
+<form id="login-form" method="post" novalidate>
     <fieldset>
         <legend>Login to Unibostu</legend>
-        <ul>
-            <li>
-            <label for="username">Username:</label>
-            
-                <input type="text" name="username" id="username" required aria-required="true"/>
-                <span class="field-error-message" id="username-error" aria-live="polite"></span>
-                <!--Warning: Attribute aria-required is unnecessary for elements that have attribute required.-->
-            </li>
-            <li>
-            <label for="password">Password:</label>            
-                <input type="password" name="password" id="password" required aria-required="true"/>
-                <span class="field-error-message" id="password-error" aria-live="polite"></span>
-            <input type="hidden" name="csrf-token" id="csrf-token" value="<?php echo $csrfToken; ?>"/>
-            <input type="hidden" name="csrf-key" id="csrf-key" value="<?php echo $csrfKey; ?>"/>
-            </li>
-            <li>
-            <button type="submit" id="login-form_submit">Login</button>
-            </li>
-        </ul>
+        <output class="form-error-message" for="username password" role="alert"></output>
+        <label for="username">Username:</label>
+        <span>
+            <input type="text" name="username" id="username" aria-describedby="username-error" required>
+            <output class="field-error-message" id="username-error" for="username"></output>
+        </span>
+        <label for="password">Password:</label>
+        <span>
+            <input type="password" name="password" id="password" aria-describedby="password-error" minlength="6" required>
+            <output class="field-error-message" id="password-error" for="password"></output>
+        </span>
+        <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>">
+        <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>">
+        <button type="submit" id="login-form_submit">Login</button>
     </fieldset>
 </form>
-
 

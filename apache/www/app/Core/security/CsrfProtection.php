@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Core\security;
 
+use Unibostu\Core\Http\Request;
 use Unibostu\Core\SessionManager;
 
 /**
@@ -14,6 +15,8 @@ use Unibostu\Core\SessionManager;
 final class CsrfProtection {
     private const CSRF_TOKEN_LIFETIME = 3600;           // 1 hour
     private const KEY_CSRF_TOKENS = "_cp_csrf_tokens";
+    public const KEY_CSRF_KEY = "csrf-key";
+    public const KEY_CSRF_TOKEN = "csrf-token";
 
     public function __construct(
         private readonly SessionManager $session
@@ -60,8 +63,44 @@ final class CsrfProtection {
         return $isValid;
     }
 
+    /**
+     * Validates CSRF token from an HTTP request.
+     *
+     * Expects the request to contain 'csrf-key' and 'csrf-token' parameters in the request body.
+     *
+     * @param Request $request The HTTP request to validate.
+     * @return bool True if the token is valid, false otherwise.
+     */
+    public function validateRequest(Request $request): bool {
+        $key = $request->post(self::KEY_CSRF_KEY);
+        $token = $request->post(self::KEY_CSRF_TOKEN);
+        if ($key === null || $token === null) {
+            return false;
+        }
+        return $this->validateToken($key, $token);
+    }
+
+    /**
+     * Invalidates a CSRF token for a given key.
+     *
+     * @param string $key Identifier for the token to invalidate.
+     */
     public function invalidateToken(string $key): void {
         unset(self::getTokens()[$key]);
+    }
+
+    /**
+     * Invalidates CSRF token from an HTTP request.
+     *
+     * Expects the request to contain a 'csrf-key' parameter in the request body.
+     *
+     * @param Request $request The HTTP request to process.
+     */
+    public function invalidateRequestToken(Request $request): void {
+        $key = $request->post(self::KEY_CSRF_KEY);
+        if ($key !== null) {
+            $this->invalidateToken($key);
+        }
     }
 
     /**

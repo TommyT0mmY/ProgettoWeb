@@ -14,7 +14,7 @@
     <?php endif; ?>
 </head>
 <body>
-    <?= $this->component('header') ?> <!--non so se va bene cosi #Aya-->
+    <?= $this->component('header') ?>
     <main>
         <?= $content ?>
     </main>

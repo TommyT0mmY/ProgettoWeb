@@ -34,6 +34,7 @@ final class SessionManager {
         if (session_status() === PHP_SESSION_ACTIVE && !isset($_SESSION[self::KEY_CREATED])) {
             throw new \RuntimeException("A session is already active without proper initialization.");
         }
+        session_name('UNIBOSTU_SESSID');
         session_start();
         $this->started = true;
         // Is this a new session 

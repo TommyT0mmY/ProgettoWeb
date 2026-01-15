@@ -69,7 +69,7 @@ class UserCoursesRepository {
         } catch (\Exception $e) {
             // Annulla la transazione in caso di errore
             $this->pdo->rollBack();
-            throw $e;
+            throw new \Exception("Errore nel salvataggio dei corsi dell'utente.", 0, $e);
         }
     }
 

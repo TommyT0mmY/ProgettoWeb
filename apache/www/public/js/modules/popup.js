@@ -46,6 +46,4 @@ class Popup {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    Popup.init();
-});
+export default Popup;

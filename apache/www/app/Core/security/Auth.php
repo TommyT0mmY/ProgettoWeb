@@ -20,38 +20,44 @@ class Auth {
         $this->adminService = new AdminService();
     }
 
-    public function loginAsUser(string $username, string $password): bool {
-        if ($this->isAuthenticatedAsUser()) {
-            $this->logout();
-        }
-        try {
-            $authenticated = $this->userService->authenticate($username, $password);
-            if ($authenticated) {
-                $this->sessionManager->regenerate();
-                $this->sessionManager->set(self::KEY_USERID, $username);
-                return true;
-            }
-            return false;
-        } catch (\Exception $e) {
+    /**
+     * Performs user login.
+     *
+     * @param string $userId The userId.
+     * @param string $password The user password.
+     *
+     * @return bool True if login is successful, false otherwise.
+     */
+    public function loginAsUser(string $userId, string $password): bool {
+        $authenticated = $this->userService->checkCredentials($userId, $password);
+        if (!$authenticated) {
             return false;
         }
+        $this->sessionManager->unset(self::KEY_USERID);
+        $this->sessionManager->unset(self::KEY_ADMINID);
+        $this->sessionManager->regenerate();
+        $this->sessionManager->set(self::KEY_USERID, $userId);
+        return true;
     }
 
+    /**
+     * Performs admin login.
+     *
+     * @param string $adminId The admin ID.
+     * @param string $password The admin password.
+     *
+     * @return bool True if login is successful, false otherwise.
+     */
     public function loginAsAdmin(string $adminId, string $password): bool {
-        if ($this->isAuthenticatedAsAdmin()) {
-            $this->logout();
-        }
-        try {
-            $authenticated = $this->adminService->authenticate($adminId, $password);
-            if ($authenticated) {
-                $this->sessionManager->regenerate();
-                $this->sessionManager->set(self::KEY_ADMINID, $adminId);
-                return true;
-            }
-            return false;
-        } catch (\Exception $e) {
+        $authenticated = $this->adminService->checkCredentials($adminId, $password);
+        if (!$authenticated) {
             return false;
         }
+        $this->sessionManager->unset(self::KEY_USERID);
+        $this->sessionManager->unset(self::KEY_ADMINID);
+        $this->sessionManager->regenerate();
+        $this->sessionManager->set(self::KEY_ADMINID, $adminId);
+        return true;
     }
 
     public function logout(): void {
