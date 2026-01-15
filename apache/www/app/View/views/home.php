@@ -3,7 +3,8 @@
 
 $this->extend('main-layout', ['title' => 'Unibostu - Homepage']); 
 ?>
-<div class="posts-container">
+
+<div class="post_container">
 <?php foreach ($posts ?? [] as $post): ?>
     <?= $this->component('post', ['post' => $post]) ?>
 <?php endforeach; ?>

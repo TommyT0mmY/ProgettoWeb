@@ -1,10 +1,8 @@
 <?php 
 /**
  * @var \Unibostu\Core\RenderingEngine $this
- * @var FacultyDTO[] $faculties
+ * @var Unibostu\Model\DTO\FacultyDTO[] $faculties
  */
-
-use Unibostu\Model\DTO\FacultyDTO;
 
 $this->extend('main-layout', [
     'title' => 'Register Unibostu',

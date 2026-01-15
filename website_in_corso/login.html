@@ -13,9 +13,8 @@
     <a href="profile.html"><img class="profile-container" src="./img/user-profile.svg" alt="user-profile" /></a>    
  </header>
 <div class="containerNavMain">
-
  <nav id="navbar">
-  <div class="navbarList">
+  <div>
     <ul>
       <li>
         <button id="close-sidebar-button" >
@@ -24,12 +23,28 @@
       </li>
       <li><a href="index.html">Home</a></li>
       <li><a href="register.html">Register</a></li>
-      <li><a href="login.html">Login</a></li>
-      <li><a href="userPreferences.html">Preferences</a></li>
+      <li><a href="login.html">Login</a></li><!--in Login non serve-->
+       <li><a href="#">Logout</a></li><!--se loggato-->
+      <li><a href="userPreferences.html">Preferences</a></li><!--solo se utente-->
+      <li><a href="admin.html">Dashboard</a></li><!--solo se admin-->
+      <!--segue lista community/courses in caso si è utenti-->
+      
+        <li><h2 class="h2-navbar">Choosen courses</h2></li>     
+        <li><a href="index.html?subject=algoritmi">Algoritmi e Strutture Dati</a></li>
+        <li><a href="index.html?subject=architetture">Architetture degli Elaboratori</a></li>
+        <li><a href="index.html?subject=fisica">Fisica</a></li>
+        <li><a href="index.html?subject=metodi">Metodi Numerici per l'Intelligenza Artificiale</a></li>
+        <li><a href="index.html?subject=programmazione_reti">Programmazione di Reti</a></li>
+        <li><a href="index.html?subject=ing_software">Ingegneria del Software</a></li>
+        <li><a href="index.html?subject=ricerca_operativa">Ricerca Operativa</a></li>
+        <li><a href="index.html?subject=tecnologie_web">Tecnolgie Web</a></li>
+        <li><a href="index.html?subject=tirocinio">Tirocinio</a></li>
+      
     </ul>
   </div>
   </nav> 
   <div id="overlay" ></div>
+
 
   <main>
     <h2>Login</h2>
@@ -44,15 +59,18 @@
         <input type="password" name="password" id="loginpassword" placeholder="Insert your password" required/>
         </li>
         <li>
-        <input type="submit"/>
+        <input type="submit" value="Submit"/>
         </li>
       </ul>
     </form>
     <section>
+      <header>
+        <h3>Other options</h3>
+      </header>
       <p>If you don't have an account</p>
       <a href="register.html"> REGISTER </a>
       <p>If you are the admin click here</p>
-      <a href="loginAdmin.html">LOGIN reserved for the admin</a>
+      <a href="loginAdmin.html">LOGIN (reserved for the admin)</a>
     </section>
   </main>
 </div>
