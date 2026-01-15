@@ -5,8 +5,6 @@
     <title><?= $title ?? 'Default' ?></title>
     <link rel="stylesheet" href="/css/popup.css">
     <link rel="stylesheet" href="/css/style2.css"><!-- Main stylesheet provvisorio #Aya -->
-    
-    <script src="js/popup.js" defer></script>
     <?php if (!empty($additionalHeadCode)): ?>
         <?php foreach ($additionalHeadCode as $code): ?>
             <?= $code ?>
