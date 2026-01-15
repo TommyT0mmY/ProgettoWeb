@@ -14,14 +14,28 @@ class FacultyService {
     }
 
     /**
-     * Ottiene i dettagli di una facolta tramite ID
+     * Gets faculty details by ID.
+     *
+     * @param int $facultyId The ID of the faculty
+     * @return FacultyDTO|null The FacultyDTO object or null if not found
      */
     public function getFacultyDetails(int $facultyId): ?FacultyDTO {
         return $this->facultyRepository->findById($facultyId);
     }
 
     /**
-     * Recupera tutte le facolta
+     * Verifies if the faculty exists 
+     *
+     * @return bool True if the faculty exists, false otherwise
+     */
+    public function facultyExists(int $facultyId): bool {
+        return $this->facultyRepository->facultyExists($facultyId);
+    }
+
+    /**
+     * Gets all faculties.
+     *
+     * @return FacultyDTO[] Array of FacultyDTO objects
      */
     public function getAllFaculties(): array {
         return $this->facultyRepository->findAll();

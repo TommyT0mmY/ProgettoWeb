@@ -6,6 +6,7 @@ namespace Unibostu\Model\Repository;
 use Unibostu\Model\DTO\FacultyDTO;
 use Unibostu\Core\Database;
 use PDO;
+use RuntimeException;
 
 class FacultyRepository {
     private PDO $pdo;
@@ -15,7 +16,10 @@ class FacultyRepository {
     }
 
     /**
-     * Recupera una facolta tramite ID
+     * Gets faculty details by ID.
+     *
+     * @param int $facultyId The ID of the faculty
+     * @return FacultyDTO|null The FacultyDTO object or null if not found
      */
     public function findById(int $facultyId): ?FacultyDTO {
         $stmt = $this->pdo->prepare(
@@ -29,7 +33,24 @@ class FacultyRepository {
     }
 
     /**
-     * Recupera tutte le facolta
+     * Verifies if the faculty exists 
+     *
+     * @return bool True if the faculty exists, false otherwise
+     */
+    public function facultyExists(int $facultyId): bool {
+        $stmt = $this->pdo->prepare(
+            "SELECT COUNT(*) as count FROM faculties WHERE faculty_id = :facultyId"
+        );
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'] > 0;
+    }
+
+    /**
+     * Gets all faculties.
+     *
+     * @return FacultyDTO[] Array of FacultyDTO objects
      */
     public function findAll(): array {
         $stmt = $this->pdo->prepare(
@@ -42,8 +63,9 @@ class FacultyRepository {
     }
 
     /**
-     * Salva una nuova facolta
-     * @throws \Exception in caso di errore
+     * Saves a new faculty
+     *
+     * @throws RuntimeException in case of error
      */
     public function save(string $facultyName): void {
         $stmt = $this->pdo->prepare(
@@ -53,13 +75,14 @@ class FacultyRepository {
         $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
         
         if (!$stmt->execute()) {
-            throw new \Exception("Errore durante il salvataggio della facoltà");
+            throw new RuntimeException("Errore durante il salvataggio della facoltà");
         }
     }
 
     /**
-     * Aggiorna i dati di una facolta
-     * @throws \Exception in caso di errore
+     * Updates faculty data
+     *
+     * @throws RuntimeException in case of error
      */
     public function update(int $facultyId, string $facultyName): void {
         $stmt = $this->pdo->prepare(
@@ -71,13 +94,14 @@ class FacultyRepository {
         $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'aggiornamento della facoltà");
+            throw new RuntimeException("Errore durante l'aggiornamento della facoltà");
         }
     }
 
     /**
-     * Elimina una facolta
-     * @throws \Exception in caso di errore
+     * Deletes a faculty
+     *
+     * @throws RuntimeException in case of error
      */
     public function delete(int $facultyId): void {
         $stmt = $this->pdo->prepare(
@@ -86,10 +110,16 @@ class FacultyRepository {
         $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
         
         if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'eliminazione della facoltà");
+            throw new RuntimeException("Errore durante l'eliminazione della facoltà");
         }
     }
 
+    /**
+     * Converts a database row to a FacultyDTO
+     *
+     * @param array $row The database row
+     * @return FacultyDTO The FacultyDTO object
+     */
     private function rowToDTO(array $row): FacultyDTO {
         return new FacultyDTO(
             (int)$row['faculty_id'],
