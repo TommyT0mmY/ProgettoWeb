@@ -30,6 +30,8 @@ class UserRepository {
 
     /**
      * Verifies if the user exists 
+     *
+     * @return bool True if the user exists, false otherwise
      */
     public function userExists(string $userId): bool {
         $stmt = $this->pdo->prepare(
@@ -42,10 +44,11 @@ class UserRepository {
     }
 
     /**
-     * Salva un nuovo utente
-     * @throws \Exception in caso di errore nel salvataggio
+     * Registers a new user.
+     *
+     * @throws \RuntimeException in case of error
      */
-    public function save(UserDTO $dto): void {
+    public function register(UserDTO $dto): void {
         $stmtUtenti = $this->pdo->prepare(
             "INSERT INTO users 
                 (user_id, password, first_name, last_name, faculty_id, suspended)
@@ -58,16 +61,17 @@ class UserRepository {
         $stmtUtenti->bindValue(':facultyId', $dto->facultyId, PDO::PARAM_INT);
         $stmtUtenti->bindValue(':suspended', false, PDO::PARAM_BOOL);
         $success = $stmtUtenti->execute();
-
         if (!$success) {
-            throw new \Exception("Errore durante il salvataggio dell'utente");
+            throw new \RuntimeException("Error during user save operation");
         }
     }
 
     /**
-     * Aggiorna il profilo di un utente
-     * @throws \Exception in caso di errore
+     * Updates user profile information.
+     *
+     * @throws \RuntimeException in case of error
      */
+    // TODO CONTROLLARE MEGLIO QUESTO METODO
     public function updateProfile(UserDTO $dto): void {
         $stmt = $this->pdo->prepare(
             "UPDATE users 
@@ -78,15 +82,15 @@ class UserRepository {
         $stmt->bindValue(':lastName', $dto->lastName, PDO::PARAM_STR);
         $stmt->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
         $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
-
         if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'aggiornamento del profilo");
+            throw new \RuntimeException("Error during user profile update");
         }
     }
 
     /**
-     * Sospende un utente
-     * @throws \Exception in caso di errore
+     * Suspends a user account.
+     *
+     * @throws \RuntimeException in case of error
      */
     public function suspendUser(string $userId): void {
         $stmt = $this->pdo->prepare(
@@ -95,9 +99,8 @@ class UserRepository {
              WHERE user_id = :userId"
         );
         $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
-        
         if (!$stmt->execute()) {
-            throw new \Exception("Errore durante la sospensione dell'utente");
+            throw new \RuntimeException("Error during user suspension");
         }
     }
 

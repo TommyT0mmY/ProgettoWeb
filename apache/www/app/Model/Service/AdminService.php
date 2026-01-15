@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\AdminRepository;
-use Unibostu\Model\DTO\AdminDTO;
 
 class AdminService {
     private AdminRepository $adminRepository;
@@ -14,19 +13,19 @@ class AdminService {
     }
 
     /**
-     * Verifica le credenziali di un amministratore
-     * @throws \Exception se le credenziali non sono valide
+     * Verifies admin credentials
+     *
+     * @return bool true if credentials are valid, false otherwise
      */
-    public function authenticate(string $adminId, string $password): void {
+    public function checkCredentials(string $adminId, string $password): bool {
         $admin = $this->adminRepository->findByAdminId($adminId);
-        
         if (!$admin) {
-            throw new \Exception("Amministratore non trovato");
+            return false;
         }
-
         if (!password_verify($password, $admin->password)) {
-            throw new \Exception("Password errata");
+            return false;
         }
+        return true;
     }
 
     public function adminExists(string $adminId): bool {

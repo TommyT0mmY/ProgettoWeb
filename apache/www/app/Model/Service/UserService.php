@@ -3,14 +3,18 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Service;
 
+use Unibostu\Core\exceptions\ValidationErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\DTO\UserDTO;
 
 class UserService {
     private UserRepository $userRepository;
+    private FacultyService $facultyService;
 
     public function __construct() {
         $this->userRepository = new UserRepository();
+        $this->facultyService = new FacultyService();
     }
 
     /**
@@ -21,105 +25,109 @@ class UserService {
     }
 
     /**
-     * Verifica le credenziali di un utente
-     * @throws \Exception se le credenziali non sono valide
+     * Verifies user credentials
+     *
+     * @return bool true if credentials are valid, false otherwise
      */
-    public function authenticate(string $userId, string $password): bool {
+    public function checkCredentials(string $userId, string $password): bool {
         $user = $this->userRepository->findByUserId($userId);
-        
         if (!$user) {
-            throw new \Exception("Utente non trovato");
+            return false; 
         }
-
         if (!password_verify($password, $user->password)) {
-            throw new \Exception("Password errata");
+            return false; 
         }
-
         if ($user->suspended) {
-            throw new \Exception("Utente sospeso, accesso negato");
+            return false; 
         }
-
         return true;
     }
 
+    /**
+     * Verifies if a user exists
+     *
+     * @return bool true if the user exists, false otherwise
+     */
     public function userExists(string $userId): bool {
         return $this->userRepository->userExists($userId);
     }
 
     /**
-     * Checks if a user is suspended
-     * @throws \Exception if the user is not found
+     * Verifies if a user is suspended
+     *
      * @return bool true if the user is suspended, false otherwise
-     */
+     */ 
     public function isUserSuspended(string $userId): bool {
         $user = $this->userRepository->findByUserId($userId);
         if (!$user) {
-            throw new \Exception("Utente non trovato");
+            return false;
         }
         return $user->suspended;
     }
 
     /**
-     * Registra un nuovo utente
-     * @throws \Exception se l'username è già preso o i dati sono invalidi
+     * Registers a new user.
+     * If the registration succeeds, no exception is thrown.
+     *
+     * @throws ValidationException if validation fails
      */
     public function registerUser(UserDTO $dto): void {
-        // Verifica che l'username non esista già
+        $exceptionBuilder = ValidationException::build();
         $existingUser = $this->userRepository->findByUserId($dto->userId);
         if ($existingUser) {
-            throw new \Exception("Username '$dto->userId' già utilizzato");
+            $exceptionBuilder->addError(ValidationErrorCode::USERNAME_ALREADY_EXISTS);
         }
-
         if (empty($dto->userId)) {
-            throw new \Exception("L'username non può essere vuoto");
+            $exceptionBuilder->addError(ValidationErrorCode::USERNAME_REQUIRED);
         }
-
-        if ($dto->facultyId <= 0) {
-            throw new \Exception("Facoltà non valida");
+        if (empty($dto->facultyId)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_REQUIRED);
         }
-
-        if (empty($dto->firstName) || empty($dto->lastName)) {
-            throw new \Exception("Nome e cognome non possono essere vuoti");
+        if (!$this->facultyService->facultyExists($dto->facultyId)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_INVALID);
         }
-
+        if (empty($dto->firstName)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FIRSTNAME_REQUIRED);
+        }
+        if (empty($dto->lastName)) {
+            $exceptionBuilder->addError(ValidationErrorCode::LASTNAME_REQUIRED);
+        }
         if (empty($dto->password)) {
-            throw new \Exception("La password non può essere vuota");
+            $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_REQUIRED);
         }
-
-        $this->userRepository->save($dto);
+        $exceptionBuilder->throwIfAny();
+        $this->userRepository->register($dto);
     }
 
     /**
-     * Aggiorna il profilo di un utente
-     * @throws \Exception se l'utente non esiste o i dati non sono validi
+     * Updates the profile of an existing user
+     *
+     * @throws ValidationException if validation fails
      */
+    // TODO CONTROLLARE MEGLIO QUESTO METODO
     public function updateProfile(UserDTO $dto): void {
+        $exceptionBuilder = ValidationException::build();
         $user = $this->userRepository->findByUserId($dto->userId);
         if (!$user) {
-            throw new \Exception("Utente '$dto->userId' non trovato");
+            $exceptionBuilder->addError(ValidationErrorCode::USERNAME_REQUIRED);
         }
-
-        if (empty($dto->firstName) || empty($dto->lastName)) {
-            throw new \Exception("Nome e cognome non possono essere vuoti");
+        if (empty($dto->firstName)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FIRSTNAME_REQUIRED);
         }
-
+        if (empty($dto->lastName)) {
+            $exceptionBuilder->addError(ValidationErrorCode::LASTNAME_REQUIRED);
+        }
         if (empty($dto->password)) {
-            throw new \Exception("La password non può essere vuota");
+            $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_REQUIRED);
         }
-
         $this->userRepository->updateProfile($dto);
     }
 
-    /**
-     * Sospende un utente
-     * @throws \Exception se l'utente non esiste
-     */
     public function suspendUser(string $userId): void {
         $user = $this->userRepository->findByUserId($userId);
         if (!$user) {
-            throw new \Exception("Utente '$userId' non trovato");
+            ValidationException::build()->addError(ValidationErrorCode::USERNAME_REQUIRED)->throwIfAny();
         }
-
         $this->userRepository->suspendUser($userId);
     }
 }

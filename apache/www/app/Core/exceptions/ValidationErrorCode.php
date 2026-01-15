@@ -1,0 +1,14 @@
+<?php
+declare(strict_types=1);
+
+namespace Unibostu\Core\exceptions;
+
+enum ValidationErrorCode: string {
+    case USERNAME_ALREADY_EXISTS = 'USERNAME_ALREADY_EXISTS';
+    case USERNAME_REQUIRED = 'USERNAME_REQUIRED';
+    case FACULTY_INVALID = 'FACULTY_INVALID';
+    case FACULTY_REQUIRED = 'FACULTY_REQUIRED' ;
+    case FIRSTNAME_REQUIRED = 'FIRSTNAME_REQUIRED';
+    case LASTNAME_REQUIRED = 'LASTNAME_REQUIRED';
+    case PASSWORD_REQUIRED = 'PASSWORD_REQUIRED';
+}
