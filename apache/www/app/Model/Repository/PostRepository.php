@@ -43,7 +43,7 @@ class PostRepository {
      * Finds posts with optional filters
      *
      * @param string $userId The ID of the user requesting the posts
-     * @param PostFilterDTO|null $filter The filter criteria
+     * @param PostQuery $postQuery The query object containing filter criteria
      */
     public function findWithFilters(PostQuery $postQuery): array {
         $sql = "SELECT DISTINCT p.* FROM posts p";
