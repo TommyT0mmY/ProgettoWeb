@@ -54,6 +54,6 @@ const configs = {
 }
 
 const formElement = document.getElementById('register-form');
-const loginForm = new Form(formElement, configs);
-loginForm.init();
+const registerForm = new Form(formElement, configs);
+registerForm.init();
 
