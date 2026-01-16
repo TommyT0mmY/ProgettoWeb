@@ -26,7 +26,7 @@ $this->extend('main-layout', [
         </div>
         <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>">
         <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>">
-        <button type="submit" id="adminlogin-form_submit" disabled>Login</button>
+        <button type="submit" id="adminlogin-form_submit" disabled>Login as Administrator</button>
         <p>Are you not an administrator? <a href="/login">Login here</a>.</p>
     </fieldset>
 </form>
