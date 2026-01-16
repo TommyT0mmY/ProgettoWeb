@@ -19,6 +19,7 @@ class CourseService {
 
     /**
      * Ottiene i dettagli di un corso tramite ID
+     * @return CourseDTO|null
      */
     public function getCourseDetails(int $courseId): ?CourseDTO {
         return $this->courseRepository->findById($courseId);
@@ -26,6 +27,7 @@ class CourseService {
 
     /**
      * Recupera tutti i corsi
+     * @return CourseDTO[]
      */
     public function getAllCourses(): array {
         return $this->courseRepository->findAll();
@@ -33,6 +35,7 @@ class CourseService {
 
     /**
      * Recupera i corsi di una facolta
+     * @return CourseDTO[]
      */
     public function getCoursesByFaculty(int $facultyId): array {
         return $this->courseRepository->findByFaculty($facultyId);
@@ -40,6 +43,7 @@ class CourseService {
     
     /**
      * Recupera i corsi di un utente
+     * @return CourseDTO[]
      */
     public function getCoursesByUser(string $userId): array {
         return $this->userCoursesRepository->findCoursesByUser($userId);
