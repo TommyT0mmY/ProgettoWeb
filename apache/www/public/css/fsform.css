@@ -31,7 +31,7 @@ main {
     font-weight: 600;
     text-align: center;
     width: 100%;
-    margin-top: var(--space-xxl);
+    padding-top: var(--space-xxl);
     margin-bottom: var(--space-xxl);
 }
 
@@ -84,6 +84,7 @@ main {
 
 /* Move label up when input is focused or has value */
 .field-holder input:focus + label,
+.field-holder input:valid + label,
 .field-holder input.has-value + label,
 .field-holder select + label {
     transform: translateY(-50%);
@@ -138,6 +139,13 @@ main {
         var(--shadow-md),
         var(--focus-ring);
 } 
+
+/* Button disabled style */
+.fullscreen-form button[type="submit"]:disabled {
+    background-color: var(--color-gray-400);
+    cursor: not-allowed;
+    box-shadow: none;
+}
 
 .fullscreen-form p {
     text-align: center;
