@@ -63,7 +63,7 @@ class Form {
                     return;
                 }
             } catch (error) {
-                formErrorElement.textContent = 'An error occurred. Please try again.';
+                this.#setGeneralError('An error occurred. Please try again.');
                 console.error('Form submission error:', error);
             } finally { // Re-enable the submit button
                 this.#submitButton.disabled = false;
@@ -74,6 +74,8 @@ class Form {
         this.#form.addEventListener('input', (e) => {
             this.#clearFieldError(e.target);
             this.#setFieldError('');
+            this.#setGeneralError('');
+            e.target.classList.toggle('has-value', Boolean(e.target.value));
         });
         // If everything is set up correctly, enable the submit button
         this.#submitButton.disabled = false;

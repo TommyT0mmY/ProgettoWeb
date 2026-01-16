@@ -1,0 +1,192 @@
+main {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-bg-dark);
+}
+
+.fullscreen-form {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;  
+    background-color: var(--color-bg);
+    box-shadow: var(--shadow-lg);
+}
+
+.fullscreen-form fieldset {
+    border: 0;
+    padding: var(--space-xxl); 
+    padding-top: 0;
+    margin: 0;
+    width: 100%;
+    min-width: 0;
+}
+
+.fullscreen-form legend {
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+    padding-top: var(--space-xxl);
+    margin-bottom: var(--space-xxl);
+}
+
+.field-holder {
+    position: relative;
+    margin-bottom: var(--space-xl);
+}
+
+/* Input field and select styles */
+.field-holder input,
+.field-holder select,
+.field-holder label {
+    box-sizing: border-box;
+    width: 100%;
+    height: 2.5rem;
+    border: 0;
+    outline: none;
+    padding: 0;
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+    background-color: var(--color-bg-light);
+    border-radius: 10px; 
+    box-shadow: var(--shadow-sm);
+}
+
+/* Input and select focus styles */
+.field-holder input:focus-visible,
+.field-holder select:focus-visible {
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-gray-300);
+    border-top: 0;
+}
+
+/* Label inside the input field */
+.field-holder label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    user-select: none;
+    box-shadow: none;
+    background-color: transparent;
+    transition: 
+        transform 0.2s cubic-bezier(0.65, 0, 0.35, 1),
+        font-size 0.2s ease-in-out,
+        color 0.2s ease-in-out;
+}
+
+/* Move label up when input is focused or has value */
+.field-holder input:focus + label,
+.field-holder input:valid + label,
+.field-holder input.has-value + label,
+.field-holder select + label {
+    transform: translateY(-50%);
+    font-size: 1em;
+}
+
+.field-error-message {
+    display: block;
+    height: var(--space-sm);
+    line-height: var(--space-sm); 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: var(--space-sm);
+    color: var(--color-error);
+}
+.field-error-message:empty {
+    display: none;
+}
+
+.form-error-message {
+    display: flex;
+    justify-content: center;
+    color: var(--color-error);
+    margin-bottom: var(--space-md);
+}
+
+.fullscreen-form button[type="submit"] {
+    width: 100%;
+    height: 2.5rem;
+    border: 0;
+    outline: none;
+    background-color: var(--color-blue-400);
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px; 
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: 
+        background-color 0.2s ease-in-out,
+        box-shadow 0.2s ease-in-out;
+}
+
+/* Button hover and focus styles */
+.fullscreen-form button[type="submit"]:hover,
+.fullscreen-form button[type="submit"]:focus-visible {
+    background-color: var(--color-blue-500);
+    box-shadow: var(--shadow-md);
+}
+.fullscreen-form button[type="submit"]:focus-visible {
+    box-shadow:
+        var(--shadow-md),
+        var(--focus-ring);
+} 
+
+/* Button disabled style */
+.fullscreen-form button[type="submit"]:disabled {
+    background-color: var(--color-gray-400);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.fullscreen-form p {
+    text-align: center;
+    margin: 0;
+    margin-top: var(--space-lg);
+    font-size: 0.9em;
+    color: var(--color-text-muted);
+}
+
+.fullscreen-form p + p {
+    margin-top: var(--space-sm);
+}
+
+p a {
+    color: var(--color-blue-400);
+    font-weight: 600;
+    transition: color 0.2s ease-in-out;
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: currentColor; 
+}
+a#adminlogin-redirect {
+    color: var(--color-gray-300);
+}
+
+
+@media (max-width: 768px) {
+    main {
+        align-items: stretch;
+    }
+
+    .fullscreen-form {
+        max-width: none;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .fullscreen-form fieldset {
+        padding: var(--space-xl);
+        padding-top: 0;
+    }
+}

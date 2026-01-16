@@ -24,11 +24,11 @@ const configs = {
     responseErrorsMapping: {
         USERNAME_ALREADY_EXISTS: {
             field: 'username',
-            message: 'This username is already taken. Please choose another one.'
+            message: 'This username is already taken.'
         },
         FACULTY_INVALID: {
             field: 'facultyid',
-            message: 'The selected faculty is invalid. Please choose a valid faculty.'
+            message: 'The selected faculty is invalid.'
         },
         USERNAME_REQUIRED: {
             field: 'username',
@@ -54,6 +54,6 @@ const configs = {
 }
 
 const formElement = document.getElementById('register-form');
-const loginForm = new Form(formElement, configs);
-loginForm.init();
+const registerForm = new Form(formElement, configs);
+registerForm.init();
 

@@ -30,6 +30,11 @@ class AuthController extends BaseController {
         return $this->render("login", []);
     }
 
+    #[Get("/adminlogin")]
+    public function adminloginIndex(): Response {
+        return $this->render("adminlogin", []);
+    }
+
     #[Get("/register")]
     public function registerIndex(): Response {
         $facultyService = new FacultyService();
@@ -49,6 +54,31 @@ class AuthController extends BaseController {
             ]);
         }
         $success = $this->auth->loginAsUser($username, $password);
+        if ($success) {
+            return Response::create()->json([
+                "success" => true,
+                "redirect" => "/",
+            ]);
+        } else {
+            return Response::create()->json([
+                "success" => false,
+                "generalError" => "Invalid username or password.",
+            ]);
+        }
+    } 
+
+    #[Post("/api/auth/adminlogin")]
+    public function adminlogin(array $params, Request $request): Response {
+        $username = $request->post("username");
+        $password = $request->post("password");
+
+        if (!$this->csrfProtection->validateRequest($request)) {
+            return Response::create()->json([
+                "success" => false,
+                "generalError" => "An error occurred. Please try again.",
+            ]);
+        }
+        $success = $this->auth->loginAsAdmin($username, $password);
         if ($success) {
             return Response::create()->json([
                 "success" => true,
