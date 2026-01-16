@@ -28,7 +28,7 @@ $this->extend('main-layout', [
         <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>">
         <button type="submit" id="login-form_submit" disabled>Login</button>
         <p>Don't have an account? <a href="/register">Register here</a>.</p>
-        <p><a href="/adminlogin">Administrator Login</a></p>
+        <p><a href="/adminlogin" id="adminlogin-redirect">Administrator Login</a></p>
     </fieldset>
 </form>
 

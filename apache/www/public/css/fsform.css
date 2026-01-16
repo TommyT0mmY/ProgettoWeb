@@ -159,6 +159,20 @@ main {
     margin-top: var(--space-sm);
 }
 
+p a {
+    color: var(--color-blue-400);
+    font-weight: 600;
+    transition: color 0.2s ease-in-out;
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: currentColor; 
+}
+a#adminlogin-redirect {
+    color: var(--color-gray-300);
+}
+
+
 @media (max-width: 768px) {
     main {
         align-items: stretch;
