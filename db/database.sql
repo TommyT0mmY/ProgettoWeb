@@ -1,7 +1,12 @@
 -- Database Section
 -- ________________ 
 
-create database if not exists unibostu;
+SET NAMES utf8mb4;
+
+-- CREA DATABASE
+CREATE DATABASE IF NOT EXISTS `unibostu` 
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_bin;
 use unibostu;
 
 
@@ -286,4 +291,5 @@ INSERT INTO `post_tags` (`post_id`, `course_id`, `tag_id`) VALUES
 (9, 2, 8),
 (10, 1, 2);
 
-
+INSERT INTO `administrators` (`admin_id`, `password`) VALUES
+('adminà', '');

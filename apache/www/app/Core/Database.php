@@ -18,7 +18,7 @@ class Database {
         $database = getenv("MYSQL_DATABASE");
         $username = getenv("MYSQL_USER");
         $password = trim(file_get_contents(getenv("MYSQL_PASSWORD_FILE")));
-        $dsn = "mysql:host=db;dbname=" . $database;
+        $dsn = "mysql:host=db;dbname=" . $database . ";charset=utf8mb4";
         self::$pdo ??= new PDO($dsn, $username, $password);
         return self::$pdo; 
     }
