@@ -63,7 +63,13 @@ class PostQuery {
 
     public function sortedBy(?string $sortOrder): self {
         if ($sortOrder !== null) {
-            $this->sortOrder = in_array($sortOrder, ['ASC', 'DESC']) ? $sortOrder : 'DESC';
+            $this->sortOrder = in_array($sortOrder, ['asc', 'desc']) ? strtoupper($sortOrder) : 'DESC';
+        }
+        // This may be removed later since its information that should be given by js
+        if ($this->sortOrder === 'DESC' && $this->lastPostId === 0) {
+            $this->lastPostId = PHP_INT_MAX;
+        } else if ($this->sortOrder === 'ASC' && $this->lastPostId === PHP_INT_MAX) {
+            $this->lastPostId = 0;
         }
         return $this;
     }
@@ -115,7 +121,7 @@ class PostQuery {
     }
 
     private function typeCorrection(mixed $value,  $type): mixed {
-        if ($value === null) {
+        if ($value === null && $type !== 'array') {
             return null;
         }
         switch ($type) {
