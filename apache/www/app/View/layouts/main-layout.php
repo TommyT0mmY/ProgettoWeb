@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Default' ?></title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> 
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" media="print" onload="this.media='all'" />
 
-    <link rel="stylesheet" href="/css/base.css" />
-    <link rel="stylesheet" href="/css/popup.css" />
     <?php if (!empty($additionalHeadCode)): ?>
         <?php foreach ($additionalHeadCode as $code): ?>
             <?= $code ?>
@@ -19,6 +16,8 @@
     <?php endif; ?>
 </head>
 <body>
+    <?= $this->component('header') ?>
+    <?= $this->component('sidebar', ['courses' => $courses]) ?>
     <main>
         <?= $content ?>
     </main>
