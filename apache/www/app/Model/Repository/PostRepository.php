@@ -53,9 +53,9 @@ class PostRepository {
         // se filtro è null ritorna tutti i post
         if ($postQuery->getIsAdminView() === false) {
             // Filtro per categoria
-            if (!empty($filter->category)) {
+            if (!empty($postQuery->getCategory())) {
                 $conditions[] = " p.category_id = ?";
-                $params[] = $filter->category;
+                $params[] = $postQuery->getCategory();
             }
 
             // Join per tag se filtrati
@@ -84,8 +84,8 @@ class PostRepository {
             }
 
             // Filtro per autore
-            if (!empty($filter->authorId)) {
-                $params[] = $filter->authorId;
+            if (!empty($postQuery->getAuthorId())) {
+                $params[] = $postQuery->getAuthorId();
                 $conditions[] = " p.user_id = ?";
             }
         }
