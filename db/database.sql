@@ -281,6 +281,7 @@ INSERT INTO `likes` (`post_id`, `user_id`, `is_like`) VALUES
 
 INSERT INTO `post_tags` (`post_id`, `course_id`, `tag_id`) VALUES 
 (1, 1, 1),
+(1, 1, 2),
 (2, 2, 5),
 (3, 3, 9),
 (4, 5, 13),
