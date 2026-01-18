@@ -257,7 +257,7 @@ INSERT INTO `posts` (`post_id`, `title`, `description`, `created_at`, `user_id`,
 (9, 'Informazioni Esami di Analisi 1', "L'esame coprirà i primi tre capitoli.", '2024-01-23 10:50:00', 'mrossi', 2, 4),
 (10, 'Appunti su Spazi Vettoriali', 'Ecco gli appunti sugli spazi vettoriali.', '2024-01-24 09:40:00', 'l.bianchi', 1, 2);
 
-INSERT INTO `comments` (`comment_id`, `post_id`, `text`, `created_at`, `user_id`, `parent_comment_id`) VALUES 
+INSERT INTO `comments` (`comment_id`, `post_id`, `comment_text`, `created_at`, `user_id`, `parent_comment_id`) VALUES 
 (1, 1, 'Puoi usare la regola di Sarrus per calcolare il determinante.', '2024-01-15', 'giulia_verdi', NULL),
 (2, 1, 'Grazie per il consiglio!', '2024-01-15', 'mrossi', 1),
 (3, 2, 'Ottimi appunti, grazie per condividerli!', '2024-01-16', 'andrea.ferrari', NULL),
