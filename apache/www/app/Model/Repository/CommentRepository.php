@@ -76,7 +76,7 @@ class CommentRepository {
      */
     public function delete(int $commentId, int $postId): void {
         $stmt = $this->pdo->prepare(
-            "UPDATE comments SET deleted = true, text = :text 
+            "UPDATE comments SET deleted = true, comment_text = :text 
              WHERE comment_id = :commentId AND post_id = :postId"
         );
         $stmt->bindValue(':text', 'commento cancellato', PDO::PARAM_STR);
@@ -93,7 +93,7 @@ class CommentRepository {
             author: $author,
             commentId: (int)$row['comment_id'],
             postId: (int)$row['post_id'],
-            text: $row['text'],
+            text: $row['comment_text'],
             createdAt: $row['created_at'],
             deleted: (bool)$row['deleted'],
             parentCommentId: $row['parent_comment_id'] !== null ? (int)$row['parent_comment_id'] : null
