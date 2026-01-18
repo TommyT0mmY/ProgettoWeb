@@ -8,6 +8,7 @@ use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Model\DTO\CreatePostDTO;
+use Unibostu\Model\DTO\PostDTO;
 
 class PostService {
     private PostRepository $postRepository;
@@ -20,8 +21,22 @@ class PostService {
         $this->courseRepository = new CourseRepository();
     }
 
+    /**
+     * Ottiene i post in base ai filtri specificati
+     * 
+     * @param PostQuery $postQuery Query con i filtri
+     * @return PostDTO[] Array di PostDTO che soddisfano i filtri
+     */
     public function getPosts(PostQuery $postQuery): array {
         return $this->postRepository->findWithFilters($postQuery);
+    }
+
+    /**
+     * Ottiene un singolo post con dettagli
+     * @return PostDTO|null Dettagli del post o null se non trovato
+     */
+    public function getPostDetails(int $postId): ?PostDTO {
+        return $this->postRepository->findById($postId);
     }
 
     /**
@@ -99,7 +114,7 @@ class PostService {
         }
 
         // Verifica che l'utente sia il creatore del post
-        if ($post->userId !== $userId && $userId !== null) {
+        if ($post->author->userId !== $userId && $userId !== null) {
             throw new \Exception("Non hai i permessi per eliminare questo post");
         }
 

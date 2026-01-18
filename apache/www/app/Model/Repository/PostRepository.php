@@ -29,6 +29,7 @@ class PostRepository {
      * Finds a post by its ID
      *
      * @param int $postId The ID of the post to find
+     * @return PostDTO|null The PostDTO if found, null otherwise
      */
     public function findById(int $postId): ?PostDTO {
         $stmt = $this->pdo->prepare("SELECT * FROM posts WHERE post_id = :postId");
@@ -142,26 +143,6 @@ class PostRepository {
              ORDER BY created_at DESC"
         );
         $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
-        $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $posts = [];
-        foreach ($rows as $row) {
-            $posts[] = $this->rowToDTO($row);
-        }
-        return $posts;
-    }
-
-    /**
-     * Recupera i post di un corso
-     */
-    public function findByCourseId(int $courseId): array {
-        $stmt = $this->pdo->prepare(
-            "SELECT * FROM posts 
-             WHERE course_id = :courseId
-             ORDER BY created_at DESC"
-        );
-        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -342,7 +323,6 @@ class PostRepository {
             title: $row['title'],
             description: $row['description'],
             createdAt: $row['created_at'],
-            userId: $row['user_id'],
             course: $course,
             tags: $tags,
             category: $category,

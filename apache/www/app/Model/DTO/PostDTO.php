@@ -27,7 +27,6 @@ readonly class PostDTO {
         string $title,
         string $description,
         string $createdAt,
-        string $userId,
         CourseDTO $course,
         ?CategoryDTO $category,
         array $tags = [],
@@ -42,7 +41,6 @@ readonly class PostDTO {
         $this->description = $description;
         $this->attachmentPath = $attachmentPath;
         $this->createdAt = $createdAt;
-        $this->userId = $userId;
         $this->course = $course;
         $this->tags = $tags;
         $this->category = $category;
