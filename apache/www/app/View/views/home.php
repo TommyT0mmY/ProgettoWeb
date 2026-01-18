@@ -1,5 +1,10 @@
 <?php 
-/** @var \Unibostu\Dto\PostDto[] $posts */
+/** 
+ * @var \Unibostu\core\RenderingEngine $this
+ * @var \Unibostu\Dto\CourseDto[] $courses
+ * @var \Unibostu\Dto\CategoryDto[] $categories
+ * @var \Unibostu\Dto\PostDto[] $posts
+ */
 
 $this->extend('main-layout', [
     'title' => 'Unibostu - Homepage',
