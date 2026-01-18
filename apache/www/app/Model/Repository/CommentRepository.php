@@ -57,7 +57,7 @@ class CommentRepository {
     public function save(CreateCommentDTO $dto): void {
         $stmt = $this->pdo->prepare(
             "INSERT INTO comments 
-             (post_id, text, created_at, deleted, user_id, parent_comment_id)
+             (post_id, comment_text, created_at, deleted, user_id, parent_comment_id)
              VALUES (:postId, :text, :createdAt, :deleted, :userId, :parentCommentId)"
         );
         $stmt->bindValue(':postId', $dto->postId, PDO::PARAM_INT);

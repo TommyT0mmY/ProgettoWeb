@@ -29,7 +29,7 @@ create table categories (
 create table comments (
      comment_id int not null auto_increment,
      post_id int not null,
-     text text not null,
+     comment_text text not null,
      created_at date not null,
      deleted boolean not null default false,
      user_id varchar(60) not null,
