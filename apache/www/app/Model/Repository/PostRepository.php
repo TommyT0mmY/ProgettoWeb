@@ -37,6 +37,9 @@ class PostRepository {
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        $author = $this->userRepository->findByUserId($row['user_id']);
+        $row['author'] = $author;
+
         return $row ? $this->rowToDTO($row) : null;
     }
 
