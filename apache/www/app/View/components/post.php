@@ -1,5 +1,5 @@
 <?php /** @var \Unibostu\Dto\PostDto $post */ ?>
-<article class="Post">
+<article class="Post" data-postId="<?= htmlspecialchars($post->postId) ?>">
     <header>
         <h3><?= htmlspecialchars($post->title) ?></h3>
     </header>
