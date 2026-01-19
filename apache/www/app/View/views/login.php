@@ -3,7 +3,7 @@
 $this->extend('loggedout-layout', [
     'title' => 'Login Unibostu',
     'additionalHeadCode' => [
-        '<script type="module" src="js/login.js"></script>',
+        '<script type="module" src="/js/login.js"></script>',
         '<link rel="stylesheet" href="/css/fsform.css" />',
     ],
 ]);
