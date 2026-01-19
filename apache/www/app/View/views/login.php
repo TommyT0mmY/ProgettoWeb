@@ -1,6 +1,6 @@
 <?php 
 /** @var \Unibostu\Core\RenderingEngine $this */
-$this->extend('main-layout', [
+$this->extend('loggedout-layout', [
     'title' => 'Login Unibostu',
     'additionalHeadCode' => [
         '<script type="module" src="js/login.js"></script>',
