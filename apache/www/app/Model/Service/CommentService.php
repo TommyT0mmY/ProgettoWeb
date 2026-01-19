@@ -6,7 +6,6 @@ namespace Unibostu\Model\Service;
 use Unibostu\Model\Repository\CommentRepository;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\DTO\CommentWithAuthorDTO;
-use Unibostu\Model\DTO\CommentsListDTO;
 use Unibostu\Model\DTO\CreateCommentDTO;
 
 class CommentService {
@@ -20,6 +19,7 @@ class CommentService {
 
     /**
      * Ottiene tutti i commenti di un post con gli autori
+     * @return CommentWithAuthorDTO[] Array di commenti con autori
      */
     public function getCommentsByPostId(int $postId): array {
         return $this->commentRepository->findByPostId($postId);
@@ -28,6 +28,8 @@ class CommentService {
     /**
      * Crea un nuovo commento
      * @throws \Exception se l'userId non è valido o non esiste
+     * @throws \Exception se il testo del commento è vuoto
+     * @throws \Exception se l'utente è sospeso
      */
     public function createComment(CreateCommentDTO $dto): void {
         // Verifica che l'utente esista
@@ -50,6 +52,7 @@ class CommentService {
     /**
      * Cancella un commento
      * @throws \Exception se l'userId non esiste o non è proprietario del commento
+     * @throws \Exception se il commento non esiste
      */
     public function deleteComment(int $commentId, int $postId, string $userId): void {
         $comment = $this->commentRepository->findById($commentId, $postId);
