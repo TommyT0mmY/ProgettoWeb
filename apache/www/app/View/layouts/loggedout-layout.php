@@ -18,8 +18,6 @@
     <?php endif; ?>
 </head>
 <body>
-    <?= $this->component('header') ?>
-    <?= $this->component('sidebar', ['courses' => $courses]) ?>
     <main>
         <?= $content ?>
     </main>

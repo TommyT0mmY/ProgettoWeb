@@ -1,9 +1,9 @@
 <?php 
 /** @var \Unibostu\Core\RenderingEngine $this */
-$this->extend('main-layout', [
+$this->extend('loggedout-layout', [
     'title' => 'Administrator Login',
     'additionalHeadCode' => [
-        '<script type="module" src="js/adminlogin.js"></script>',
+        '<script type="module" src="/js/adminlogin.js"></script>',
         '<link rel="stylesheet" href="/css/fsform.css" />',
     ],
 ]);

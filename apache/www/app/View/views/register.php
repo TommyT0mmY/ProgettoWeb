@@ -4,10 +4,10 @@
  * @var Unibostu\Model\DTO\FacultyDTO[] $faculties
  */
 
-$this->extend('main-layout', [
+$this->extend('loggedout-layout', [
     'title' => 'Register Unibostu',
     'additionalHeadCode' => [
-        '<script type="module" src="js/register.js"></script>',
+        '<script type="module" src="/js/register.js"></script>',
         '<link rel="stylesheet" href="/css/fsform.css" />',
     ],
 ]);
