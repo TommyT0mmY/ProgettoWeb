@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Repository;
 
+use Dom\Comment;
 use Unibostu\Model\DTO\CommentDTO;
 use Unibostu\Model\DTO\CreateCommentDTO;
 use Unibostu\Core\Database;
@@ -54,7 +55,7 @@ class CommentRepository {
     /**
      * Salva un nuovo commento da DTO
      */
-    public function save(CreateCommentDTO $dto): void {
+    public function save(CreateCommentDTO $dto): CommentDTO {
         $stmt = $this->pdo->prepare(
             "INSERT INTO comments 
              (post_id, comment_text, created_at, deleted, user_id, parent_comment_id)
@@ -69,6 +70,7 @@ class CommentRepository {
         if (!$stmt->execute()) {
             throw new \Exception("Errore nel salvataggio del commento");
         }
+        return $this->lastInsertedComment();
     }
 
     /**
@@ -85,6 +87,12 @@ class CommentRepository {
         if (!$stmt->execute()) {
             throw new \Exception("Errore nella cancellazione del commento");
         }
+    }
+
+    private function lastInsertedComment(): CommentDTO {
+        $stmt = $this->pdo->query("SELECT * FROM comments ORDER BY comment_id DESC LIMIT 1");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $this->rowToDTO($row);
     }
 
     private function rowToDTO(array $row): CommentDTO {
