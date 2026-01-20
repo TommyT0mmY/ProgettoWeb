@@ -9,7 +9,6 @@ use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
-use Unibostu\Core\security\Auth;
 use Unibostu\Core\security\CsrfProtection;
 use Unibostu\Model\DTO\UserDTO;
 use Unibostu\Model\Service\FacultyService;
@@ -17,12 +16,10 @@ use Unibostu\Model\Service\UserService;
 
 class AuthController extends BaseController {
     private CsrfProtection $csrfProtection;
-    private Auth $auth;
 
     public function __construct(Container $container) {
         parent::__construct($container);
         $this->csrfProtection = $container->get(CsrfProtection::class);
-        $this->auth = $container->get(Auth::class);
     }
 
     #[Get("/login")]
@@ -53,7 +50,7 @@ class AuthController extends BaseController {
                 "generalError" => "An error occurred. Please try again.",
             ]);
         }
-        $success = $this->auth->loginAsUser($username, $password);
+        $success = $this->getAuth()->loginAsUser($username, $password);
         if ($success) {
             return Response::create()->json([
                 "success" => true,
@@ -78,7 +75,7 @@ class AuthController extends BaseController {
                 "generalError" => "An error occurred. Please try again.",
             ]);
         }
-        $success = $this->auth->loginAsAdmin($username, $password);
+        $success = $this->getAuth()->loginAsAdmin($username, $password);
         if ($success) {
             return Response::create()->json([
                 "success" => true,
@@ -129,7 +126,7 @@ class AuthController extends BaseController {
 
     #[Post("/api/auth/logout")]
     public function logout(array $params, Request $request): Response {
-        $this->auth->logout();
+        $this->getAuth()->logout();
         return Response::create()->json([
             "success" => true,
             "redirect" => "/login",

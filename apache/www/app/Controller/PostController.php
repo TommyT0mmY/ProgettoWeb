@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace Unibostu\Controller;
 
+use Unibostu\Core\Container;
 use Unibostu\Core\Http\Request;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
-use Unibostu\Core\security\Auth;
+use Unibostu\Model\DTO\CreateCommentDTO; 
 use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CommentService;
 use Unibostu\Model\Service\CourseService;
@@ -18,6 +19,14 @@ class PostController extends BaseController {
     private $commentService;
     private $courseService;
 
+    public function __construct(Container $container)
+    {
+        parent::__construct($container);
+        $this->postService = new PostService();
+        $this->commentService = new CommentService();
+        $this->courseService = new CourseService();
+    }
+
     #[Get("/posts/:postid")]
     public function getPost(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
@@ -25,16 +34,12 @@ class PostController extends BaseController {
             return new Response('Post ID is required', 400);
         }
 
-        if ($this->getContainer()->get(Auth::class)->isAuthenticatedAsUser() || true) {
-            $userId = "mrossi"; //$this->getContainer()->get(Auth::class)->getAuthenticatedUserId();
+        if ($this->getAuth()->isAuthenticatedAsUser() || true) {
+            $userId = "mrossi"; //$this->getAuth()->getAuthenticatedUserId();
         } else {
             return new Response('Unauthorized', 401);
         }
 
-        $this->postService = new PostService();
-        $this->commentService = new CommentService();
-        $this->courseService = new CourseService();
-        $this->container->get(Auth::class);
         return $this->render("postcomments", [
             "courses" => $this->courseService->getCoursesByUser($userId),
             "post" => $this->postService->getPostDetails((int)$postId),
@@ -48,8 +53,8 @@ class PostController extends BaseController {
         if ($postId === null) {
             return new Response('Post ID is required', 400);
         }
-        if ($this->getContainer()->get(Auth::class)->isAuthenticatedAsUser() || true) {
-            $userId = "mrossi"; //$this->getContainer()->get(Auth::class)->getAuthenticatedUserId();
+        if ($this->getAuth()->isAuthenticatedAsUser() || true) {
+            $userId = "mrossi"; //$this->getAuth()->getAuthenticatedUserId();
         } else {
             return new Response('Unauthorized', 401);
         }
@@ -57,8 +62,8 @@ class PostController extends BaseController {
         if ($commentText === null || trim($commentText) === '') {
             return new Response('Comment text is required', 400);
         }
-        $this->commentService = new CommentService();
-        $this->commentService->createComment(new \Unibostu\Model\DTO\CreateCommentDTO(
+
+        $this->commentService->createComment(new CreateCommentDTO(
             postId: (int)$postId,
             userId: $userId,
             text: $commentText
