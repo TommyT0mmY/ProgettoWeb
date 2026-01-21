@@ -140,7 +140,17 @@ class PostController extends BaseController {
     public function deleteComment(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
         $commentId = $params['commentid'] ?? null;
-        $userId = $this->getAuth()->getUserId();
+
+        if ($postId === null || $commentId === null) {
+            return new Response('Post ID and Comment ID are required', 400);
+        }
+
+        if ($this->getAuth()->isAuthenticatedAsUser()) {
+            $userId = $this->getAuth()->getUserId();
+        } else {
+            return new Response('Unauthorized', 401);
+        }
+        
         $this->commentService->deleteComment((int)$commentId, (int)$postId, $userId);
         return new Response(json_encode(['text' => 'Comment deleted']), 200);
     }
