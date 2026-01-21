@@ -1,0 +1,270 @@
+/* /css/comments.css */
+
+/* Base styles */
+.comments-section {
+    margin-top: var(--space-xxl);
+    padding: var(--space-xl);
+    background: var(--color-bg-light);
+    border-radius: 25px;
+    box-shadow: var(--shadow-lg);
+}
+
+.comments-title {
+    margin: 0 0 var(--space-xl) 0;
+    color: var(--color-text);
+    font-size: 2rem;
+    font-weight: var(--fw-semibold);
+}
+
+/* Loading state */
+.comments-loading {
+    text-align: center;
+    padding: var(--space-xxl);
+    color: var(--color-text-muted);
+}
+
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-gray-200);
+    border-top: 3px solid var(--color-blue-400);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: var(--space-md);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Comments list */
+.comments-list {
+    margin-top: var(--space-xxl);
+}
+
+/* Comment component */
+.comment {
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+    background: var(--color-bg);
+    border-radius: 10px;
+    border-left: 4px solid transparent;
+    box-shadow: var(--shadow-sm);
+}
+
+.comment[data-depth="1"] { margin-left: var(--space-xxl); border-left-color: var(--color-gray-200); }
+.comment[data-depth="2"] { margin-left: calc(var(--space-xxl) * 2); border-left-color: var(--color-gray-300); }
+.comment[data-depth="3"] { margin-left: calc(var(--space-xxl) * 3); border-left-color: var(--color-gray-300); }
+.comment[data-depth="4"] { margin-left: calc(var(--space-xxl) * 4); border-left-color: var(--color-gray-400); }
+.comment[data-depth="5"] { margin-left: calc(var(--space-xxl) * 5); border-left-color: var(--color-gray-400); }
+.comment[data-depth="6"] { margin-left: calc(var(--space-xxl) * 6); border-left-color: var(--color-gray-500); }
+
+.comment-deleted {
+    opacity: 0.7;
+    background: var(--color-gray-100);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xs);
+}
+
+.comment-author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-author-name {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+}
+
+.comment-date {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.comment-body {
+    margin: var(--space-sm) 0;
+}
+
+.comment-text {
+    margin: 0;
+    line-height: var(--lh-body);
+    color: var(--color-text);
+}
+
+.deleted-text {
+    color: var(--color-gray-400);
+    font-style: italic;
+}
+
+/* Comment actions */
+.comment-actions {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.btn-reply,
+.btn-like,
+.btn-submit,
+.btn-cancel {
+    padding: var(--space-xs) var(--space-md);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: var(--fw-semibold);
+    box-shadow: var(--shadow-sm);
+    transition: 
+        background-color 0.2s ease-in-out,
+        box-shadow 0.2s ease-in-out;
+}
+
+.btn-reply {
+    background: var(--color-blue-400);
+    color: var(--color-white);
+}
+
+.btn-reply:hover,
+.btn-reply:focus-visible {
+    background: var(--color-blue-500);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-like {
+    background: var(--color-gray-200);
+    color: var(--color-text);
+}
+
+.btn-like:hover,
+.btn-like:focus-visible {
+    background: var(--color-gray-300);
+    box-shadow: var(--shadow-md);
+}
+
+.like-count {
+    margin-left: var(--space-xxs);
+    font-weight: var(--fw-semibold);
+}
+
+/* Replies container */
+.comment-replies {
+    margin-top: var(--space-md);
+    border-top: 1px solid var(--color-gray-200);
+    padding-top: var(--space-md);
+}
+
+/* Comment forms */
+.comment-form {
+    margin: var(--space-md) 0;
+    padding: var(--space-md);
+    background: var(--color-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.form-group {
+    margin-bottom: var(--space-md);
+}
+
+.comment-input {
+    width: 100%;
+    padding: var(--space-sm);
+    border: 0;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    box-sizing: border-box;
+    background-color: var(--color-bg-light);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-text);
+}
+
+.comment-input:focus {
+    outline: none;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-gray-300);
+    border-top: 0;
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+.btn-submit {
+    background: var(--color-blue-400);
+    color: var(--color-white);
+}
+
+.btn-submit:hover,
+.btn-submit:focus-visible {
+    background: var(--color-blue-500);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-submit:disabled {
+    background: var(--color-gray-400);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-cancel {
+    background: var(--color-error);
+    color: var(--color-white);
+}
+
+.btn-cancel:hover,
+.btn-cancel:focus-visible {
+    background: #c0392b;
+    box-shadow: var(--shadow-md);
+}
+
+/* Error states */
+.comments-error {
+    padding: var(--space-md);
+    background: #ffe6e6;
+    border: 1px solid #ff9999;
+    border-radius: 10px;
+    color: var(--color-error);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Empty state */
+.comments-empty {
+    text-align: center;
+    padding: calc(var(--space-xxl) * 1.5) var(--space-md);
+    color: var(--color-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .comments-section {
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .comment[data-depth="1"] { margin-left: var(--space-md); }
+    .comment[data-depth="2"] { margin-left: var(--space-xxl); }
+    .comment[data-depth="3"] { margin-left: calc(var(--space-xxl) * 1.5); }
+    .comment[data-depth="4"] { margin-left: calc(var(--space-xxl) * 2); }
+    .comment[data-depth="5"] { margin-left: calc(var(--space-xxl) * 2.5); }
+    .comment[data-depth="6"] { margin-left: calc(var(--space-xxl) * 3); }
+    
+    .comment-actions {
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
