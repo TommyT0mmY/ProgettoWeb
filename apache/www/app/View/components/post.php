@@ -31,9 +31,7 @@
                     </a>
                 </li>
             <?php endif; ?>
-            <!--se è l'ADMIN può eliminare il post e anche se è l'utente stesso , come segue-->
-        <!-- if (isset($_SESSION['userId']) && ($_SESSION['userId'] === $post->userId || $_SESSION['role'] === 'ADMIN')): -->
-                <li><a href=#>Delete </a></li> <!--to be updated-->       
+                <li><a href=#>Delete </a></li>
                 <li class="reaction">
                     <button><img src="images/icons/like.svg" alt="like"></button>
                     <data value="<?= $post->likes ?>"><?= $post->likes ?></data>
