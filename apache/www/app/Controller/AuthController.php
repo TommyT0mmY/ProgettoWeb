@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Unibostu\Controller;
 
 use Unibostu\Core\Container;
+use Unibostu\Core\exceptions\DomainErrorCode;
+use Unibostu\Core\exceptions\ValidationErrorCode;
 use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
@@ -47,7 +49,7 @@ class AuthController extends BaseController {
         if (!$this->csrfProtection->validateRequest($request)) {
             return Response::create()->json([
                 "success" => false,
-                "generalError" => "An error occurred. Please try again.",
+                "errors" => [DomainErrorCode::GENERIC_ERROR->name]
             ]);
         }
         $success = $this->getAuth()->loginAsUser($username, $password);
@@ -59,7 +61,7 @@ class AuthController extends BaseController {
         } else {
             return Response::create()->json([
                 "success" => false,
-                "generalError" => "Invalid username or password.",
+                "errors" => [DomainErrorCode::INVALID_CREDENTIALS->name]
             ]);
         }
     } 
@@ -72,7 +74,7 @@ class AuthController extends BaseController {
         if (!$this->csrfProtection->validateRequest($request)) {
             return Response::create()->json([
                 "success" => false,
-                "generalError" => "An error occurred. Please try again.",
+                "errors" => [DomainErrorCode::GENERIC_ERROR->name]
             ]);
         }
         $success = $this->getAuth()->loginAsAdmin($username, $password);
@@ -84,7 +86,7 @@ class AuthController extends BaseController {
         } else {
             return Response::create()->json([
                 "success" => false,
-                "generalError" => "Invalid username or password.",
+                "errors" => [DomainErrorCode::INVALID_CREDENTIALS->name],
             ]);
         }
     } 
@@ -101,7 +103,7 @@ class AuthController extends BaseController {
         if (!$this->csrfProtection->validateRequest($request)) {
             return Response::create()->json([
                 "success" => false,
-                "generalError" => "An error occurred. Please try again.",
+                "errors" => [DomainErrorCode::GENERIC_ERROR->name]
             ]);
         }
         try {

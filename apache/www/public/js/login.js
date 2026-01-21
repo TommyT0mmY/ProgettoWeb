@@ -11,6 +11,14 @@ const configs = {
             valueMissing: 'Please enter your password.',
             tooShort: 'Password must be at least 6 characters long.'
         }
+    },
+    responseErrorsMapping: {
+        INVALID_CREDENTIALS: {
+            message: 'Invalid username or password.'
+        },
+        GENERIC_ERROR: {
+            message: 'An error occurred. Please try again.'
+        }
     }
 }
 
