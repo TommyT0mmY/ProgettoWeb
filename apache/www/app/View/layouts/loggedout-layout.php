@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <title><?= $title ?? 'Unibostu' ?></title>
     <meta charset="UTF-8">

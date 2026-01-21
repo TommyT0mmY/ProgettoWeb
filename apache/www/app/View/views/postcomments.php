@@ -45,7 +45,7 @@ $this->extend('main-layout', [
             
             <div class="comment-actions">
                 <button type="button" class="btn-reply">
-                    Rispondi
+                    Reply
                 </button>
             </div>
             
@@ -58,7 +58,7 @@ $this->extend('main-layout', [
             <div class="form-group">
                 <textarea 
                     class="comment-input" 
-                    placeholder="Scrivi un commento..." 
+                    placeholder="Write a comment..." 
                     rows="4" 
                     required
                     maxlength="1000"
@@ -67,9 +67,9 @@ $this->extend('main-layout', [
             
             <div class="form-actions">
                 <button type="submit" class="btn-submit">
-                    Commenta
+                    Submit
                 </button>
-                <button type="button" class="btn-cancel">Annulla</button>
+                <button type="button" class="btn-cancel">Cancel</button>
             </div>
         </form>
     </template>

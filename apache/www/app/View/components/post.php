@@ -43,9 +43,6 @@
                     <data value="<?= $post->dislikes ?>"><?= $post->dislikes ?></data>
                 </li>
                 <li>
-                    <a href="comments.php#replyMain">Reply</a><!--to be updated-->
-                </li>
-                <li>
                     <a href="comments.php">Comments</a> <!--to be updated-->
                 </li>
         </ul>            

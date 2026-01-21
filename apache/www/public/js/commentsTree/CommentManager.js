@@ -204,7 +204,7 @@ export class CommentManager {
             }
             
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Invio in corso...';
+            submitBtn.textContent = 'Sending...';
             
             try {
                 const newComment = await postComment({
@@ -226,7 +226,7 @@ export class CommentManager {
                 alert('Errore nell\'invio del commento. Riprova.');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = parentCommentId !== null ? 'Rispondi' : 'Commenta';
+                submitBtn.textContent = parentCommentId !== null ? 'Reply' : 'Comment';
             }
         });
         
