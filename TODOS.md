@@ -1,46 +1,9 @@
 # TODO LIST
 
-## Rendering Engine
-
-### Obiettivo
-Implementare **IoC** e **componenti**.
-
-### Concetti principali
-
-#### Layout
-Container principale della pagina.
-
-#### View
-View specifico per ogni pagina.
-
-#### Component
-Componenti riutilizzabili  
-(es. navbar, footer, card, ecc.)
-
 ## Middleware
-
-### Autenticazione
-Router per **autenticazione** ❓
-
-
-## AuthController
-
-Gestione dell’autenticazione utente.
-
-### GET /login
-Mostra il form di login.
-
-### POST /login
-Processa il form di login.
-
-### GET /logout
-Effettua il logout dell’utente.
-
-### GET /register
-Mostra il form di registrazione.
-
-### POST /register
-Processa il form di registrazione.
+- [ ] AuthMiddleware
+- [ ] CsrfMiddleware
+- [ ] ValidationMiddleware
 
 
 
