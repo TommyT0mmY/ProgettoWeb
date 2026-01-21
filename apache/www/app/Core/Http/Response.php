@@ -20,62 +20,96 @@ class Response {
     }
 
     /**
-     *
-     * Set the response content.
+     * Set the response content immutably.
      *
      * @param string $content The content to set.
-     * @return self
+     * @return self A new Response instance with the updated content.
      */
-    public function setContent(string $content): self {
-        $this->content = $content;
-        return $this;
+    public function withContent(string $content): self {
+        $clone = clone $this;
+        $clone->content = $content;
+        return $clone;
     }
 
     /**
-     * Set the HTTP status code.
+     * Set the HTTP status code immutably.
      *
      * @param int $statusCode The status code to set.
-     * @return self
+     * @return self A new Response instance with the updated status code.
      */
-    public function setStatusCode(int $statusCode): self {
-        $this->statusCode = $statusCode;
-        return $this;
+    public function withStatusCode(int $statusCode): self {
+        $clone = clone $this;
+        $clone->statusCode = $statusCode;
+        return $clone;
     }
- 
+
     /**
-     * Set a response header.
+     * Set a header immutably.
      *
-     * @param string $name  The name of the header.
-     * @param string $value The value of the header.
-     * @return self
+     * @param string $name The header name.
+     * @param string $value The header value.
+     * @return self A new Response instance with the updated header.
      */
-    public function setHeader(string $name, string $value): self {
-        $this->headers[$name] = $value;
-        return $this;
+    public function withHeader(string $name, string $value): self {
+        $clone = clone $this;
+        $clone->headers[$name] = $value;
+        return $clone;
     }
- 
+
     /**
-     * Set JSON content and appropriate header.
+     * Add a header immutably (appends to existing header if present).
+     *
+     * @param string $name The header name.
+     * @param string $value The header value to add.
+     * @return self A new Response instance with the added header.
+     */
+    public function withAddedHeader(string $name, string $value): self {
+        $clone = clone $this;
+        if (isset($clone->headers[$name])) {
+            $clone->headers[$name] .= ', ' . $value;
+        } else {
+            $clone->headers[$name] = $value;
+        }
+        return $clone;
+    }
+
+    /**
+     * Remove a header immutably.
+     *
+     * @param string $name The header name to remove.
+     * @return self A new Response instance without the specified header.
+     */
+    public function withoutHeader(string $name): self {
+        $clone = clone $this;
+        unset($clone->headers[$name]);
+        return $clone;
+    }
+
+    /**
+     * Set JSON content with appropriate headers.
      *
      * @param array $data The data to encode as JSON.
-     * @return self
+     * @param int $status The HTTP status code.
+     * @return self A new Response instance with JSON content and headers.
      */
-    public function json(array $data): self {
-        $this->content = json_encode($data);
-        $this->headers['Content-Type'] = 'application/json';
-        return $this;
+    public function json(array $data, int $status = 200): self {
+        return $this
+            ->withStatusCode($status)
+            ->withHeader('Content-Type', 'application/json')
+            ->withContent(json_encode($data));
     }
- 
+
     /**
-     * Redirect to a different URL.
+     * Set a redirect response.
      *
      * @param string $url The URL to redirect to.
-     * @return self
+     * @param int $status The HTTP status code for the redirect.
+     * @return self A new Response instance configured for redirection.
      */
-    public function redirect(string $url): self {
-        $this->statusCode = 302; // Temporary Redirect
-        $this->headers['Location'] = $url;
-        return $this;
+    public function redirect(string $url, int $status = 302): self {
+        return $this
+            ->withStatusCode($status)
+            ->withHeader('Location', $url);
     }
  
     /**
@@ -83,11 +117,9 @@ class Response {
      */
     public function send(): void {
         http_response_code($this->statusCode);
-        
         foreach ($this->headers as $name => $value) {
             header("$name: $value");
         }
-        
         echo $this->content;
     }
 }
