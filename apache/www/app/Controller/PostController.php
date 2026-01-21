@@ -34,8 +34,8 @@ class PostController extends BaseController {
             return new Response('Post ID is required', 400);
         }
 
-        if ($this->getAuth()->isAuthenticatedAsUser() || true) {
-            $userId = "mrossi"; //$this->getAuth()->getAuthenticatedUserId();
+        if ($this->getAuth()->isAuthenticatedAsUser()) {
+            $userId = $this->getAuth()->getUserId();
         } else {
             return new Response('Unauthorized', 401);
         }
@@ -43,33 +43,55 @@ class PostController extends BaseController {
         return $this->render("postcomments", [
             "courses" => $this->courseService->getCoursesByUser($userId),
             "post" => $this->postService->getPostDetails((int)$postId),
-            "comments" => $this->commentService->getCommentsByPostId((int)$postId)
+            "comments" => $this->commentService->getCommentsByPostId((int)$postId),
+            "userId" => $userId,
         ]);
     }
 
-    #[Post("/posts/:postid/comments/addComment")]
+    #[Post("/api/posts/:postid/comments")]
     public function addComment(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
         if ($postId === null) {
-            return new Response('Post ID is required', 400);
+            return new Response('Post ID is required', 402);
         }
-        if ($this->getAuth()->isAuthenticatedAsUser() || true) {
-            $userId = "mrossi"; //$this->getAuth()->getAuthenticatedUserId();
+        if ($this->getAuth()->isAuthenticatedAsUser()) {
+            $userId = $this->getAuth()->getUserId();
         } else {
             return new Response('Unauthorized', 401);
         }
-        $commentText = $request->post('comment-text') ?? null;
-        if ($commentText === null || trim($commentText) === '') {
-            return new Response('Comment text is required', 400);
+
+        $text = $request->post("text");
+        if ($text === null || trim($text) === '') {
+            return new Response('Comment text is required', 403);
         }
 
-        $this->commentService->createComment(new CreateCommentDTO(
+        $parentCommentId = $request->post("parentCommentId");
+        if (isset($parentCommentId)) {
+            $parentCommentId = (int)$parentCommentId;
+        } else {
+            $parentCommentId = null;
+        }
+
+        $commentWithAuthor = $this->commentService->createComment(new CreateCommentDTO(
             postId: (int)$postId,
             userId: $userId,
-            text: $commentText
+            text: $text,
+            parentCommentId: $parentCommentId
         ));
 
-        return Response::create()->redirect("/posts/" . htmlspecialchars($postId));
+        return new Response(json_encode([
+            'commentId' => $commentWithAuthor->commentId,
+            'postId' => $commentWithAuthor->postId,
+            'text' => $commentWithAuthor->text,
+            'createdAt' => $commentWithAuthor->createdAt,
+            'deleted' => $commentWithAuthor->deleted,
+            'parentCommentId' => $commentWithAuthor->parentCommentId,
+            'author' => [
+                'userId' => $commentWithAuthor->author->userId,
+                'firstName' => $commentWithAuthor->author->firstName,
+                'lastName' => $commentWithAuthor->author->lastName,
+            ]
+        ]), 201, ['Content-Type' => 'application/json']);
     }
 
     #[Post("/api/posts/create")]
@@ -85,20 +107,42 @@ class PostController extends BaseController {
     #[Get("/api/posts/:postid/comments")]
     public function showComments(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
-        return new Response();
+        $comments = $this->commentService->getCommentsByPostId((int)$postId);
+
+        $commentsArray = array_map(function($commentDTO) {
+                return [
+                    'commentId' => $commentDTO->commentId,
+                    'postId' => $commentDTO->postId,
+                    'text' => $commentDTO->text,
+                    'createdAt' => $commentDTO->createdAt,
+                    'deleted' => $commentDTO->deleted,
+                    'parentCommentId' => $commentDTO->parentCommentId,
+                    'author' => [
+                        'userId' => $commentDTO->author->userId,
+                        'firstName' => $commentDTO->author->firstName,
+                        'lastName' => $commentDTO->author->lastName,
+                    ]
+                ];
+            }, $comments);
+
+        return new Response(json_encode($commentsArray), 200, ['Content-Type' => 'application/json']);
     }
 
     #[Delete("/api/posts/:postid")]
     public function deletePost(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
-        return new Response();
+        $userId = $this->getAuth()->getUserId();
+        $this->postService->deletePost((int)$postId, $userId);
+        return new Response('Post deleted', 200);
     }
 
     #[Delete("/api/posts/:postid/comments/:commentid")]
     public function deleteComment(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
         $commentId = $params['commentid'] ?? null;
-        return new Response();
+        $userId = $this->getAuth()->getUserId();
+        $this->commentService->deleteComment((int)$commentId, (int)$postId, $userId);
+        return new Response(json_encode(['text' => 'Comment deleted']), 200);
     }
 
     #[Post("/api/posts/:postid/like")]

@@ -34,11 +34,12 @@ class HomeController extends BaseController {
     #[Get('/homepage')]
     public function getHomepagePosts(array $params, Request $request): Response {
         $postQuery = null; 
-        $userId = "mrossi"; //$this->getAuth()->getAuthenticatedUserId();                             
+        $userId = null;
         if ($this->getAuth()->isAuthenticatedAsAdmin()) {
             $postQuery = PostQuery::create()
                 ->forAdmin(true);                                  //|| true per testing poi lo tolgo
-        } else if ($this->getAuth()->isAuthenticatedAsUser() || true) {
+        } else if ($this->getAuth()->isAuthenticatedAsUser()) {
+            $userId = $this->getAuth()->getUserId();
             $postQuery = PostQuery::create()
                 ->forUser($userId)
                 ->inCategory($request->get('categoryId'))
