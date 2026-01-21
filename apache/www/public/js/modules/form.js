@@ -49,12 +49,10 @@ class Form {
                 // Response handling
                 const responseData = await response.json();
                 if (!responseData.success) { // Displaying errors
-                    this.#setGeneralError(responseData?.generalError);
-                    // Field specific errors
                     const errorMapping = this.#configs?.responseErrorsMapping ?? {};
                     responseData?.errors?.forEach(errorCode => {
                         const { field, message = 'Invalid input.' } = errorMapping[errorCode] ?? {};
-                        this.#setFieldError(field, message);
+                        (!field) ? this.#setGeneralError(message) : this.#setFieldError(field, message);
                     });
                     return;
                 }

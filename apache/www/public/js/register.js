@@ -49,6 +49,9 @@ const configs = {
         FACULTY_REQUIRED: {
             field: 'facultyid',
             message: 'Faculty is required.'
+        },
+        GENERIC_ERROR: {
+            message: 'An error occurred. Please try again.'
         }
     }
 }

@@ -11,15 +11,15 @@ namespace Unibostu\Core\exceptions;
  */
 class ValidationExceptionBuilder {
     private array $errors = [];
-    private \BackedEnum $mainErrorCode = DomainErrorCode::INVALID_DATA;
+    private \UnitEnum $mainErrorCode = DomainErrorCode::INVALID_DATA;
     
     /**
      * Adds a validation error code to the builder.
      *
-     * @param \BackedEnum $validationErrorCode The validation error code to add.
+     * @param \UnitEnum $validationErrorCode The validation error code to add.
      * @return self The current instance of the builder.
      */
-    public function addError(\BackedEnum $validationErrorCode): self {
+    public function addError(\UnitEnum $validationErrorCode): self {
         $this->errors[] = $validationErrorCode;
         return $this;
     }
@@ -36,10 +36,10 @@ class ValidationExceptionBuilder {
     /**
      * Sets the main error code for the validation exception.
      *
-     * @param \BackedEnum $mainErrorCode The main error code to set.
+     * @param \UnitEnum $mainErrorCode The main error code to set.
      * @return self The current instance of the builder.
      */
-    public function setMainErrorCode(\BackedEnum $mainErrorCode): self {
+    public function setMainErrorCode(\UnitEnum $mainErrorCode): self {
         $this->mainErrorCode = $mainErrorCode;
         return $this;
     }

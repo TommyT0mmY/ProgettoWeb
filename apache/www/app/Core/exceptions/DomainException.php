@@ -7,11 +7,11 @@ abstract class DomainException extends \RuntimeException {
     protected int $httpStatusCode = 400;
 
     public function __construct(
-        protected \BackedEnum $enumErrorCode,
+        protected \UnitEnum $enumErrorCode,
         int $code = 0,
         ?\Throwable $previous = null
     ) {
-        parent::__construct($this->enumErrorCode->value, $code, $previous);
+        parent::__construct($this->enumErrorCode->name, $code, $previous);
     }
 
     public function getErrorName(): string {
