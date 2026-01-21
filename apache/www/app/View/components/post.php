@@ -5,7 +5,7 @@
     </header>
     <p><em>Posted by <?= htmlspecialchars($post->author->userId) ?> on <?= $post->createdAt ?></em></p>
     
-    <ul class="tag">
+    <ul class="tags">
      <li class="tag subject"><a href="#"><?= htmlspecialchars($post->course->courseName) ?></a></li>
      <?php if ($post->category): ?>
      <li class="tag type"><a href="#"><?= htmlspecialchars($post->category->categoryName) ?></a></li>
@@ -51,3 +51,4 @@
         </ul>            
    </footer>
 </article>
+
