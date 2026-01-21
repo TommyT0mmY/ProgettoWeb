@@ -33,5 +33,9 @@
           </div>
         </section>
     </template>
+
+    <script>
+        window.currentUser = <?= json_encode($userId) ?>;
+    </script>
 </body>
 </html>
