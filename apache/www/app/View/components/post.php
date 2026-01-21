@@ -1,11 +1,11 @@
 <?php /** @var \Unibostu\Dto\PostDto $post */ ?>
-<article class="Post" data-postId="<?= htmlspecialchars($post->postId) ?>">
+<article class="Post" data-post-id="<?= htmlspecialchars($post->postId) ?>">
     <header>
         <h3><?= htmlspecialchars($post->title) ?></h3>
     </header>
     <p><em>Posted by <?= htmlspecialchars($post->author->userId) ?> on <?= $post->createdAt ?></em></p>
     
-    <ul class="tag">
+    <ul class="tags">
      <li class="tag subject"><a href="#"><?= htmlspecialchars($post->course->courseName) ?></a></li>
      <?php if ($post->category): ?>
      <li class="tag type"><a href="#"><?= htmlspecialchars($post->category->categoryName) ?></a></li>
@@ -51,3 +51,4 @@
         </ul>            
    </footer>
 </article>
+

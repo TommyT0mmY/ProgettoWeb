@@ -9,9 +9,12 @@
 $this->extend('main-layout', [
     'title' => 'Unibostu - Post details',
     'courses' => $courses,
+    'userId' => $userId,
     'additionalHeadCode' => [
         '<script type="module" src="js/navbar-css.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">'
+        '<link rel="stylesheet" href="/css/style2.css">',
+        '<script type="module" src="/js/commentsTree/main.js"></script>',
+        '<link rel="stylesheet" href="/css/comments.css">',
         ],
     ]);
 ?>
@@ -22,34 +25,54 @@ $this->extend('main-layout', [
     <?php else: ?>
         <p>Post not found.</p>
     <?php endif; ?>
-    <section class="comments-section">
-        <section class="Post comment"> 
-            <header>
-                <h3>Add a Comment</h3>
-            </header>
-            <form id="comment-form" action="/posts/<?= htmlspecialchars($post->postId) ?>/comments/addComment" method="POST">
-                <textarea name="comment-text" id="comment-text" placeholder="Write your comment here..." required></textarea>
-                <button type="submit">Submit</button>
-            </form>
-        </section>
-
-        <header>
-            <h3>Comments</h3>
-        </header>
-        <?php if (!empty($comments)): ?>
-            <?php foreach ($comments as $comment): ?>
-                <article class="comment" data-commentId="<?= htmlspecialchars($comment->commentId) ?>">
-                    <header>
-                        <h4><?= htmlspecialchars($comment->author->userId) ?></h4>
-                        <p><em>Posted on <?= $comment->createdAt ?></em></p>
-                    </header>
-                    <p><?= nl2br(htmlspecialchars($comment->text)) ?></p>
-                </article>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No comments yet. Be the first to comment!</p>
-        <?php endif; ?>
+    
+    <section id="comments-section" class="comments-section" data-post-id="<?= $post->postId ?>">
+        
     </section>
+
+    <template id="comment-template">
+        <article class="comment">
+            <div class="comment-header">
+                <div class="comment-author-info">
+                    <span class="comment-author-name"></span>
+                    <time class="comment-date"></time>
+                </div>
+            </div>
+            
+            <div class="comment-body">
+                <p class="comment-text"></p>
+            </div>
+            
+            <div class="comment-actions">
+                <button type="button" class="btn-reply">
+                    Rispondi
+                </button>
+            </div>
+            
+            <div class="comment-replies"></div>
+        </article>
+    </template>
+
+    <template id="comment-form-template">
+        <form class="comment-form" novalidate>
+            <div class="form-group">
+                <textarea 
+                    class="comment-input" 
+                    placeholder="Scrivi un commento..." 
+                    rows="4" 
+                    required
+                    maxlength="1000"
+                ></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    Commenta
+                </button>
+                <button type="button" class="btn-cancel">Annulla</button>
+            </div>
+        </form>
+    </template>
 </div>
 
 

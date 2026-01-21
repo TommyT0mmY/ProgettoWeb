@@ -19,10 +19,12 @@
 </head>
 <body>
     <?= $this->component('header') ?>
-    <?= $this->component('sidebar', ['courses' => $courses]) ?>
-    <main>
-        <?= $content ?>
-    </main>
+    <div class="containerNavMain">
+        <?= $this->component('sidebar', ['courses' => $courses]) ?>
+        <main>
+            <?= $content ?>
+        </main>
+    </div>
     <!-- Popup Template -->
     <template id="popup-template">
         <section class="popup" aria-label="Popup di errore">
@@ -33,5 +35,9 @@
           </div>
         </section>
     </template>
+
+    <script>
+        window.currentUser = <?= json_encode($userId) ?>;
+    </script>
 </body>
 </html>
