@@ -13,6 +13,7 @@ class Request {
     private string $uri;
     private array $params;
     private array $body;
+    private array $attributes = [];
     
     public function __construct() {
         $this->method = $_SERVER['REQUEST_METHOD'];
@@ -65,4 +66,41 @@ class Request {
     public function post(string $key, $default = null) {
         return $this->body[$key] ?? $default;
     }
+
+    /**
+     * Get a custom attribute.
+     *
+     * @param string $name The attribute name.
+     * @param mixed $default The default value if the attribute is not set.
+     * @return mixed The attribute value or default.
+     */
+    public function getAttribute(string $name, $default = null) {
+        return $this->attributes[$name] ?? $default;
+    }
+
+    /**
+     * Set a custom attribute.
+     *
+     * @param string $name The attribute name.
+     * @param mixed $value The attribute value.
+     * @return self A new instance with the specified attribute set.
+     */
+    public function withAttribute(string $name, $value): self {
+        $clone = clone $this;
+        $clone->attributes[$name] = $value;
+        return $clone;
+    }
+
+    /**
+     * Remove a custom attribute.
+     *
+     * @param string $name The attribute name to remove.
+     * @return self A new instance without the specified attribute.
+     */
+    public function withoutAttribute(string $name): self {
+        $clone = clone $this;
+        unset($clone->attributes[$name]);
+        return $clone;
+     }
+
 }
