@@ -33,10 +33,12 @@ class PostService {
 
     /**
      * Ottiene un singolo post con dettagli
+     * @param int $postId ID del post
+     * @param string|null $userId ID dell'utente corrente per popolare likedByUser
      * @return PostDTO|null Dettagli del post o null se non trovato
      */
-    public function getPostDetails(int $postId): ?PostDTO {
-        return $this->postRepository->findById($postId);
+    public function getPostDetails(int $postId, ?string $userId = null): ?PostDTO {
+        return $this->postRepository->findById($postId, $userId);
     }
 
     /**
@@ -99,6 +101,72 @@ class PostService {
         } else {
             throw new \Exception("Reazione non valida");
         }
+    }
+
+    /**
+     * Ottiene la reazione corrente dell'utente per un post
+     * @return string|null 'like', 'dislike' o null se non ha reagito
+     */
+    public function getUserReaction(int $postId, string $userId): ?string {
+        return $this->postRepository->getUserReaction($postId, $userId);
+    }
+
+    /**
+     * Toggle like su un post
+     * Se l'utente aveva già messo like, lo rimuove
+     * Se aveva messo dislike, lo cambia in like
+     * Se non aveva reagito, aggiunge like
+     * @return array con likes, dislikes, userReaction
+     */
+    public function toggleLike(int $postId, string $userId): array {
+        $currentReaction = $this->getUserReaction($postId, $userId);
+        
+        if ($currentReaction === 'like') {
+            // Se aveva già like, lo rimuove
+            $this->postRepository->removeReaction($postId, $userId);
+        } else {
+            // Se aveva dislike o niente, mette like
+            $this->postRepository->setReaction($postId, $userId, true);
+        }
+        
+        return $this->getPostReactionStats($postId, $userId);
+    }
+
+    /**
+     * Toggle dislike su un post
+     * Se l'utente aveva già messo dislike, lo rimuove
+     * Se aveva messo like, lo cambia in dislike
+     * Se non aveva reagito, aggiunge dislike
+     * @return array con likes, dislikes, userReaction
+     */
+    public function toggleDislike(int $postId, string $userId): array {
+        $currentReaction = $this->getUserReaction($postId, $userId);
+        
+        if ($currentReaction === 'dislike') {
+            // Se aveva già dislike, lo rimuove
+            $this->postRepository->removeReaction($postId, $userId);
+        } else {
+            // Se aveva like o niente, mette dislike
+            $this->postRepository->setReaction($postId, $userId, false);
+        }
+        
+        return $this->getPostReactionStats($postId, $userId);
+    }
+
+    /**
+     * Ottiene le statistiche delle reazioni per un post
+     * @return array con likes, dislikes, userReaction
+     */
+    private function getPostReactionStats(int $postId, string $userId): array {
+        $likes = $this->postRepository->countLikes($postId);
+        $dislikes = $this->postRepository->countDislikes($postId);
+        $userReaction = $this->getUserReaction($postId, $userId);
+        
+        return [
+            'likes' => $likes,
+            'dislikes' => $dislikes,
+            'userReaction' => $userReaction
+        ];
     }
 
     /**

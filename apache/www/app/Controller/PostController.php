@@ -40,11 +40,13 @@ class PostController extends BaseController {
             return new Response('Unauthorized', 401);
         }
 
-        return $this->render("postcomments", [
-            "courses" => $this->courseService->getCoursesByUser($userId),
-            "post" => $this->postService->getPostDetails((int)$postId),
-            "comments" => $this->commentService->getCommentsByPostId((int)$postId),
-            "userId" => $userId,
+        $post = $this->postService->getPostDetails((int)$postId, $userId);
+
+        return $this->render('postcomments', [
+            'courses' => $this->courseService->getCoursesByUser($userId),
+            'post' => $post,
+            'comments' => $this->commentService->getCommentsByPostId((int)$postId),
+            'userId' => $userId,
         ]);
     }
 
@@ -131,11 +133,29 @@ class PostController extends BaseController {
     #[Delete("/api/posts/:postid")]
     public function deletePost(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
-        $userId = $this->getAuth()->getUserId();
-        $this->postService->deletePost((int)$postId, $userId);
-        return new Response('Post deleted', 200);
-    }
+        if ($postId === null) {
+            return new Response('Post ID is required', 400);
+        }
 
+        if ($this->getAuth()->isAuthenticatedAsUser()) {
+            $userId = $this->getAuth()->getUserId();
+        } else {
+            return new Response('Unauthorized', 401);
+        }
+        
+        try {
+            $this->postService->deletePost((int)$postId, $userId);
+            if ($request->getReferer() === null || str_contains($request->getReferer(), '/posts/')) {
+                // If the request comes from the post detail page, redirect to home
+                return new Response(json_encode(['success' => true, 'redirect' => '/']), 200, ['Content-Type' => 'application/json']);
+            } else {
+                return new Response(json_encode(['success' => true, 'redirect' => $request->getReferer()]), 200, ['Content-Type' => 'application/json']);
+            }
+        } catch (\Exception $e) {
+            return new Response(json_encode(['success' => false, 'message' => $e->getMessage()]), 403, ['Content-Type' => 'application/json']);
+        }
+    }
+    
     #[Delete("/api/posts/:postid/comments/:commentid")]
     public function deleteComment(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
@@ -158,6 +178,42 @@ class PostController extends BaseController {
     #[Post("/api/posts/:postid/like")]
     public function likePost(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
-        return new Response();
+        if ($postId === null) {
+            return new Response('Post ID is required', 400);
+        }
+
+        if ($this->getAuth()->isAuthenticatedAsUser()) {
+            $userId = $this->getAuth()->getUserId();
+        } else {
+            return new Response('Unauthorized', 401);
+        }
+
+        try {
+            $result = $this->postService->toggleLike((int)$postId, $userId);
+            return new Response(json_encode($result), 200, ['Content-Type' => 'application/json']);
+        } catch (\Exception $e) {
+            return new Response(json_encode(['error' => $e->getMessage()]), 400, ['Content-Type' => 'application/json']);
+        }
+    }
+
+    #[Post("/api/posts/:postid/dislike")]
+    public function dislikePost(array $params, Request $request): Response {
+        $postId = $params['postid'] ?? null;
+        if ($postId === null) {
+            return new Response('Post ID is required', 400);
+        }
+
+        if ($this->getAuth()->isAuthenticatedAsUser()) {
+            $userId = $this->getAuth()->getUserId();
+        } else {
+            return new Response('Unauthorized', 401);
+        }
+
+        try {
+            $result = $this->postService->toggleDislike((int)$postId, $userId);
+            return new Response(json_encode($result), 200, ['Content-Type' => 'application/json']);
+        } catch (\Exception $e) {
+            return new Response(json_encode(['error' => $e->getMessage()]), 400, ['Content-Type' => 'application/json']);
+        }
     }
 }
