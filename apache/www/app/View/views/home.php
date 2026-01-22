@@ -4,7 +4,7 @@
  * @var \Unibostu\Dto\CourseDto[] $courses
  * @var \Unibostu\Dto\CategoryDto[] $categories
  * @var \Unibostu\Dto\PostDto[] $posts
- * @var int|null $userId
+ * @var int $userId
  */
 
 $this->extend('main-layout', [

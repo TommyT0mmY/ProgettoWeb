@@ -4,6 +4,7 @@
  * @var \Unibostu\Dto\CourseDto[] $courses
  * @var \Unibostu\Dto\PostDto $post
  * @var \Unibostu\Dto\CommentWithAuthorDTO[] $comments
+ * @var int $userId
  */
 
 $this->extend('main-layout', [
