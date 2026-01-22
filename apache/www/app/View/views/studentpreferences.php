@@ -16,7 +16,7 @@ $this->extend('main-layout', [
 
 <h2>Student preferences</h2>
     <form action="#" method="post">           
-        <fieldset>
+        <fieldset class="student-preferences-fieldset">
             <legend>Courses of <?= htmlspecialchars($faculty->facultyName) ?></legend>
             <div>
                 <?php foreach ($courses ?? [] as $course): ?>
