@@ -13,6 +13,7 @@ class Request {
     private string $uri;
     private array $params;
     private array $body;
+    private string $referer;
     
     public function __construct() {
         $this->method = $_SERVER['REQUEST_METHOD'];
@@ -24,6 +25,7 @@ class Request {
         $this->params = $_GET;
         $input = file_get_contents('php://input');
         $this->body = json_decode($input, true) ?? $_POST;
+        $this->referer = $_SERVER['HTTP_REFERER'] ?? '';
     }
     
     /**
@@ -64,5 +66,14 @@ class Request {
      */
     public function post(string $key, $default = null) {
         return $this->body[$key] ?? $default;
+    }
+
+    /**
+     * Get the referer URL of the request.
+     *
+     * @return string The referer URL.
+     */
+    public function getReferer(): string {
+        return $this->referer;
     }
 }
