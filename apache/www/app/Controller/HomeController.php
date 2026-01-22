@@ -27,17 +27,12 @@ class HomeController extends BaseController {
     }
 
     #[Get('/')]
-    public function index(): Response {
-        return $this->render("home", []);
-    }
-
-    #[Get('/homepage')]
     public function getHomepagePosts(array $params, Request $request): Response {
         $postQuery = null; 
         $userId = null;
         if ($this->getAuth()->isAuthenticatedAsAdmin()) {
             $postQuery = PostQuery::create()
-                ->forAdmin(true);                                  //|| true per testing poi lo tolgo
+                ->forAdmin(true);
         } else if ($this->getAuth()->isAuthenticatedAsUser()) {
             $userId = $this->getAuth()->getUserId();
             $postQuery = PostQuery::create()
@@ -49,10 +44,13 @@ class HomeController extends BaseController {
             throw new Exception('You are not authenticated');
         }
 
+        $posts = $this->postService->getPosts($postQuery);
+
         return $this->render("home", [
-            "posts" => $this->postService->getPosts($postQuery),
+            "posts" => $posts,
             "courses" => $this->courseService->getCoursesByUser($userId),
-            "categories" => $this->categoryService->getAllCategories()
+            "categories" => $this->categoryService->getAllCategories(),
+            "userId" => $userId
         ]);
     }
 }
