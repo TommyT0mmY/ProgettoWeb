@@ -4,13 +4,16 @@
  * @var \Unibostu\Dto\CourseDto[] $courses
  * @var \Unibostu\Dto\CategoryDto[] $categories
  * @var \Unibostu\Dto\PostDto[] $posts
+ * @var int|null $userId
  */
 
 $this->extend('main-layout', [
     'title' => 'Unibostu - Homepage',
     'courses' => $courses,
+    'userId' => $userId,
     'additionalHeadCode' => [
         '<script type="module" src="js/navbar-css.js"></script>',
+        '<script type="module" src="/js/posts/main.js"></script>',
         '<link rel="stylesheet" href="/css/style2.css">'
         ],
     ]);

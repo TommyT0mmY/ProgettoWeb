@@ -1,5 +1,9 @@
-<?php /** @var \Unibostu\Dto\PostDto $post */ ?>
-<article class="Post" data-post-id="<?= htmlspecialchars($post->postId) ?>">
+<?php 
+/** 
+ * @var \Unibostu\Dto\PostDto $post 
+*/ 
+?>
+<article class="Post" data-post-id="<?= htmlspecialchars($post->postId) ?>" data-author-id="<?= htmlspecialchars($post->author->userId) ?>">
     <header>
         <h3><?= htmlspecialchars($post->title) ?></h3>
     </header>
@@ -31,13 +35,16 @@
                     </a>
                 </li>
             <?php endif; ?>
-                <li><a href=#>Delete </a></li>
-                <li class="reaction">
-                    <button><img src="images/icons/like.svg" alt="like"></button>
+                <li class="reaction reaction-like">
+                    <button class="btn-like <?= $post->likedByUser === true ? 'active' : '' ?>">
+                        <img src="images/icons/like.svg" alt="like">
+                    </button>
                     <data value="<?= $post->likes ?>"><?= $post->likes ?></data>
                 </li>
-                <li class="reaction">
-                    <button><img src="images/icons/dislike.svg" alt="dislike"></button>
+                <li class="reaction reaction-dislike">
+                    <button class="btn-dislike <?= $post->likedByUser === false ? 'active' : '' ?>">
+                        <img src="images/icons/dislike.svg" alt="dislike">
+                    </button>
                     <data value="<?= $post->dislikes ?>"><?= $post->dislikes ?></data>
                 </li>
                 <li>

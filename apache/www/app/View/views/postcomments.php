@@ -5,7 +5,7 @@
  * @var \Unibostu\Dto\PostDto $post
  * @var \Unibostu\Dto\CommentWithAuthorDTO[] $comments
  */
-//devo cambiare nome a sto file
+
 $this->extend('main-layout', [
     'title' => 'Unibostu - Post details',
     'courses' => $courses,
@@ -14,6 +14,7 @@ $this->extend('main-layout', [
         '<script type="module" src="js/navbar-css.js"></script>',
         '<link rel="stylesheet" href="/css/style2.css">',
         '<script type="module" src="/js/comments/main.js"></script>',
+        '<script type="module" src="/js/posts/main.js"></script>',
         '<link rel="stylesheet" href="/css/comments.css">',
         ],
     ]);
@@ -21,7 +22,7 @@ $this->extend('main-layout', [
 
 <div class="post_container"> 
     <?php if (!empty($post)): ?>
-        <?= $this->component('post', ['post' => $post]) ?>
+        <?= $this->component('post', ['post' => $post, 'userId' => $userId]) ?>
     <?php else: ?>
         <p>Post not found.</p>
     <?php endif; ?>

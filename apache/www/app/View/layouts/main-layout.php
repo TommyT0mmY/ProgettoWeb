@@ -37,7 +37,7 @@
     </template>
 
     <script>
-        window.currentUser = <?= json_encode($userId) ?>;
+        window.currentUser = '<?= isset($userId) ? htmlspecialchars($userId) : '' ?>';
     </script>
 </body>
 </html>
