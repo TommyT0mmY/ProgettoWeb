@@ -10,7 +10,7 @@ $this->extend('main-layout', [
     'title' => 'Unibostu - Homepage',
     'courses' => $courses,
     'additionalHeadCode' => [
-        '<script type="module" src="js/navbar-css.js"></script>',
+        '<script type="module" src="/js/navbar-css.js"></script>',
         '<link rel="stylesheet" href="/css/style2.css">'
         ],
     ]);
@@ -38,6 +38,7 @@ $this->extend('main-layout', [
             <input type="submit" value="Filter"/>
         </form>
     </section>
+    <hr/>
 <div class="post_container">
 <?php foreach ($posts ?? [] as $post): ?>
     <?= $this->component('post', ['post' => $post]) ?>

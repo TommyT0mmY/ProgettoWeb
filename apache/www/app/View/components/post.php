@@ -35,18 +35,15 @@
         <!-- if (isset($_SESSION['userId']) && ($_SESSION['userId'] === $post->userId || $_SESSION['role'] === 'ADMIN')): -->
                 <li><a href=#>Delete </a></li> <!--to be updated-->       
                 <li class="reaction">
-                    <button><img src="images/icons/like.svg" alt="like"></button>
+                    <button><img src="/images/icons/like.svg" alt="like"></button>
                     <data value="<?= $post->likes ?>"><?= $post->likes ?></data>
                 </li>
                 <li class="reaction">
-                    <button><img src="images/icons/dislike.svg" alt="dislike"></button>
+                    <button><img src="/images/icons/dislike.svg" alt="dislike"></button>
                     <data value="<?= $post->dislikes ?>"><?= $post->dislikes ?></data>
                 </li>
                 <li>
-                    <a href="comments.php#replyMain">Reply</a><!--to be updated-->
-                </li>
-                <li>
-                    <a href="comments.php">Comments</a> <!--to be updated-->
+                    <a href="/posts/<?= htmlspecialchars($post->postId) ?>">Comments</a>
                 </li>
         </ul>            
    </footer>

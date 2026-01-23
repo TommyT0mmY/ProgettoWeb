@@ -11,13 +11,15 @@ $this->extend('main-layout', [
     'courses' => $courses,
     'userId' => $userId,
     'additionalHeadCode' => [
-        '<script type="module" src="js/navbar-css.js"></script>',
+        '<script type="module" src="/js/navbar-css.js"></script>',
         '<link rel="stylesheet" href="/css/style2.css">',
         '<script type="module" src="/js/commentsTree/main.js"></script>',
         '<link rel="stylesheet" href="/css/comments.css">',
         ],
     ]);
 ?>
+
+<a href="/homepage">Go back to homepage</a>
 
 <div class="post_container"> 
     <?php if (!empty($post)): ?>
