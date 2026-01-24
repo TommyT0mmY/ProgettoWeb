@@ -311,6 +311,32 @@ ul.tags {
     filter: brightness(0) invert(1); /* Bianca su hover */
 }
 
+/* Stili per i pulsanti like/dislike attivi */
+.review .btn-like.active,
+.review .btn-dislike.active {
+    background-color: #0757a9;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.review .btn-like.active img,
+.review .btn-dislike.active img {
+    filter: brightness(0) invert(1); /* Icona bianca quando attivo */
+}
+
+/* Stile per il contenitore reaction quando il pulsante è attivo */
+.review .reaction-like:has(.btn-like.active),
+.review .reaction-dislike:has(.btn-dislike.active) {
+    background-color: #e3f2fd;
+    border-color: #1976d2;
+}
+
+.review .reaction-like:has(.btn-like.active) data,
+.review .reaction-dislike:has(.btn-dislike.active) data {
+    color: #1976d2;
+    font-weight: 700;
+}
+
 
 /* LOGIN and REGISTER */
 main > form {
