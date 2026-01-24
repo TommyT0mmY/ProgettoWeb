@@ -3,103 +3,81 @@ declare(strict_types=1);
 
 namespace Unibostu\Core\security;
 use Unibostu\Core\SessionManager;
+use Unibostu\Model\Service\RoleService;
 use Unibostu\Model\Service\AdminService;
 use Unibostu\Model\Service\UserService;
 
-class Auth {
-    private const KEY_USERID = 'user_id';
-    private const KEY_ADMINID = 'admin_id';
+readonly class RoleData {
+    public function __construct(
+        public string $idKey,
+        public RoleService $service,
+    ) {}
+}
 
-    private UserService $userService;
-    private AdminService $adminService;
-    
+class Auth {
+    private array $roleData = [];
+
     public function __construct(
         private SessionManager $sessionManager
     ) {
-        $this->userService = new UserService();
-        $this->adminService = new AdminService();
+        $roleData = [
+            Role::USER->name => new RoleData(
+                "user_id",
+                new UserService(),
+            ),
+            Role::ADMIN->name => new RoleData(
+                "admin_id",
+                new AdminService(),
+            ),
+        ];
     }
 
-    /**
-     * Performs user login.
-     *
-     * @param string $userId The userId.
-     * @param string $password The user password.
-     *
-     * @return bool True if login is successful, false otherwise.
-     */
-    public function loginAsUser(string $userId, string $password): bool {
-        $authenticated = $this->userService->checkCredentials($userId, $password);
+    public function login(Role $role, string $id, string $password): bool {
+        $data = $this->roleData[$role->name] ?? null;
+        if ($data === null) return false;
+        [ $idKey, $service ] = [ $data->idKey, $data->service ];
+        $authenticated = $service->checkCredentials($id, $password);
         if (!$authenticated) {
             return false;
         }
-        $this->sessionManager->unset(self::KEY_USERID);
-        $this->sessionManager->unset(self::KEY_ADMINID);
-        $this->sessionManager->regenerate();
-        $this->sessionManager->set(self::KEY_USERID, $userId);
-        return true;
-    }
-
-    /**
-     * Performs admin login.
-     *
-     * @param string $adminId The admin ID.
-     * @param string $password The admin password.
-     *
-     * @return bool True if login is successful, false otherwise.
-     */
-    public function loginAsAdmin(string $adminId, string $password): bool {
-        $authenticated = $this->adminService->checkCredentials($adminId, $password);
-        if (!$authenticated) {
-            return false;
+        /** @var RoleData $currData */
+        foreach ($this->roleData as $currData) { // Unsetting every other role's session data
+            $this->sessionManager->unset($currData->idKey);
         }
-        $this->sessionManager->unset(self::KEY_USERID);
-        $this->sessionManager->unset(self::KEY_ADMINID);
         $this->sessionManager->regenerate();
-        $this->sessionManager->set(self::KEY_ADMINID, $adminId);
+        $this->sessionManager->set($idKey, $id);
         return true;
     }
 
     public function logout(): void {
-        $this->sessionManager->unset(self::KEY_USERID);
-        $this->sessionManager->unset(self::KEY_ADMINID);
+        foreach ($this->roleData as $data) {
+            $this->sessionManager->unset($data->idKey);
+        }
         $this->sessionManager->destroySession();
         $this->sessionManager->start();
     }
 
-    public function isAuthenticatedAsUser(): bool {
-        $userId = $this->sessionManager->get(self::KEY_USERID);
-        if ($userId === null) {
+    public function isAuthenticated(Role $role): bool {
+        $data = $this->roleData[$role->name] ?? null;
+        if ($data === null) return false;
+        $id = $this->sessionManager->get($data->idKey);
+        if ($id === null) {
             return false;
         }
-        if (!$this->userService->userExists($userId)) {
+        if (!$data->service->exists($id)) {
             $this->logout();
             return false;
         }
-        if ($this->userService->isUserSuspended($userId)) {
-            $this->logout();
-            return false;
-        }
-        return true;
-    }
-
-    public function isAuthenticatedAsAdmin(): bool {
-        $adminId = $this->sessionManager->get(self::KEY_ADMINID);
-        if ($adminId === null) {
-            return false;
-        }
-        if (!$this->adminService->adminExists($adminId)) {
+        if ($role === Role::USER && $data->service->isSuspended($id)) {
             $this->logout();
             return false;
         }
         return true;
     }
 
-    public function getUserId(): string {
-        return $this->sessionManager->get(self::KEY_USERID);
-    }
-
-    public function getAdminId(): string {
-        return $this->sessionManager->get(self::KEY_ADMINID);
+    public function getId(Role $role): ?string {
+        $data = $this->roleData[$role->name] ?? null;
+        if ($data === null) return null;
+        return $this->sessionManager->get($data->idKey);
     }
 }

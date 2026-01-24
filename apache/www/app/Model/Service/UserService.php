@@ -8,7 +8,7 @@ use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\DTO\UserDTO;
 
-class UserService {
+class UserService implements RoleService {
     private UserRepository $userRepository;
     private FacultyService $facultyService;
 
@@ -18,17 +18,16 @@ class UserService {
     }
 
     /**
-     * Ottiene il profilo di un utente tramite ID
+     * Retrieves the user profile by user ID.
+     *
+     * @param string $userId The user ID.
+     *
+     * @return UserDTO|null The user profile DTO or null if not found.
      */
     public function getUserProfile(string $userId): ?UserDTO {
         return $this->userRepository->findByUserId($userId);
     }
 
-    /**
-     * Verifies user credentials
-     *
-     * @return bool true if credentials are valid, false otherwise
-     */
     public function checkCredentials(string $userId, string $password): bool {
         $user = $this->userRepository->findByUserId($userId);
         if (!$user) {
@@ -43,22 +42,12 @@ class UserService {
         return true;
     }
 
-    /**
-     * Verifies if a user exists
-     *
-     * @return bool true if the user exists, false otherwise
-     */
-    public function userExists(string $userId): bool {
+    public function exists(string $userId): bool {
         return $this->userRepository->userExists($userId);
     }
 
-    /**
-     * Verifies if a user is suspended
-     *
-     * @return bool true if the user is suspended, false otherwise
-     */ 
-    public function isUserSuspended(string $userId): bool {
-        $user = $this->userRepository->findByUserId($userId);
+    public function isSuspended(string $userId): bool {
+        $user = $this->getUserProfile($userId); 
         if (!$user) {
             return false;
         }
@@ -73,7 +62,7 @@ class UserService {
      */
     public function registerUser(UserDTO $dto): void {
         $exceptionBuilder = ValidationException::build();
-        $existingUser = $this->userRepository->findByUserId($dto->userId);
+        $existingUser = $this->getUserProfile($dto->userId);
         if ($existingUser) {
             $exceptionBuilder->addError(ValidationErrorCode::USERNAME_ALREADY_EXISTS);
         }
@@ -107,7 +96,7 @@ class UserService {
     // TODO CONTROLLARE MEGLIO QUESTO METODO
     public function updateProfile(UserDTO $dto): void {
         $exceptionBuilder = ValidationException::build();
-        $user = $this->userRepository->findByUserId($dto->userId);
+        $user = $this->getUserProfile($dto->userId);
         if (!$user) {
             $exceptionBuilder->addError(ValidationErrorCode::USERNAME_REQUIRED);
         }
@@ -124,7 +113,7 @@ class UserService {
     }
 
     public function suspendUser(string $userId): void {
-        $user = $this->userRepository->findByUserId($userId);
+        $user = $this->getUserProfile($userId);
         if (!$user) {
             ValidationException::build()->addError(ValidationErrorCode::USERNAME_REQUIRED)->throwIfAny();
         }
