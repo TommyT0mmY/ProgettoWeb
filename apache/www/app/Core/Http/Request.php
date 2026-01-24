@@ -70,36 +70,36 @@ class Request {
     /**
      * Get a custom attribute.
      *
-     * @param string $name The attribute name.
+     * @param RequestAttribute $name The attribute name.
      * @param mixed $default The default value if the attribute is not set.
      * @return mixed The attribute value or default.
      */
-    public function getAttribute(string $name, $default = null) {
-        return $this->attributes[$name] ?? $default;
+    public function getAttribute(RequestAttribute $name, $default = null) {
+        return $this->attributes[$name->value] ?? $default;
     }
 
     /**
      * Set a custom attribute.
      *
-     * @param string $name The attribute name.
+     * @param RequestAttribute $name The attribute name.
      * @param mixed $value The attribute value.
      * @return self A new instance with the specified attribute set.
      */
-    public function withAttribute(string $name, $value): self {
+    public function withAttribute(RequestAttribute $name, $value): self {
         $clone = clone $this;
-        $clone->attributes[$name] = $value;
+        $clone->attributes[$name->value] = $value;
         return $clone;
     }
 
     /**
      * Remove a custom attribute.
      *
-     * @param string $name The attribute name to remove.
+     * @param RequestAttribute $name The attribute name to remove.
      * @return self A new instance without the specified attribute.
      */
-    public function withoutAttribute(string $name): self {
+    public function withoutAttribute(RequestAttribute $name): self {
         $clone = clone $this;
-        unset($clone->attributes[$name]);
+        unset($clone->attributes[$name->value]);
         return $clone;
      }
 
