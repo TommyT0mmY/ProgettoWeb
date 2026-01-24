@@ -8,9 +8,9 @@ use Unibostu\Core\exceptions\DomainErrorCode;
 use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
-use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
+use Unibostu\Core\security\Auth;
 use Unibostu\Core\security\CsrfProtection;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\DTO\UserDTO;
@@ -19,10 +19,12 @@ use Unibostu\Model\Service\UserService;
 
 class AuthController extends BaseController {
     private CsrfProtection $csrfProtection;
+    private Auth $auth;
 
     public function __construct(Container $container) {
         parent::__construct($container);
         $this->csrfProtection = $container->get(CsrfProtection::class);
+        $this->auth = $container->get(Auth::class);
     }
 
     #[Get("/login")]
@@ -44,7 +46,6 @@ class AuthController extends BaseController {
 
     #[Post("/api/auth/login")]
     public function login(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $username = $request->post("username");
         $password = $request->post("password");
 
@@ -54,7 +55,7 @@ class AuthController extends BaseController {
                 "errors" => [DomainErrorCode::GENERIC_ERROR->name]
             ]);
         }
-        $success = $this->getAuth()->login(Role::USER, $username, $password);
+        $success = $this->auth->login(Role::USER, $username, $password);
         if ($success) {
             return Response::create()->json([
                 "success" => true,
@@ -70,7 +71,6 @@ class AuthController extends BaseController {
 
     #[Post("/api/auth/adminlogin")]
     public function adminlogin(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $username = $request->post("username");
         $password = $request->post("password");
 
@@ -80,7 +80,7 @@ class AuthController extends BaseController {
                 "errors" => [DomainErrorCode::GENERIC_ERROR->name]
             ]);
         }
-        $success = $this->getAuth()->login(Role::ADMIN, $username, $password);
+        $success = $this->auth->login(Role::ADMIN, $username, $password);
         if ($success) {
             return Response::create()->json([
                 "success" => true,
@@ -96,7 +96,6 @@ class AuthController extends BaseController {
 
     #[Post("/api/auth/register")]
     public function register(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $userService = new UserService();
         $username = $request->post("username");
         $firstname = $request->post("firstname");
@@ -131,9 +130,8 @@ class AuthController extends BaseController {
     }
 
     #[Post("/api/auth/logout")]
-    public function logout(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
-        $this->getAuth()->logout();
+    public function logout(): Response {
+        $this->auth->logout();
         return Response::create()->json([
             "success" => true,
             "redirect" => "/login",
