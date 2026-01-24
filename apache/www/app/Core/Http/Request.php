@@ -77,6 +77,8 @@ class Request {
     public function getReferer(): string {
         return $this->referer;
     }
+
+    /**
      * Get a custom attribute.
      *
      * @param string $name The attribute name.
