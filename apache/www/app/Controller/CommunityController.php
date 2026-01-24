@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace Unibostu\Controller;
 
-use Exception;
 use Unibostu\Core\Http\Request;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Container;
 use Unibostu\Core\Http\RequestAttribute;
-use Unibostu\Core\SessionManager;
+use Unibostu\Core\router\middleware\AuthMiddleware;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\security\Role;
@@ -24,8 +23,7 @@ class CommunityController extends BaseController {
     private $categoryService;
     private $userService;
 
-    public function __construct(Container $container)
-    {
+    public function __construct(Container $container) {
         parent::__construct($container);
         $this->postService = new PostService();
         $this->courseService = new CourseService();
@@ -35,17 +33,18 @@ class CommunityController extends BaseController {
 
     /** get Community posts */
     #[Get("/courses/:courseId")]
+    #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getCommunityPosts(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $courseId = $params['courseId'];
         $postQuery = null;
         $userId = null; //per testing usare "laura.monti"
-
-        if ($this->getAuth()->isAuthenticated(Role::ADMIN)) {
+        $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        if ($currentRole === Role::ADMIN) {
             $postQuery = PostQuery::create()
                 ->forAdmin(true);                                  
-        } else if ($this->getAuth()->isAuthenticated(Role::USER)) { //|| true per testing poi lo tolgo
-            $userId = $this->getAuth()->getId(Role::USER);//commentare per testing
+        } else if ($currentRole === Role::USER) {
+            $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
             $postQuery = PostQuery::create()
                 ->forUser($userId)
                 ->authoredBy($userId)
@@ -53,12 +52,10 @@ class CommunityController extends BaseController {
                 ->inCategory($request->get('categoryId'))
                 ->withTags($request->get('tags'))
                 ->sortedBy($request->get('sortOrder'));
-        } else {
-            throw new Exception('You are not authenticated');
         }
 
         $user = $this->userService->getUserProfile($userId);
-        
+
         return $this->render("community", [
             "posts" => $this->postService->getPosts($postQuery),
             "courses" => $this->courseService->getCoursesByUser($userId),

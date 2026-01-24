@@ -4,9 +4,12 @@ declare(strict_types=1);
 namespace Unibostu\Controller;
 
 use Unibostu\Core\Container;
+use Unibostu\Core\exceptions\ValidationErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Core\Http\Request;
 use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\Http\Response;
+use Unibostu\Core\router\middleware\AuthMiddleware;
 use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
@@ -21,8 +24,7 @@ class PostController extends BaseController {
     private $commentService;
     private $courseService;
 
-    public function __construct(Container $container)
-    {
+    public function __construct(Container $container) {
         parent::__construct($container);
         $this->postService = new PostService();
         $this->commentService = new CommentService();
@@ -30,19 +32,14 @@ class PostController extends BaseController {
     }
 
     #[Get("/posts/:postid")]
+    #[AuthMiddleware(Role::USER)]
     public function getPost(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         if ($postId === null) {
-            return new Response('Post ID is required', 400);
+            throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
         }
-
-        if ($this->getAuth()->isAuthenticated(Role::USER)) {
-            $userId = $this->getAuth()->getId(Role::USER);
-        } else {
-            return new Response('Unauthorized', 401);
-        }
-
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         return $this->render("postcomments", [
             "courses" => $this->courseService->getCoursesByUser($userId),
             "post" => $this->postService->getPostDetails((int)$postId),
@@ -52,37 +49,31 @@ class PostController extends BaseController {
     }
 
     #[Post("/api/posts/:postid/comments")]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationException()]
     public function addComment(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         if ($postId === null) {
-            return new Response('Post ID is required', 402);
+            throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
         }
-        if ($this->getAuth()->isAuthenticated(Role::USER)) {
-            $userId = $this->getAuth()->getId(Role::USER);
-        } else {
-            return new Response('Unauthorized', 401);
-        }
-
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $text = $request->post("text");
         if ($text === null || trim($text) === '') {
-            return new Response('Comment text is required', 403);
+            throw new ValidationException(errors: [ValidationErrorCode::COMMENT_TEXT_REQUIRED]);
         }
-
         $parentCommentId = $request->post("parentCommentId");
         if (isset($parentCommentId)) {
             $parentCommentId = (int)$parentCommentId;
         } else {
             $parentCommentId = null;
         }
-
         $commentWithAuthor = $this->commentService->createComment(new CreateCommentDTO(
             postId: (int)$postId,
             userId: $userId,
             text: $text,
             parentCommentId: $parentCommentId
         ));
-
         return new Response(json_encode([
             'commentId' => $commentWithAuthor->commentId,
             'postId' => $commentWithAuthor->postId,
@@ -99,23 +90,24 @@ class PostController extends BaseController {
     }
 
     #[Post("/api/posts/create")]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationException()]
     public function createPost(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         return new Response();
     }
 
     #[Post("/api/posts/search")]
+    #[AuthMiddleware(Role::USER)]
     public function searchPost(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         return new Response();
     }
 
     #[Get("/api/posts/:postid/comments")]
+    #[AuthMiddleware(Role::USER)]
     public function showComments(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         $comments = $this->commentService->getCommentsByPostId((int)$postId);
-
         $commentsArray = array_map(function($commentDTO) {
                 return [
                     'commentId' => $commentDTO->commentId,
@@ -131,40 +123,40 @@ class PostController extends BaseController {
                     ]
                 ];
             }, $comments);
-
         return new Response(json_encode($commentsArray), 200, ['Content-Type' => 'application/json']);
     }
 
     #[Delete("/api/posts/:postid")]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationException()]
     public function deletePost(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
-        $userId = $this->getAuth()->getId(Role::USER);
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $this->postService->deletePost((int)$postId, $userId);
-        return new Response('Post deleted', 200);
+        return new Response('Post deleted', 200); // TODO JSON
     }
 
     #[Delete("/api/posts/:postid/comments/:commentid")]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationException()]
     public function deleteComment(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         $commentId = $params['commentid'] ?? null;
-
-        if ($postId === null || $commentId === null) {
-            return new Response('Post ID and Comment ID are required', 400);
+        if ($postId === null) {
+            throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
         }
-
-        if ($this->getAuth()->isAuthenticated(Role::USER)) {
-            $userId = $this->getAuth()->getId(Role::USER);
-        } else {
-            return new Response('Unauthorized', 401);
+        if ($commentId === null) {
+            throw new ValidationException(errors: [ValidationErrorCode::COMMENT_ID_REQUIRED]);
         }
-        
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $this->commentService->deleteComment((int)$commentId, (int)$postId, $userId);
         return new Response(json_encode(['text' => 'Comment deleted']), 200);
     }
 
     #[Post("/api/posts/:postid/like")]
+    #[AuthMiddleware(Role::USER)]
     public function likePost(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;

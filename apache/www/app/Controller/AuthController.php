@@ -5,25 +5,22 @@ namespace Unibostu\Controller;
 
 use Unibostu\Core\Container;
 use Unibostu\Core\exceptions\DomainErrorCode;
-use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
+use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\security\Auth;
-use Unibostu\Core\security\CsrfProtection;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\DTO\UserDTO;
 use Unibostu\Model\Service\FacultyService;
 use Unibostu\Model\Service\UserService;
 
 class AuthController extends BaseController {
-    private CsrfProtection $csrfProtection;
     private Auth $auth;
 
     public function __construct(Container $container) {
         parent::__construct($container);
-        $this->csrfProtection = $container->get(CsrfProtection::class);
         $this->auth = $container->get(Auth::class);
     }
 
@@ -45,16 +42,10 @@ class AuthController extends BaseController {
     }
 
     #[Post("/api/auth/login")]
+    #[ValidationMiddleware()]
     public function login(Request $request): Response {
         $username = $request->post("username");
         $password = $request->post("password");
-
-        if (!$this->csrfProtection->validateRequest($request)) {
-            return Response::create()->json([
-                "success" => false,
-                "errors" => [DomainErrorCode::GENERIC_ERROR->name]
-            ]);
-        }
         $success = $this->auth->login(Role::USER, $username, $password);
         if ($success) {
             return Response::create()->json([
@@ -70,16 +61,10 @@ class AuthController extends BaseController {
     } 
 
     #[Post("/api/auth/adminlogin")]
+    #[ValidationMiddleware()]
     public function adminlogin(Request $request): Response {
         $username = $request->post("username");
         $password = $request->post("password");
-
-        if (!$this->csrfProtection->validateRequest($request)) {
-            return Response::create()->json([
-                "success" => false,
-                "errors" => [DomainErrorCode::GENERIC_ERROR->name]
-            ]);
-        }
         $success = $this->auth->login(Role::ADMIN, $username, $password);
         if ($success) {
             return Response::create()->json([
@@ -95,6 +80,7 @@ class AuthController extends BaseController {
     } 
 
     #[Post("/api/auth/register")]
+    #[ValidationMiddleware()]
     public function register(Request $request): Response {
         $userService = new UserService();
         $username = $request->post("username");
@@ -102,27 +88,13 @@ class AuthController extends BaseController {
         $lastname = $request->post("lastname");
         $facultyid = $request->post("facultyid");
         $password = $request->post("password");
-
-        if (!$this->csrfProtection->validateRequest($request)) {
-            return Response::create()->json([
-                "success" => false,
-                "errors" => [DomainErrorCode::GENERIC_ERROR->name]
-            ]);
-        }
-        try {
-            $userService->registerUser(new UserDTO(
-                userId: $username,
-                firstName: $firstname, 
-                lastName: $lastname,
-                facultyId: (int)$facultyid,
-                password: $password
-            ));
-        } catch (ValidationException $e) {
-            return Response::create()->json([
-                "success" => false,
-                "errors" => $e->getErrorCodes()
-            ]);
-        }
+        $userService->registerUser(new UserDTO(
+            userId: $username,
+            firstName: $firstname, 
+            lastName: $lastname,
+            facultyId: (int)$facultyid,
+            password: $password
+        ));
         return Response::create()->json([
             "success" => true,
             "redirect" => "/login",
