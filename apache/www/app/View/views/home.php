@@ -41,6 +41,7 @@ $this->extend('main-layout', [
             <input type="submit" value="Filter"/>
         </form>
     </section>
+    <hr/>
 <div class="post_container">
 <?php foreach ($posts ?? [] as $post): ?>
     <?= $this->component('post', ['post' => $post]) ?>

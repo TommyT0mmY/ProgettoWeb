@@ -41,7 +41,10 @@ class App {
             Ctrl\PostController::class,
             Ctrl\HomeController::class,
             Ctrl\AuthController::class,
-            Ctrl\CommunityController::class
+            Ctrl\CommunityController::class,
+            Ctrl\UserProfileController::class,
+            Ctrl\CreatePostController::class,
+            Ctrl\StudentPreferencesController::class
         );
         return;
     }

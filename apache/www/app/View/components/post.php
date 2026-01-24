@@ -48,7 +48,7 @@
                     <data value="<?= $post->dislikes ?>"><?= $post->dislikes ?></data>
                 </li>
                 <li>
-                    <a href="comments.php">Comments</a> <!--to be updated-->
+                    <a href="/posts/<?= htmlspecialchars($post->postId) ?>">Comments</a>
                 </li>
         </ul>            
    </footer>

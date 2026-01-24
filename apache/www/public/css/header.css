@@ -1,0 +1,48 @@
+
+main,h1,ul,p{
+    margin: 0;
+    padding: 0;
+}
+body{
+    padding-top: 50px;/* per header fisso*/
+    padding-bottom: 10px;
+    background-color: #e3effa; /* Celeste ghiaccio */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+img{
+  width: 40px;
+}
+
+/*HEADER*/
+body > header {
+    display: flex;
+    width:100%;
+    justify-content: space-between; 
+    height:33px;/*33px su 50 rispetto al body, position fixed*/
+    align-items: center; 
+    background-color: #ffffff; 
+    position: fixed;
+    top: 0;
+    right: 0;
+    left:0;
+    padding: 5px 0;
+    border-bottom: 1px solid #000;
+    z-index: 1;
+    color: #0757a9;
+}
+body > header > button{
+    height: 30px;
+    width:40px;
+    background-color: #fff;
+    border:#fff;
+
+} 
+body > header > .profile-container{
+    width:30px;
+    height:30px;
+    border:#fff;
+}
+body > header > .title_with_logo{
+    display: flex; 
+    flex-direction: row;
+}
