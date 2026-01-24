@@ -7,10 +7,12 @@ use Unibostu\Core\Container;
 use Exception;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
+use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Core\security\Auth;
+use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\UserService;
@@ -37,15 +39,16 @@ class UserProfileController extends BaseController {
 
     /** get user profile */
     #[Get('/user-profile')]
-    public function getUserProfilePosts(array $params, Request $request): Response {
+    public function getUserProfilePosts(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postQuery = null;
         $userId = null; //per testing usare "laura.monti"
 
-        if ($this->getAuth()->isAuthenticatedAsAdmin()) {
+        if ($this->getAuth()->isAuthenticated(Role::ADMIN)) {
             $postQuery = PostQuery::create()
                 ->forAdmin(true);                                  
-        } else if ($this->getAuth()->isAuthenticatedAsUser()) { //|| true per testing poi lo tolgo
-            $userId = $this->getAuth()->getUserId();//commentare per testing
+        } else if ($this->getAuth()->isAuthenticated(Role::USER)) { //|| true per testing poi lo tolgo
+            $userId = $this->getAuth()->getId(Role::USER);//commentare per testing
             $postQuery = PostQuery::create()
                 ->forUser($userId)
                 ->authoredBy($userId)

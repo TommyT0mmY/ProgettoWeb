@@ -5,10 +5,12 @@ namespace Unibostu\Controller;
 
 use Unibostu\Core\Container;
 use Unibostu\Core\Http\Request;
+use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
+use Unibostu\Core\security\Role;
 use Unibostu\Model\DTO\CreateCommentDTO; 
 use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CommentService;
@@ -28,14 +30,15 @@ class PostController extends BaseController {
     }
 
     #[Get("/posts/:postid")]
-    public function getPost(array $params, Request $request): Response {
+    public function getPost(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         if ($postId === null) {
             return new Response('Post ID is required', 400);
         }
 
-        if ($this->getAuth()->isAuthenticatedAsUser()) {
-            $userId = $this->getAuth()->getUserId();
+        if ($this->getAuth()->isAuthenticated(Role::USER)) {
+            $userId = $this->getAuth()->getId(Role::USER);
         } else {
             return new Response('Unauthorized', 401);
         }
@@ -49,13 +52,14 @@ class PostController extends BaseController {
     }
 
     #[Post("/api/posts/:postid/comments")]
-    public function addComment(array $params, Request $request): Response {
+    public function addComment(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         if ($postId === null) {
             return new Response('Post ID is required', 402);
         }
-        if ($this->getAuth()->isAuthenticatedAsUser()) {
-            $userId = $this->getAuth()->getUserId();
+        if ($this->getAuth()->isAuthenticated(Role::USER)) {
+            $userId = $this->getAuth()->getId(Role::USER);
         } else {
             return new Response('Unauthorized', 401);
         }
@@ -95,17 +99,20 @@ class PostController extends BaseController {
     }
 
     #[Post("/api/posts/create")]
-    public function createPost(array $params, Request $request): Response {
+    public function createPost(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         return new Response();
     }
 
     #[Post("/api/posts/search")]
-    public function searchPost(array $params, Request $request): Response {
+    public function searchPost(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         return new Response();
     }
 
     #[Get("/api/posts/:postid/comments")]
-    public function showComments(array $params, Request $request): Response {
+    public function showComments(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         $comments = $this->commentService->getCommentsByPostId((int)$postId);
 
@@ -129,15 +136,17 @@ class PostController extends BaseController {
     }
 
     #[Delete("/api/posts/:postid")]
-    public function deletePost(array $params, Request $request): Response {
+    public function deletePost(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
-        $userId = $this->getAuth()->getUserId();
+        $userId = $this->getAuth()->getId(Role::USER);
         $this->postService->deletePost((int)$postId, $userId);
         return new Response('Post deleted', 200);
     }
 
     #[Delete("/api/posts/:postid/comments/:commentid")]
-    public function deleteComment(array $params, Request $request): Response {
+    public function deleteComment(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         $commentId = $params['commentid'] ?? null;
 
@@ -145,8 +154,8 @@ class PostController extends BaseController {
             return new Response('Post ID and Comment ID are required', 400);
         }
 
-        if ($this->getAuth()->isAuthenticatedAsUser()) {
-            $userId = $this->getAuth()->getUserId();
+        if ($this->getAuth()->isAuthenticated(Role::USER)) {
+            $userId = $this->getAuth()->getId(Role::USER);
         } else {
             return new Response('Unauthorized', 401);
         }
@@ -156,7 +165,8 @@ class PostController extends BaseController {
     }
 
     #[Post("/api/posts/:postid/like")]
-    public function likePost(array $params, Request $request): Response {
+    public function likePost(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         return new Response();
     }

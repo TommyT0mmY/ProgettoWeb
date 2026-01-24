@@ -7,9 +7,11 @@ use Unibostu\Core\Container;
 use Exception;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
+use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\security\Auth;
+use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\TagService;
@@ -30,16 +32,17 @@ class CreatePostController extends BaseController {
         $this->userService = new UserService();
     }
     #[Get('/courses/:courseId/createpost')]
-    public function createPosts(array $params, Request $request): Response {
+    public function createPosts(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $courseId = $params['courseId'];
 
         $userId = null; //per testing usare "laura.monti"
         
         //autenticazione,commentare per testing
-        if ($this->getAuth()->isAuthenticatedAsAdmin()) {
-            $userId = $this->getAuth()->getAdminId();                                 
-        } else if ($this->getAuth()->isAuthenticatedAsUser()) { 
-            $userId = $this->getAuth()->getUserId();
+        if ($this->getAuth()->isAuthenticated(Role::ADMIN)) {
+            $userId = $this->getAuth()->getId(Role::ADMIN);
+        } else if ($this->getAuth()->isAuthenticated(Role::USER)) {
+            $userId = $this->getAuth()->getId(Role::USER);
         } else {
             throw new Exception('You are not authenticated');
         }

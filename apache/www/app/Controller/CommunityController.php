@@ -7,9 +7,11 @@ use Exception;
 use Unibostu\Core\Http\Request;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Container;
+use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\SessionManager;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Core\router\routes\Get;
+use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
@@ -33,16 +35,17 @@ class CommunityController extends BaseController {
 
     /** get Community posts */
     #[Get("/courses/:courseId")]
-    public function getCommunityPosts(array $params, Request $request): Response {
+    public function getCommunityPosts(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $courseId = $params['courseId'];
         $postQuery = null;
         $userId = null; //per testing usare "laura.monti"
 
-        if ($this->getAuth()->isAuthenticatedAsAdmin()) {
+        if ($this->getAuth()->isAuthenticated(Role::ADMIN)) {
             $postQuery = PostQuery::create()
                 ->forAdmin(true);                                  
-        } else if ($this->getAuth()->isAuthenticatedAsUser()) { //|| true per testing poi lo tolgo
-            $userId = $this->getAuth()->getUserId();//commentare per testing
+        } else if ($this->getAuth()->isAuthenticated(Role::USER)) { //|| true per testing poi lo tolgo
+            $userId = $this->getAuth()->getId(Role::USER);//commentare per testing
             $postQuery = PostQuery::create()
                 ->forUser($userId)
                 ->authoredBy($userId)

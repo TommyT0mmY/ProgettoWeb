@@ -5,13 +5,14 @@ namespace Unibostu\Controller;
 
 use Unibostu\Core\Container;
 use Unibostu\Core\exceptions\DomainErrorCode;
-use Unibostu\Core\exceptions\ValidationErrorCode;
 use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
+use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\security\CsrfProtection;
+use Unibostu\Core\security\Role;
 use Unibostu\Model\DTO\UserDTO;
 use Unibostu\Model\Service\FacultyService;
 use Unibostu\Model\Service\UserService;
@@ -42,7 +43,8 @@ class AuthController extends BaseController {
     }
 
     #[Post("/api/auth/login")]
-    public function login(array $params, Request $request): Response {
+    public function login(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $username = $request->post("username");
         $password = $request->post("password");
 
@@ -52,7 +54,7 @@ class AuthController extends BaseController {
                 "errors" => [DomainErrorCode::GENERIC_ERROR->name]
             ]);
         }
-        $success = $this->getAuth()->loginAsUser($username, $password);
+        $success = $this->getAuth()->login(Role::USER, $username, $password);
         if ($success) {
             return Response::create()->json([
                 "success" => true,
@@ -67,7 +69,8 @@ class AuthController extends BaseController {
     } 
 
     #[Post("/api/auth/adminlogin")]
-    public function adminlogin(array $params, Request $request): Response {
+    public function adminlogin(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $username = $request->post("username");
         $password = $request->post("password");
 
@@ -77,7 +80,7 @@ class AuthController extends BaseController {
                 "errors" => [DomainErrorCode::GENERIC_ERROR->name]
             ]);
         }
-        $success = $this->getAuth()->loginAsAdmin($username, $password);
+        $success = $this->getAuth()->login(Role::ADMIN, $username, $password);
         if ($success) {
             return Response::create()->json([
                 "success" => true,
@@ -92,7 +95,8 @@ class AuthController extends BaseController {
     } 
 
     #[Post("/api/auth/register")]
-    public function register(array $params, Request $request): Response {
+    public function register(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $userService = new UserService();
         $username = $request->post("username");
         $firstname = $request->post("firstname");
@@ -127,7 +131,8 @@ class AuthController extends BaseController {
     }
 
     #[Post("/api/auth/logout")]
-    public function logout(array $params, Request $request): Response {
+    public function logout(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $this->getAuth()->logout();
         return Response::create()->json([
             "success" => true,
