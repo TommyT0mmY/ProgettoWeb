@@ -115,7 +115,7 @@ class UserService implements RoleService {
     public function suspendUser(string $userId): void {
         $user = $this->getUserProfile($userId);
         if (!$user) {
-            ValidationException::build()->addError(ValidationErrorCode::USERNAME_REQUIRED)->throwIfAny();
+            throw new ValidationException(errors: [ValidationErrorCode::USERNAME_REQUIRED]);
         }
         $this->userRepository->suspendUser($userId);
     }

@@ -14,9 +14,9 @@ use Unibostu\Core\SessionManager;
  */
 final class CsrfProtection {
     private const CSRF_TOKEN_LIFETIME = 3600;           // 1 hour
-    private const KEY_CSRF_TOKENS = "_cp_csrf_tokens";
-    public const KEY_CSRF_KEY = "csrf-key";
-    public const KEY_CSRF_TOKEN = "csrf-token";
+    private const KEY_CSRF_TOKENS = "_cp_csrf_tokens";  // Session key for storing CSRF tokens
+    public const KEY_CSRF_KEY = "csrf-key";             // Request parameter name for CSRF token key
+    public const KEY_CSRF_TOKEN = "csrf-token";         // Request parameter name for CSRF token value
 
     public function __construct(
         private readonly SessionManager $session
