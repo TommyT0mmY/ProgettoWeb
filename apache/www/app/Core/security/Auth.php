@@ -20,7 +20,7 @@ class Auth {
     public function __construct(
         private SessionManager $sessionManager
     ) {
-        $roleData = [
+        $this->roleData = [
             Role::USER->name => new RoleData(
                 "user_id",
                 new UserService(),
