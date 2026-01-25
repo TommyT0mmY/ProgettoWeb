@@ -20,4 +20,8 @@ enum RequestAttribute: string {
      * The ID of the role of the client making the request.
      */
     case ROLE_ID = "role_id";
+    /**
+     * The fields extracted from the request body.
+     */
+    case FIELDS = "fields";
 }
