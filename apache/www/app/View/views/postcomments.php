@@ -48,7 +48,7 @@ $this->extend('main-layout', [
             </div>
             
             <div class="comment-actions">
-                <button type="button" class="btn-reply">
+                <button type="button" class="btn-reply" aria-label="Reply to comment">
                     Reply
                 </button>
             </div>
@@ -60,7 +60,9 @@ $this->extend('main-layout', [
     <template id="comment-form-template">
         <form class="comment-form" novalidate>
             <div class="form-group">
-                <textarea 
+                <label for="comment-input" class="sr-only">Write a comment</label>
+                <textarea
+                    id="comment-input"
                     class="comment-input" 
                     placeholder="Write a comment..." 
                     rows="4" 
@@ -73,7 +75,7 @@ $this->extend('main-layout', [
                 <button type="submit" class="btn-submit">
                     Submit
                 </button>
-                <button type="button" class="btn-cancel">Cancel</button>
+                <button type="button" class="btn-cancel" aria-label="Cancel comment">Cancel</button>
             </div>
         </form>
     </template>

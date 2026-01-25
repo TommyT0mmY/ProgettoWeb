@@ -6,7 +6,7 @@ export class PostManager {
     #currentUser;
     
     /**
-     * @param {string} currentUser - ID dell'utente corrente
+     * @param {string} currentUser - Current user ID
      */
     constructor(currentUser) {
         this.#currentUser = currentUser;
@@ -14,7 +14,7 @@ export class PostManager {
     }
     
     init() {
-        // Trova tutti i post nella pagina
+        // Find all posts on the page
         const posts = document.querySelectorAll('.Post');
         
         posts.forEach(post => {
@@ -26,7 +26,7 @@ export class PostManager {
         const postId = parseInt(postElement.dataset.postId);
         const authorId = postElement.dataset.authorId;
         
-        // Crea e setup del pulsante delete se l'utente è l'autore
+        // Create and setup delete button if user is the author
         if (this.#currentUser && this.#currentUser === authorId) {
             this.createAndSetupDeleteButton(postElement, postId);
         }
@@ -39,7 +39,7 @@ export class PostManager {
         const reviewList = postElement.querySelector('.review');
         if (!reviewList) return;
         
-        // Crea l'elemento li per il pulsante delete
+        // Create li element for delete button
         const deleteItem = document.createElement('li');
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'btn-delete-post';
@@ -48,7 +48,7 @@ export class PostManager {
         
         deleteItem.appendChild(deleteBtn);
         
-        // Inserisci il pulsante dopo l'attachment (se esiste) o all'inizio
+        // Insert button after attachment (if exists) or at the beginning
         const attachmentItem = reviewList.querySelector('li:first-child');
         if (attachmentItem && attachmentItem.querySelector('a[download]')) {
             attachmentItem.insertAdjacentElement('afterend', deleteItem);
@@ -88,6 +88,7 @@ export class PostManager {
         // Use Button utility for like functionality
         new Button(likeBtn, {
             stopPropagation: true,
+            loadingText: '',
             onClick: async () => {
                 const result = await likePost(postId);
                 this.updateReactionUI(postElement, result);
@@ -101,6 +102,7 @@ export class PostManager {
         // Use Button utility for dislike functionality
         new Button(dislikeBtn, {
             stopPropagation: true,
+            loadingText: '',
             onClick: async () => {
                 const result = await dislikePost(postId);
                 this.updateReactionUI(postElement, result);
@@ -113,7 +115,7 @@ export class PostManager {
     }
     
     /**
-     * Aggiorna la UI dei like/dislike in base alla risposta del server
+     * Updates the like/dislike UI based on server response
      * @param {HTMLElement} postElement 
      * @param {Object} result - {likes: number, dislikes: number, userReaction: 'like'|'dislike'|null}
      */
@@ -123,7 +125,7 @@ export class PostManager {
         const likeData = postElement.querySelector('.reaction-like data');
         const dislikeData = postElement.querySelector('.reaction-dislike data');
         
-        // Aggiorna i contatori
+        // Update counters
         if (likeData) {
             likeData.textContent = result.likes;
             likeData.setAttribute('value', result.likes);
@@ -134,12 +136,12 @@ export class PostManager {
             dislikeData.setAttribute('value', result.dislikes);
         }
         
-        // Rimuovi le classi active da entrambi i pulsanti
+        // Remove active class from both buttons
         likeBtn.classList.remove('active');
         dislikeBtn.classList.remove('active');
         
-        // Il server ritorna userReaction come 'like', 'dislike' o null
-        // Aggiungi la classe active al pulsante corretto
+        // Server returns userReaction as 'like', 'dislike' or null
+        // Add active class to the correct button
         if (result.userReaction === 'like') {
             likeBtn.classList.add('active');
         } else if (result.userReaction === 'dislike') {
