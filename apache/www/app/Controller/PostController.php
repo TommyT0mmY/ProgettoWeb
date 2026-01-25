@@ -170,15 +170,7 @@ class PostController extends BaseController {
     public function likePost(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
-        if ($postId === null) {
-            return new Response('Post ID is required', 400);
-        }
-
-        if ($this->getAuth()->isAuthenticatedAsUser()) {
-            $userId = $this->getAuth()->getUserId();
-        } else {
-            return new Response('Unauthorized', 401);
-        }
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
 
         try {
             $result = $this->postService->toggleLike((int)$postId, $userId);
@@ -191,15 +183,7 @@ class PostController extends BaseController {
     #[Post("/api/posts/:postid/dislike")]
     public function dislikePost(array $params, Request $request): Response {
         $postId = $params['postid'] ?? null;
-        if ($postId === null) {
-            return new Response('Post ID is required', 400);
-        }
-
-        if ($this->getAuth()->isAuthenticatedAsUser()) {
-            $userId = $this->getAuth()->getUserId();
-        } else {
-            return new Response('Unauthorized', 401);
-        }
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
 
         try {
             $result = $this->postService->toggleDislike((int)$postId, $userId);
