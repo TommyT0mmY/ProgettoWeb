@@ -5,8 +5,10 @@ namespace Unibostu\Controller;
 
 use Unibostu\Core\Container;
 use Unibostu\Core\exceptions\DomainErrorCode;
+use Unibostu\Core\exceptions\ValidationErrorCode;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
+use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
@@ -42,10 +44,12 @@ class AuthController extends BaseController {
     }
 
     #[Post("/api/auth/login")]
-    #[ValidationMiddleware()]
+    #[ValidationMiddleware([
+        "username" => ValidationErrorCode::USERNAME_REQUIRED,
+        "password" => ValidationErrorCode::PASSWORD_REQUIRED
+    ])]
     public function login(Request $request): Response {
-        $username = $request->post("username");
-        $password = $request->post("password");
+        [ "username" => $username, "password" => $password ] = $request->getAttribute(RequestAttribute::FIELDS);
         $success = $this->auth->login(Role::USER, $username, $password);
         if ($success) {
             return Response::create()->json([
@@ -61,10 +65,12 @@ class AuthController extends BaseController {
     } 
 
     #[Post("/api/auth/adminlogin")]
-    #[ValidationMiddleware()]
+    #[ValidationMiddleware([
+        "username" => ValidationErrorCode::USERNAME_REQUIRED,
+        "password" => ValidationErrorCode::PASSWORD_REQUIRED
+    ])]
     public function adminlogin(Request $request): Response {
-        $username = $request->post("username");
-        $password = $request->post("password");
+        [ "username" => $username, "password" => $password ] = $request->getAttribute(RequestAttribute::FIELDS);
         $success = $this->auth->login(Role::ADMIN, $username, $password);
         if ($success) {
             return Response::create()->json([
@@ -80,19 +86,27 @@ class AuthController extends BaseController {
     } 
 
     #[Post("/api/auth/register")]
-    #[ValidationMiddleware()]
+    #[ValidationMiddleware([
+        "username" => ValidationErrorCode::USERNAME_REQUIRED,
+        "password" => ValidationErrorCode::PASSWORD_REQUIRED,
+        "firstname" => ValidationErrorCode::FIRSTNAME_REQUIRED,
+        "lastname" => ValidationErrorCode::LASTNAME_REQUIRED,
+        "facultyid" => ValidationErrorCode::FACULTY_REQUIRED
+    ])]
     public function register(Request $request): Response {
+        [ 
+            "username" => $username, 
+            "password" => $password,
+            "firstname" => $firstName,
+            "lastname" => $lastName,
+            "facultyid" => $facultyId
+        ] = $request->getAttribute(RequestAttribute::FIELDS);
         $userService = new UserService();
-        $username = $request->post("username");
-        $firstname = $request->post("firstname");
-        $lastname = $request->post("lastname");
-        $facultyid = $request->post("facultyid");
-        $password = $request->post("password");
         $userService->registerUser(new UserDTO(
             userId: $username,
-            firstName: $firstname, 
-            lastName: $lastname,
-            facultyId: (int)$facultyid,
+            firstName: $firstName, 
+            lastName: $lastName,
+            facultyId: (int)$facultyId,
             password: $password
         ));
         return Response::create()->json([
