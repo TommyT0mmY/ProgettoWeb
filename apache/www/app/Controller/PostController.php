@@ -75,19 +75,22 @@ class PostController extends BaseController {
             text: $text,
             parentCommentId: $parentCommentId
         ));
-        return new Response(json_encode([
-            'commentId' => $commentWithAuthor->commentId,
-            'postId' => $commentWithAuthor->postId,
-            'text' => $commentWithAuthor->text,
-            'createdAt' => $commentWithAuthor->createdAt,
-            'deleted' => $commentWithAuthor->deleted,
-            'parentCommentId' => $commentWithAuthor->parentCommentId,
-            'author' => [
-                'userId' => $commentWithAuthor->author->userId,
-                'firstName' => $commentWithAuthor->author->firstName,
-                'lastName' => $commentWithAuthor->author->lastName,
+        return Response::create()->json([
+            'success' => true,
+            'data' => [
+                'commentId' => $commentWithAuthor->commentId,
+                'postId' => $commentWithAuthor->postId,
+                'text' => $commentWithAuthor->text,
+                'createdAt' => $commentWithAuthor->createdAt,
+                'deleted' => $commentWithAuthor->deleted,
+                'parentCommentId' => $commentWithAuthor->parentCommentId,
+                'author' => [
+                    'userId' => $commentWithAuthor->author->userId,
+                    'firstName' => $commentWithAuthor->author->firstName,
+                    'lastName' => $commentWithAuthor->author->lastName,
+                ]
             ]
-        ]), 201, ['Content-Type' => 'application/json']);
+        ], 201);
     }
 
     #[Post("/api/posts/create")]
@@ -124,7 +127,10 @@ class PostController extends BaseController {
                     ]
                 ];
             }, $comments);
-        return new Response(json_encode($commentsArray), 200, ['Content-Type' => 'application/json']);
+        return Response::create()->json([
+            'success' => true,
+            'data' => $commentsArray
+        ]);
     }
 
     #[Delete("/api/posts/:postid")]
@@ -134,10 +140,29 @@ class PostController extends BaseController {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-        $this->postService->deletePost((int)$postId, $userId);
-        return new Response('Post deleted', 200); // TODO JSON
-    }
 
+        try {
+            $this->postService->deletePost((int)$postId, $userId);
+            if ($request->getReferer() === null || str_contains($request->getReferer(), '/posts/')) {
+                // If the request comes from the post detail page, redirect to home
+                return Response::create()->json([
+                    'success' => true,
+                    'redirect' => '/'
+                ]);
+            } else {
+                return Response::create()->json([
+                    'success' => true,
+                    'redirect' => $request->getReferer()
+                ]);
+            }
+        } catch (\Exception $e) {
+            return Response::create()->json([
+                'success' => false,
+                'errors' => [$e->getMessage()]
+            ], 403);
+        }
+    }
+    
     #[Delete("/api/posts/:postid/comments/:commentid")]
     #[AuthMiddleware(Role::USER)]
     #[ValidationMiddleware()]
@@ -153,7 +178,10 @@ class PostController extends BaseController {
         }
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $this->commentService->deleteComment((int)$commentId, (int)$postId, $userId);
-        return new Response(json_encode(['text' => 'Comment deleted']), 200);
+        return Response::create()->json([
+            'success' => true,
+            'message' => 'Comment deleted'
+        ]);
     }
 
     #[Post("/api/posts/:postid/like")]
@@ -161,6 +189,40 @@ class PostController extends BaseController {
     public function likePost(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
-        return new Response();
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+
+        try {
+            $result = $this->postService->toggleLike((int)$postId, $userId);
+            return Response::create()->json([
+                'success' => true,
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return Response::create()->json([
+                'success' => false,
+                'errors' => [$e->getMessage()]
+            ], 400);
+        }
+    }
+
+    #[Post("/api/posts/:postid/dislike")]
+    #[AuthMiddleware(Role::USER)]
+    public function dislikePost(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $postId = $pathVars['postid'] ?? null;
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+
+        try {
+            $result = $this->postService->toggleDislike((int)$postId, $userId);
+            return Response::create()->json([
+                'success' => true,
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return Response::create()->json([
+                'success' => false,
+                'errors' => [$e->getMessage()]
+            ], 400);
+        }
     }
 }

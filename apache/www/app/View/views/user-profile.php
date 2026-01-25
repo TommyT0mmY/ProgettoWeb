@@ -23,57 +23,50 @@ $this->extend('main-layout', [
     <section>
     <h2>University details</h2>         
         <p>Faculty: <strong><?= htmlspecialchars($faculty->facultyName ?? ''); ?></strong></p> 
-        <p>Chosen courses:</p>                              
-            <?php if (!empty($courses)): ?>               
+        <p>Chosen courses:</p>
+            <?php if (!empty($courses)): ?>
                 <ul class="tags">
                     <?php foreach ($courses as $course): ?>
-                    <li class="tag subject"><a href="#"><?= htmlspecialchars($course->courseName) ?></a></li>
+                    <li class="tag subject"><a href="/courses/<?= htmlspecialchars($course->courseId) ?>"><?= htmlspecialchars($course->courseName) ?></a></li>
                     <?php endforeach; ?>
                 </ul>
-            <?php endif; ?>       
-            <a href="/studentpreferences">Change chosen courses</a>         
+            <?php endif; ?>
+            <p><a href="/studentpreferences">Change chosen courses</a></p>         
     </section>
 
 </div>
 
-<hr/>
-
 <section>
+    <h2>My posts</h2>
 
-    <header>
-    <h2> My posts </h2>
-    </header>
+    <div class="post-filters">
+        <h3>Filters</h3>
+        <form action="/courses/<?= htmlspecialchars($thisCourse->courseId) ?>" method="get" id="filter-form">
+            <p>
+                <label for="filter-type">Category:</label>
+                <select id="filter-type" name="categoryId">
+                    <option value="">All categories</option>
+                    <?php foreach ($categories ?? [] as $category): ?>
+                        <option value="<?= htmlspecialchars($category->categoryId) ?>"><?= htmlspecialchars($category->categoryName) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
 
-    <section class="post-filters"> 
+            <p>
+                <label for="ordering">Order by date:</label>
+                <select id="ordering" name="sortOrder">
+                    <option value="desc">Newest post first</option>
+                    <option value="asc">Oldest post first</option>
+                </select>
+            </p>
 
-        <form action="/courses/<?= htmlspecialchars($thisCourse->courseId) ?>" method="GET" id="filter-form">
-
-            <label for="filter-type">Category</label>
-            <select id="filter-type" name="categoryId">
-            <option  value="">All categories</option>
-            <?php foreach ($categories ?? [] as $category): ?>
-                <option value="<?= htmlspecialchars($category->categoryId) ?>"><?= htmlspecialchars($category->categoryName) ?></option>
-            <?php endforeach; ?>
-            </select>
-
-            <label for="ordering">Order by date</label>
-            <select id="ordering" name="sortOrder">
-                <option id="tag_sorting" value="desc">Newest post first</option>
-                <option id="tag_sorting" value="asc">Oldest post first</option>
-            </select>
-
-            <input type="submit" value="Filter"/>
-
+            <p><input type="submit" value="Filter" /></p>
         </form>
-
-    </section>
-
-    <hr/>
+    </div>
 
     <div class="post_container">
     <?php foreach ($posts ?? [] as $post): ?>
         <?= $this->component('post', ['post' => $post]) ?>
     <?php endforeach; ?>
     </div>
-
 </section>

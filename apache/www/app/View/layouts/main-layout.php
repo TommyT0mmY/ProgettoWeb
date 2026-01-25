@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <title><?= $title ?? 'Unibostu' ?></title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> 
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" />
@@ -37,7 +37,7 @@
     </template>
 
     <script>
-        window.currentUser = <?= json_encode($userId) ?>;
+        window.currentUser = '<?= isset($userId) ? htmlspecialchars($userId) : '' ?>';
     </script>
 </body>
 </html>

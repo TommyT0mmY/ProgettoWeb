@@ -1,9 +1,15 @@
-<?php /** @var \Unibostu\Dto\PostDto $post */ ?>
-<article class="Post" data-post-id="<?= htmlspecialchars($post->postId) ?>">
+<?php 
+/** 
+ * @var \Unibostu\Dto\PostDto $post 
+*/ 
+?>
+<article class="Post" data-post-id="<?= htmlspecialchars($post->postId) ?>" data-author-id="<?= htmlspecialchars($post->author->userId) ?>">
     <header>
         <h3><?= htmlspecialchars($post->title) ?></h3>
+        <p>
+            <em>Posted by <?= htmlspecialchars($post->author->userId) ?> on <time datetime="<?= $post->createdAt ?>"><?= $post->createdAt ?></time></em>
+        </p>
     </header>
-    <p><em>Posted by <?= htmlspecialchars($post->author->userId) ?> on <?= $post->createdAt ?></em></p>
     
     <ul class="tags">
      <li class="tag subject"><a href="#"><?= htmlspecialchars($post->course->courseName) ?></a></li>
@@ -31,19 +37,20 @@
                     </a>
                 </li>
             <?php endif; ?>
-            <!--se è l'ADMIN può eliminare il post e anche se è l'utente stesso , come segue-->
-        <!-- if (isset($_SESSION['userId']) && ($_SESSION['userId'] === $post->userId || $_SESSION['role'] === 'ADMIN')): -->
-                <li><a href=#>Delete </a></li> <!--to be updated-->       
-                <li class="reaction">
-                    <button><img src="/images/icons/like.svg" alt="like"></button>
+                <li class="reaction reaction-like">
+                    <button type="button" class="btn-like <?= $post->likedByUser === true ? 'active' : '' ?>" aria-label="Like">
+                        <img src="/images/icons/like.svg" alt="" />
+                    </button>
                     <data value="<?= $post->likes ?>"><?= $post->likes ?></data>
                 </li>
-                <li class="reaction">
-                    <button><img src="/images/icons/dislike.svg" alt="dislike"></button>
+                <li class="reaction reaction-dislike">
+                    <button type="button" class="btn-dislike <?= $post->likedByUser === false ? 'active' : '' ?>" aria-label="Dislike">
+                        <img src="/images/icons/dislike.svg" alt="" />
+                    </button>
                     <data value="<?= $post->dislikes ?>"><?= $post->dislikes ?></data>
                 </li>
                 <li>
-                    <a href="/posts/<?= htmlspecialchars($post->postId) ?>">Comments</a>
+                    <a href="/posts/<?= htmlspecialchars($post->postId) ?>" aria-label="Go to post comments">Comments</a>
                 </li>
         </ul>            
    </footer>

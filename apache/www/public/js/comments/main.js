@@ -4,14 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const commentsSection = document.getElementById('comments-section');
     
     if (!commentsSection) {
-        console.warn('Sezione commenti non trovata');
+        console.warn('Comments section not found');
         return;
     }
     
     const postId = commentsSection.dataset.postId;
     
     if (!postId) {
-        console.error('ID post non trovato');
+        console.error('Post ID not found');
         return;
     }
     const currentUser = window.currentUser || null;
@@ -24,10 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
         );
                 window.commentManager = commentManager;
     } catch (error) {
-        console.error('Errore inizializzazione commenti:', error);
+        console.error('Error initializing comments:', error);
         commentsSection.innerHTML = `
             <div class="comments-error">
-                <p>Errore nel caricamento dei commenti</p>
+                <p>Error loading comments</p>
             </div>
         `;
     }

@@ -1,4 +1,5 @@
 import { fetchComments, postComment, deleteComment } from './CommentsApi.js';
+import Button from '../modules/button.js';
 
 export class CommentManager {
     /** @type {int} */
@@ -25,7 +26,7 @@ export class CommentManager {
         this.commentFormTemplate = document.getElementById('comment-form-template');
         
         if (!this.commentTemplate || !this.commentFormTemplate) {
-            throw new Error('Templates non trovati');
+            throw new Error('Templates not found');
         }
         
         this.init();
@@ -35,7 +36,7 @@ export class CommentManager {
         try {
             await this.loadComments();
         } catch (error) {
-            this.showError('Impossibile caricare i commenti');
+            this.showError('Unable to load comments');
         }
     }
     
@@ -45,7 +46,7 @@ export class CommentManager {
             this.#comments = this.buildTree(flatComments);
             this.render();
         } catch (error) {
-            this.showError('Errore nel caricamento dei commenti');
+            this.showError('Error loading comments');
             throw error;
         }
     }
@@ -86,7 +87,7 @@ export class CommentManager {
         const sortChildren = (nodes) => {
             nodes.forEach(node => {
                 if (node.children.length > 0) {
-                    node.children.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    node.children.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     sortChildren(node.children);
                 }
             });
@@ -122,7 +123,7 @@ export class CommentManager {
         this.#container.appendChild(commentsList);
     }
     
-    renderComment(comment, depth = 0) {
+    renderComment(comment, depth = 0, parentAuthor = null) {
         const clone = this.commentTemplate.content.cloneNode(true);
         const commentEl = clone.querySelector('.comment');
         
@@ -133,7 +134,12 @@ export class CommentManager {
             commentEl.classList.add('comment-deleted');
         }
         
-        commentEl.querySelector('.comment-author-name').textContent = `${comment.author.firstName} ${comment.author.lastName}`;
+        const authorNameElement = commentEl.querySelector('.comment-author-name');
+        authorNameElement.innerHTML = '';
+        const authorLink = document.createElement('a');
+        authorLink.href = `/users/${comment.author.userId}`;
+        authorLink.textContent = `${comment.author.firstName} ${comment.author.lastName}`;
+        authorNameElement.appendChild(authorLink);
         
         const dateElement = commentEl.querySelector('.comment-date');
         dateElement.textContent = comment.createdAt;
@@ -148,17 +154,43 @@ export class CommentManager {
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'btn-delete';
-            deleteBtn.textContent = 'Elimina';
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.confirmDelete(comment.commentId);
-            });
+            deleteBtn.textContent = 'Delete';
             
             commentActions.appendChild(deleteBtn);
+            
+            // Use Button utility for delete functionality
+            new Button(deleteBtn, {
+                confirmMessage: 'Are you sure you want to delete this comment?',
+                loadingText: 'Deleting...',
+                errorMessage: 'Error deleting the comment',
+                stopPropagation: true,
+                onClick: async () => {
+                    const success = await deleteComment(this.#postId, comment.commentId);
+                    if (success) {
+                        this.markCommentAsDeleted(success, comment.commentId);
+                        this.render();
+                    } else {
+                        throw new Error('Deletion failed');
+                    }
+                }
+            }).init();
         }
 
         const textElement = commentEl.querySelector('.comment-text');
-        textElement.textContent = comment.text;        
+        
+        // If it's a reply, add @mention to parent author
+        if (parentAuthor) {
+            const mention = document.createElement('a');
+            mention.className = 'comment-mention';
+            mention.href = `/users/${parentAuthor.userId}`;
+            mention.textContent = `@${parentAuthor.userId}`;
+            textElement.innerHTML = '';
+            textElement.appendChild(mention);
+            textElement.appendChild(document.createTextNode(' ' + comment.text));
+        } else {
+            textElement.textContent = comment.text;
+        }
+        
         // Add event listener if not deleted
         if (!comment.deleted) {
             const replyBtn = commentEl.querySelector('.btn-reply');
@@ -172,7 +204,8 @@ export class CommentManager {
         if (comment.children && comment.children.length > 0) {
             const repliesContainer = commentEl.querySelector('.comment-replies');
             comment.children.forEach(child => {
-                repliesContainer.appendChild(this.renderComment(child, depth + 1));
+                // Passing the parent author to add @mention
+                repliesContainer.appendChild(this.renderComment(child, depth + 1, comment.author));
             });
         }
         
@@ -190,23 +223,24 @@ export class CommentManager {
         if (parentCommentId === null) {
             cancelBtn.style.display = 'none';
         } else {
-            cancelBtn.addEventListener('click', () => {
-                form.remove();
-           });
+            new Button(cancelBtn, {
+                preventDefault: true,
+                onClick: async () => {
+                    form.remove();
+                }
+            }).init();
         }
         
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const text = textarea.value.trim();
-            if (!text) {
-                return;
-            }
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Invio in corso...';
-            
-            try {
+        // Use Button utility for submit functionality
+        new Button(submitBtn, {
+            loadingText: parentCommentId !== null ? 'Sending...' : 'Sending...',
+            errorMessage: 'Error sending comment. Please try again.',
+            onClick: async () => {
+                const text = textarea.value.trim();
+                if (!text) {
+                    throw new Error('Comment cannot be empty');
+                }
+                
                 const newComment = await postComment({
                     postid: this.#postId,
                     parentCommentId: parentCommentId,
@@ -217,17 +251,17 @@ export class CommentManager {
                 this.render();
 
                 textarea.value = '';
-                // Se è una risposta, rimuovi il form
+                // Remove the form if it was a reply
                 if (parentCommentId !== null) {
                     form.remove();
                 }
-                
-            } catch (error) {
-                alert('Errore nell\'invio del commento. Riprova.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = parentCommentId !== null ? 'Rispondi' : 'Commenta';
             }
+        }).init();
+        
+        // Alternative: use form submit event instead
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            submitBtn.click();
         });
         
         return form;
@@ -243,8 +277,13 @@ export class CommentManager {
             return;
         }
         
+        // Remove only reply forms (those inside comments or comment-list), never the main form
         document.querySelectorAll('.comment-form').forEach(form => {
-            if (!form.closest(`[data-comment-id="${commentId}"]`)) {
+            const isInsideComment = form.closest('.comment');
+            const isInsideCommentList = form.closest('.comments-list');
+            
+            // Remove only if it's inside a comment or comment-list AND not in the current comment
+            if ((isInsideComment || isInsideCommentList) && !form.closest(`[data-comment-id="${commentId}"]`)) {
                 form.remove();
             }
         });
@@ -264,7 +303,7 @@ export class CommentManager {
             const parent = this.findCommentById(this.#comments, newComment.parentCommentId);
             if (parent) {
                 parent.children.push(newNode);
-                parent.children.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                parent.children.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             }
         } else {
             this.#comments.unshift(newNode);
@@ -281,31 +320,11 @@ export class CommentManager {
         }
         return null;
     }
-    
-    async confirmDelete(commentId) {
-        if (!confirm('Sei sicuro di voler eliminare questo commento?')) {
-            return;
-        }
-        
-        try {
-            const success = await deleteComment(this.#postId, commentId);
-            
-            if (success) {
 
-                this.markCommentAsDeleted(success, commentId);
-                this.render();
-            } else {
-                throw new Error('Eliminazione fallita');
-            }
-        } catch (error) {
-            console.error('Errore nell\'eliminazione:', error);
-        }
-    }
-
-    markCommentAsDeleted(success, commentId) {
+    markCommentAsDeleted(result, commentId) {
         const comment = this.findCommentById(this.#comments, commentId);
         if (comment) {
-            comment.text = success.text;
+            comment.text = result.message || 'Comment deleted';
             comment.deleted = true;
         }
     }
@@ -333,7 +352,7 @@ export class CommentManager {
     showLoading() {
         this.#container.innerHTML = `
             <div class="comments-loading">
-                <p>Caricamento commenti...</p>
+                <p>Loading comments...</p>
             </div>
         `;
     }
@@ -342,7 +361,7 @@ export class CommentManager {
         this.#container.innerHTML = `
             <div class="comments-error">
                 <p>${message}</p>
-                <button onclick="window.location.reload()">Riprova</button>
+                <button onclick="window.location.reload()">Try again</button>
             </div>
         `;
     }
@@ -351,7 +370,7 @@ export class CommentManager {
         const emptyState = document.createElement('div');
         emptyState.className = 'comments-empty';
         emptyState.innerHTML = `
-            <p>Nessun commento ancora. Sii il primo a commentare!</p>
+            <p>No comments yet. Be the first to comment!</p>
         `;
         this.#container.appendChild(emptyState);
     }

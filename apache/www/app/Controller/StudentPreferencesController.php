@@ -31,13 +31,12 @@ class StudentPreferencesController extends BaseController {
     #[Get('/studentpreferences')]
     #[AuthMiddleware(Role::USER)]
     public function getStudentPreferences(Request $request): Response {
-        //autenticazione,commentare per testing
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $user = $this->userService->getUserProfile($userId);
 
         return $this->render("studentpreferences", [
             'user' => $user,
-            'courses' => $this->courseService->getCoursesByUser($userId),
+            'courses' => $this->courseService->getCoursesByFaculty($user->facultyId),
             'faculty' => $this->facultyService->getFacultyDetails($user->facultyId)
         ]);
     }

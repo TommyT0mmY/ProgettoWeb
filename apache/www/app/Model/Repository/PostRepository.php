@@ -29,18 +29,23 @@ class PostRepository {
      * Finds a post by its ID
      *
      * @param int $postId The ID of the post to find
+     * @param string|null $currentUserId ID dell'utente corrente per determinare likedByUser
      * @return PostDTO|null The PostDTO if found, null otherwise
      */
-    public function findById(int $postId): ?PostDTO {
+    public function findById(int $postId, ?string $currentUserId = null): ?PostDTO {
         $stmt = $this->pdo->prepare("SELECT * FROM posts WHERE post_id = :postId");
         $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        if (!$row) {
+            return null;
+        }
+
         $author = $this->userRepository->findByUserId($row['user_id']);
         $row['author'] = $author;
 
-        return $row ? $this->rowToDTO($row) : null;
+        return $this->rowToDTO($row, $currentUserId);
     }
 
     /**
@@ -131,7 +136,7 @@ class PostRepository {
             $author = $this->userRepository->findByUserId($row['user_id']);
             $row['author'] = $author;
 
-            $posts[] = $this->rowToDTO($row);
+            $posts[] = $this->rowToDTO($row, $postQuery->getUserId());
         }
         return $posts;
     }
@@ -151,7 +156,7 @@ class PostRepository {
 
         $posts = [];
         foreach ($rows as $row) {
-            $posts[] = $this->rowToDTO($row);
+            $posts[] = $this->rowToDTO($row, null);
         }
         return $posts;
     }
@@ -299,6 +304,26 @@ class PostRepository {
     }
 
     /**
+     * Ottiene la reazione dell'utente per un post
+     * @return string|null 'like', 'dislike' o null
+     */
+    public function getUserReaction(int $postId, string $userId): ?string {
+        $stmt = $this->pdo->prepare(
+            "SELECT is_like FROM likes WHERE post_id = :postId AND user_id = :userId"
+        );
+        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result === false) {
+            return null;
+        }
+
+        return (bool)$result['is_like'] ? 'like' : 'dislike';
+    }
+
+    /**
      * Elimina un post
      */
     public function delete(int $postId): bool {
@@ -307,18 +332,19 @@ class PostRepository {
         return $stmt->execute();
     }
 
-    /**
-     * Verifica che l'utente ha messo like o dislike
-     */
-
-    private function rowToDTO(array $row): PostDTO {
+    private function rowToDTO(array $row, ?string $currentUserId = null): PostDTO {
         $postId = (int)$row['post_id'];
         $tags = $this->postTagRepository->findTagsByPost($postId);
         $course = $this->courseRepository->findById((int)$row['course_id']);
         $category = $this->categoryRepository->findById((int)$row['category_id']);
         $likes = $this->countLikes($postId);
         $dislikes = $this->countDislikes($postId);
-        $likedByCurrentUser = $this->hasUserVoted($postId, $row['user_id']);
+        
+        // Ottieni la reazione dell'utente corrente (null, true=like, false=dislike)
+        $likedByCurrentUser = null;
+        if ($currentUserId !== null) {
+            $likedByCurrentUser = $this->hasUserVoted($postId, $currentUserId);
+        }
 
         $dto = new PostDTO(
             postId: $postId,

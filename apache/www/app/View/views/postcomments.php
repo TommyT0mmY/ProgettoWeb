@@ -4,8 +4,9 @@
  * @var \Unibostu\Dto\CourseDto[] $courses
  * @var \Unibostu\Dto\PostDto $post
  * @var \Unibostu\Dto\CommentWithAuthorDTO[] $comments
+ * @var int $userId
  */
-//devo cambiare nome a sto file
+
 $this->extend('main-layout', [
     'title' => 'Unibostu - Post details',
     'courses' => $courses,
@@ -13,7 +14,8 @@ $this->extend('main-layout', [
     'additionalHeadCode' => [
         '<script type="module" src="/js/navbar-css.js"></script>',
         '<link rel="stylesheet" href="/css/style2.css">',
-        '<script type="module" src="/js/commentsTree/main.js"></script>',
+        '<script type="module" src="/js/comments/main.js"></script>',
+        '<script type="module" src="/js/posts/main.js"></script>',
         '<link rel="stylesheet" href="/css/comments.css">',
         ],
     ]);
@@ -23,7 +25,7 @@ $this->extend('main-layout', [
 
 <div class="post_container"> 
     <?php if (!empty($post)): ?>
-        <?= $this->component('post', ['post' => $post]) ?>
+        <?= $this->component('post', ['post' => $post, 'userId' => $userId]) ?>
     <?php else: ?>
         <p>Post not found.</p>
     <?php endif; ?>
@@ -46,8 +48,8 @@ $this->extend('main-layout', [
             </div>
             
             <div class="comment-actions">
-                <button type="button" class="btn-reply">
-                    Rispondi
+                <button type="button" class="btn-reply" aria-label="Reply to comment">
+                    Reply
                 </button>
             </div>
             
@@ -58,9 +60,11 @@ $this->extend('main-layout', [
     <template id="comment-form-template">
         <form class="comment-form" novalidate>
             <div class="form-group">
-                <textarea 
+                <label for="comment-input" class="sr-only">Write a comment</label>
+                <textarea
+                    id="comment-input"
                     class="comment-input" 
-                    placeholder="Scrivi un commento..." 
+                    placeholder="Write a comment..." 
                     rows="4" 
                     required
                     maxlength="1000"
@@ -69,9 +73,9 @@ $this->extend('main-layout', [
             
             <div class="form-actions">
                 <button type="submit" class="btn-submit">
-                    Commenta
+                    Submit
                 </button>
-                <button type="button" class="btn-cancel">Annulla</button>
+                <button type="button" class="btn-cancel" aria-label="Cancel comment">Cancel</button>
             </div>
         </form>
     </template>

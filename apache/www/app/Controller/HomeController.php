@@ -29,11 +29,6 @@ class HomeController extends BaseController {
     }
 
     #[Get('/')]
-    public function index(): Response {
-        return $this->render("home", []);
-    }
-
-    #[Get('/homepage')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getHomepagePosts(Request $request): Response {
         $postQuery = null; 
@@ -51,10 +46,13 @@ class HomeController extends BaseController {
                 ->sortedBy($request->get('sortOrder'));
         }
 
+        $posts = $this->postService->getPosts($postQuery);
+
         return $this->render("home", [
-            "posts" => $this->postService->getPosts($postQuery),
+            "posts" => $posts,
             "courses" => $this->courseService->getCoursesByUser($userId),
-            "categories" => $this->categoryService->getAllCategories()
+            "categories" => $this->categoryService->getAllCategories(),
+            "userId" => $userId
         ]);
     }
 }

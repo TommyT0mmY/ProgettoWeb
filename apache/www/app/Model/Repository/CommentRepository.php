@@ -81,7 +81,7 @@ class CommentRepository {
             "UPDATE comments SET deleted = true, comment_text = :text 
              WHERE comment_id = :commentId AND post_id = :postId"
         );
-        $stmt->bindValue(':text', 'commento cancellato', PDO::PARAM_STR);
+        $stmt->bindValue(':text', 'comment deleted', PDO::PARAM_STR);
         $stmt->bindValue(':commentId', $commentId, PDO::PARAM_INT);
         $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         if (!$stmt->execute()) {
