@@ -1,4 +1,5 @@
 import { fetchComments, postComment, deleteComment } from './CommentsApi.js';
+import Button from '../modules/button.js';
 
 export class CommentManager {
     /** @type {int} */
@@ -149,12 +150,25 @@ export class CommentManager {
             deleteBtn.type = 'button';
             deleteBtn.className = 'btn-delete';
             deleteBtn.textContent = 'Delete';
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.confirmDelete(comment.commentId);
-            });
             
             commentActions.appendChild(deleteBtn);
+            
+            // Use Button utility for delete functionality
+            new Button(deleteBtn, {
+                confirmMessage: 'Are you sure you want to delete this comment?',
+                loadingText: 'Deleting...',
+                errorMessage: 'Error deleting the comment',
+                stopPropagation: true,
+                onClick: async () => {
+                    const success = await deleteComment(this.#postId, comment.commentId);
+                    if (success) {
+                        this.markCommentAsDeleted(success, comment.commentId);
+                        this.render();
+                    } else {
+                        throw new Error('Deletion failed');
+                    }
+                }
+            }).init();
         }
 
         const textElement = commentEl.querySelector('.comment-text');
@@ -203,23 +217,24 @@ export class CommentManager {
         if (parentCommentId === null) {
             cancelBtn.style.display = 'none';
         } else {
-            cancelBtn.addEventListener('click', () => {
-                form.remove();
-           });
+            new Button(cancelBtn, {
+                preventDefault: true,
+                onClick: async () => {
+                    form.remove();
+                }
+            }).init();
         }
         
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const text = textarea.value.trim();
-            if (!text) {
-                return;
-            }
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            
-            try {
+        // Use Button utility for submit functionality
+        new Button(submitBtn, {
+            loadingText: parentCommentId !== null ? 'Sending...' : 'Sending...',
+            errorMessage: 'Error sending comment. Please try again.',
+            onClick: async () => {
+                const text = textarea.value.trim();
+                if (!text) {
+                    throw new Error('Comment cannot be empty');
+                }
+                
                 const newComment = await postComment({
                     postid: this.#postId,
                     parentCommentId: parentCommentId,
@@ -234,13 +249,13 @@ export class CommentManager {
                 if (parentCommentId !== null) {
                     form.remove();
                 }
-                
-            } catch (error) {
-                alert('Error sending comment. Please try again.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = parentCommentId !== null ? 'Reply' : 'Comment';
             }
+        }).init();
+        
+        // Alternative: use form submit event instead
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            submitBtn.click();
         });
         
         return form;
@@ -298,26 +313,6 @@ export class CommentManager {
             }
         }
         return null;
-    }
-    
-    async confirmDelete(commentId) {
-        if (!confirm('Sei sicuro di voler eliminare questo commento?')) {
-            return;
-        }
-        
-        try {
-            const success = await deleteComment(this.#postId, commentId);
-            
-            if (success) {
-
-                this.markCommentAsDeleted(success, commentId);
-                this.render();
-            } else {
-                throw new Error('Eliminazione fallita');
-            }
-        } catch (error) {
-            console.error('Errore nell\'eliminazione:', error);
-        }
     }
 
     markCommentAsDeleted(success, commentId) {

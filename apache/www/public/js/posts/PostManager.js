@@ -1,4 +1,5 @@
 import { deletePost, likePost, dislikePost } from './PostApi.js';
+import Button from '../modules/button.js';
 
 export class PostManager {
     /** @type {string} */
@@ -55,65 +56,60 @@ export class PostManager {
             reviewList.insertBefore(deleteItem, reviewList.firstChild);
         }
         
-        // Aggiungi event listener
-        deleteBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            if (!confirm('Sei sicuro di voler eliminare questo post?')) {
-                return;
-            }
-            
-            try {
+        // Use Button utility for delete functionality
+        new Button(deleteBtn, {
+            confirmMessage: 'Are you sure you want to delete this post?',
+            loadingText: 'Deleting...',
+            stopPropagation: true,
+            onClick: async () => {
                 const result = await deletePost(postId);
                 
                 if (result.success) {
                     window.location.href = result.redirect;
                 } else {
-                    alert('Errore durante l\'eliminazione del post: ' + result.message);
+                    throw new Error(result.message || 'Error deleting the post');
                 }
-            } catch (error) {
+            },
+            onError: (error) => {
                 console.error('Error deleting post:', error);
-                alert('Errore durante l\'eliminazione del post');
+                alert('Error deleting the post');
             }
-        });
+        }).init();
     }
     
     setupReactionButtons(postElement, postId) {
         const likeBtn = postElement.querySelector('.btn-like');
         const dislikeBtn = postElement.querySelector('.btn-dislike');
-        const likeData = postElement.querySelector('.reaction-like data');
-        const dislikeData = postElement.querySelector('.reaction-dislike data');
         
         if (!likeBtn || !dislikeBtn) {
             return;
         }
         
-        likeBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            try {
+        // Use Button utility for like functionality
+        new Button(likeBtn, {
+            stopPropagation: true,
+            onClick: async () => {
                 const result = await likePost(postId);
                 this.updateReactionUI(postElement, result);
-            } catch (error) {
+            },
+            onError: (error) => {
                 console.error('Error liking post:', error);
-                alert('Errore durante il like del post');
+                alert('Error liking the post');
             }
-        });
+        }).init();
         
-        dislikeBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            try {
+        // Use Button utility for dislike functionality
+        new Button(dislikeBtn, {
+            stopPropagation: true,
+            onClick: async () => {
                 const result = await dislikePost(postId);
                 this.updateReactionUI(postElement, result);
-            } catch (error) {
+            },
+            onError: (error) => {
                 console.error('Error disliking post:', error);
-                alert('Errore durante il dislike del post');
+                alert('Error disliking the post');
             }
-        });
+        }).init();
     }
     
     /**
