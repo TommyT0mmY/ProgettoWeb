@@ -5,18 +5,13 @@ namespace Unibostu\Model\Service;
 
 use Unibostu\Model\Repository\AdminRepository;
 
-class AdminService {
+class AdminService implements RoleService {
     private AdminRepository $adminRepository;
 
     public function __construct() {
         $this->adminRepository = new AdminRepository();
     }
 
-    /**
-     * Verifies admin credentials
-     *
-     * @return bool true if credentials are valid, false otherwise
-     */
     public function checkCredentials(string $adminId, string $password): bool {
         $admin = $this->adminRepository->findByAdminId($adminId);
         if (!$admin) {
@@ -28,8 +23,12 @@ class AdminService {
         return true;
     }
 
-    public function adminExists(string $adminId): bool {
+    public function exists(string $adminId): bool {
         return $this->adminRepository->adminExists($adminId);
     }
+
+    public function isSuspended(string $id): bool {
+        return false;
+    } 
 }
 

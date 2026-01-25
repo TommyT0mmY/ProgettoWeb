@@ -11,4 +11,7 @@ enum ValidationErrorCode {
     case FIRSTNAME_REQUIRED;
     case LASTNAME_REQUIRED;
     case PASSWORD_REQUIRED;
+    case COMMENT_TEXT_REQUIRED;
+    case POST_ID_REQUIRED;
+    case COMMENT_ID_REQUIRED;
 }

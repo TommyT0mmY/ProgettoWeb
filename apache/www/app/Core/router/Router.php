@@ -1,11 +1,17 @@
 <?php
 namespace Unibostu\Core\router;
 
+use ReflectionAttribute;
+use ReflectionClass;
+use ReflectionMethod;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
 use Unibostu\Controller\BaseController;
 use Unibostu\Core\Container;
+use Unibostu\Core\Http\RequestAttribute;
+use Unibostu\Core\Http\RequestHandlerInterface;
 use Unibostu\Core\LogHelper;
+use Unibostu\Core\router\middleware\AbstractMiddleware;
 
 /**
  * Prefix used to identify variable route segments (e.g. ":id").
@@ -172,10 +178,45 @@ class Router {
         if (!$result->found || !isset($result->callback)) {
             throw new \RuntimeException("404 Not Found\n", 404);
         }
+        $request = $request->withAttribute(RequestAttribute::PARAMETERS, $result->params); // Adding route parameters to the request
         $controllerName = $result->callback->controllerClassname;
-        $action = $result->callback->action;
+        $action = $result->callback->action; // Method name
         $controller = $this->istantiateController($controllerName, $container);
-        return $controller->$action($result->params, $request);
+        // Middlewares
+        $reflectionClass = new ReflectionClass($controllerName);
+        $reflectionMethod = new ReflectionMethod($controller, $action);
+        $middlewares = $reflectionClass->getAttributes(AbstractMiddleware::class, ReflectionAttribute::IS_INSTANCEOF);
+        $middlewares = array_merge($middlewares, $reflectionMethod->getAttributes(AbstractMiddleware::class, ReflectionAttribute::IS_INSTANCEOF));
+        /** @var AbstractMiddleware[] $middlewareInstances */
+        $middlewareInstances = array_map(fn($attr) => $attr->newInstance(), $middlewares);
+        foreach ($middlewareInstances as $middleware) {
+            $middleware->setContainer($container);
+        }
+        // Building middleware chain
+        $currentHandler = new class($controller, $action) implements RequestHandlerInterface {
+            public function __construct(
+                private BaseController $controller,
+                private string $action
+            ) {}
+
+            public function handle(Request $request): Response {
+                return $this->controller->{$this->action}($request);
+            }
+        };
+        foreach(array_reverse($middlewareInstances) as $middleware) {
+            $next = $currentHandler;
+            $currentHandler = new class($middleware, $next) implements RequestHandlerInterface {
+                public function __construct(
+                    private AbstractMiddleware $middleware,
+                    private RequestHandlerInterface $next                
+                ) {}
+                
+                public function handle(Request $request): Response {
+                    return $this->middleware->process($request, $this->next);
+                }
+            };
+        }
+        return $currentHandler->handle($request);
     }
 
     private function dispatchDFS(Node $node, array $segments, int $segmentIndex): BacktrackingResult {
