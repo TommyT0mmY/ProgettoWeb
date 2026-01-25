@@ -15,16 +15,18 @@ $this->extend('main-layout', [
 ?>
 
 <h2>Student preferences</h2>
-    <form action="#" method="post">           
+    <form action="#" method="post">
         <fieldset class="student-preferences-fieldset">
             <legend>Courses of <?= htmlspecialchars($faculty->facultyName) ?></legend>
             <div>
                 <?php foreach ($courses ?? [] as $course): ?>
-                    <input type="checkbox" id="course_<?= htmlspecialchars($course->courseId) ?>" name="courses" value="<?= htmlspecialchars($course->courseName) ?>">
-                    <label for="course_<?= htmlspecialchars($course->courseId) ?>"><?= htmlspecialchars($course->courseName) ?></label>
-                <?php endforeach; ?>               
-            </div>           
+                    <p>
+                        <input type="checkbox" id="course_<?= htmlspecialchars($course->courseId) ?>" name="courses" value="<?= htmlspecialchars($course->courseName) ?>" />
+                        <label for="course_<?= htmlspecialchars($course->courseId) ?>"><?= htmlspecialchars($course->courseName) ?></label>
+                    </p>
+                <?php endforeach; ?>
+            </div>
         </fieldset>
-        <input type="submit" value="Save"/>      
+        <p><input type="submit" value="Save" /></p>
     </form>
-    <a href="/user-profile"> go back to profile ⟵</a>
+    <p><a href="/users">Go back to profile</a></p>

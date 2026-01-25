@@ -26,7 +26,7 @@ export class CommentManager {
         this.commentFormTemplate = document.getElementById('comment-form-template');
         
         if (!this.commentTemplate || !this.commentFormTemplate) {
-            throw new Error('Templates non trovati');
+            throw new Error('Templates not found');
         }
         
         this.init();
@@ -36,7 +36,7 @@ export class CommentManager {
         try {
             await this.loadComments();
         } catch (error) {
-            this.showError('Impossibile caricare i commenti');
+            this.showError('Unable to load comments');
         }
     }
     
@@ -46,7 +46,7 @@ export class CommentManager {
             this.#comments = this.buildTree(flatComments);
             this.render();
         } catch (error) {
-            this.showError('Errore nel caricamento dei commenti');
+            this.showError('Error loading comments');
             throw error;
         }
     }
@@ -137,7 +137,7 @@ export class CommentManager {
         const authorNameElement = commentEl.querySelector('.comment-author-name');
         authorNameElement.innerHTML = '';
         const authorLink = document.createElement('a');
-        authorLink.href = `/user-profile/${comment.author.userId}`;
+        authorLink.href = `/users/${comment.author.userId}`;
         authorLink.textContent = `${comment.author.firstName} ${comment.author.lastName}`;
         authorNameElement.appendChild(authorLink);
         
@@ -182,7 +182,7 @@ export class CommentManager {
         if (parentAuthor) {
             const mention = document.createElement('a');
             mention.className = 'comment-mention';
-            mention.href = `/user-profile/${parentAuthor.userId}`;
+            mention.href = `/users/${parentAuthor.userId}`;
             mention.textContent = `@${parentAuthor.userId}`;
             textElement.innerHTML = '';
             textElement.appendChild(mention);
@@ -352,7 +352,7 @@ export class CommentManager {
     showLoading() {
         this.#container.innerHTML = `
             <div class="comments-loading">
-                <p>Caricamento commenti...</p>
+                <p>Loading comments...</p>
             </div>
         `;
     }
@@ -361,7 +361,7 @@ export class CommentManager {
         this.#container.innerHTML = `
             <div class="comments-error">
                 <p>${message}</p>
-                <button onclick="window.location.reload()">Riprova</button>
+                <button onclick="window.location.reload()">Try again</button>
             </div>
         `;
     }
@@ -370,7 +370,7 @@ export class CommentManager {
         const emptyState = document.createElement('div');
         emptyState.className = 'comments-empty';
         emptyState.innerHTML = `
-            <p>Nessun commento ancora. Sii il primo a commentare!</p>
+            <p>No comments yet. Be the first to comment!</p>
         `;
         this.#container.appendChild(emptyState);
     }
