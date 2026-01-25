@@ -29,11 +29,6 @@ class HomeController extends BaseController {
     }
 
     #[Get('/')]
-    public function index(): Response {
-        return $this->render("home", []);
-    }
-
-    #[Get('/homepage')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getHomepagePosts(Request $request): Response {
         $postQuery = null; 
