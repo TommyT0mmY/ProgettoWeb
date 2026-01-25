@@ -6,7 +6,9 @@ class Button {
     /** @type {HTMLButtonElement} */
     #element;
     /** @type {string} */
-    #originalText;  
+    #originalText;
+    /** @type {string} */
+    #originalHTML;
     /** @type {Object} */
     #configs;
 
@@ -32,6 +34,7 @@ class Button {
             ...configs
         };
         this.#originalText = element.textContent;
+        this.#originalHTML = element.innerHTML;
     }
 
     /**
@@ -91,9 +94,19 @@ class Button {
      */
     setLoading(isLoading) {
         this.#element.disabled = isLoading;
-        this.#element.textContent = isLoading 
-            ? this.#configs.loadingText
-            : this.#originalText;
+        
+        // If loadingText is empty, preserve the button's HTML content (e.g., images)
+        if (this.#configs.loadingText === '') {
+            return;
+        }
+        
+        // Otherwise, update text content
+        if (isLoading) {
+            this.#element.textContent = this.#configs.loadingText;
+        } else {
+            // Restore original HTML to preserve any child elements (images, icons, etc.)
+            this.#element.innerHTML = this.#originalHTML;
+        }
     }
 
     /**
