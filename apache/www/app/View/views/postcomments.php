@@ -21,7 +21,7 @@ $this->extend('main-layout', [
     ]);
 ?>
 
-<a href="/homepage">Go back to homepage</a>
+<a href="/">Go back to homepage</a>
 
 <div class="post_container"> 
     <?php if (!empty($post)): ?>

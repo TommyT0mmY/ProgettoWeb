@@ -6,7 +6,7 @@
           <img class="menu-container" src="/images/icons/close-sidebar.svg" alt="" />
         </button>
       </li>
-      <li><a href="/homepage">Home</a></li>
+      <li><a href="/">Home</a></li>
       <li><a href="/register.php">Register</a></li>
       <li><a href="/login.php">Login</a></li>
       <li><a href="/logout.php">Logout</a></li>

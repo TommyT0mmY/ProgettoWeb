@@ -21,7 +21,7 @@ $this->extend('main-layout', [
 
     <section class="post-filters">
         <h3>Filters</h3>
-        <form action="/homepage" method="get" id="filter-form">
+        <form action="/" method="get" id="filter-form">
             <p>
                 <label for="filter-type">Category:</label>
                 <select id="filter-type" name="categoryId">
