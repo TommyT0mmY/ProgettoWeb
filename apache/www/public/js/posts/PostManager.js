@@ -64,10 +64,10 @@ export class PostManager {
             onClick: async () => {
                 const result = await deletePost(postId);
                 
-                if (result.success) {
+                if (result.success && result.redirect) {
                     window.location.href = result.redirect;
                 } else {
-                    throw new Error(result.message || 'Error deleting the post');
+                    throw new Error('Error deleting the post');
                 }
             },
             onError: (error) => {

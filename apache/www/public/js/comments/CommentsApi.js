@@ -8,7 +8,12 @@ export async function fetchComments(postId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return await response.json();
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.errors ? result.errors.join(', ') : 'Failed to fetch comments');
+        }
+        
+        return result.data;
     } catch (error) {
         console.error('Error fetching comments:', error);
         throw error;
@@ -29,7 +34,12 @@ export async function postComment(commentData) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.errors ? result.errors.join(', ') : 'Failed to post comment');
+        }
+        
+        return result.data;
     } catch (error) {
         console.error('Error posting comment:', error);
         throw error;
@@ -46,7 +56,12 @@ export async function deleteComment(postId, commentId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return response.json();
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.errors ? result.errors.join(', ') : 'Failed to delete comment');
+        }
+        
+        return result;
     } catch (error) {
         console.error('Error deleting comment:', error);
         throw error;

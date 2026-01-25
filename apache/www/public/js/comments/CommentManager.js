@@ -321,10 +321,10 @@ export class CommentManager {
         return null;
     }
 
-    markCommentAsDeleted(success, commentId) {
+    markCommentAsDeleted(result, commentId) {
         const comment = this.findCommentById(this.#comments, commentId);
         if (comment) {
-            comment.text = success.text;
+            comment.text = result.message || 'Comment deleted';
             comment.deleted = true;
         }
     }

@@ -74,19 +74,22 @@ class PostController extends BaseController {
             text: $text,
             parentCommentId: $parentCommentId
         ));
-        return new Response(json_encode([
-            'commentId' => $commentWithAuthor->commentId,
-            'postId' => $commentWithAuthor->postId,
-            'text' => $commentWithAuthor->text,
-            'createdAt' => $commentWithAuthor->createdAt,
-            'deleted' => $commentWithAuthor->deleted,
-            'parentCommentId' => $commentWithAuthor->parentCommentId,
-            'author' => [
-                'userId' => $commentWithAuthor->author->userId,
-                'firstName' => $commentWithAuthor->author->firstName,
-                'lastName' => $commentWithAuthor->author->lastName,
+        return Response::create()->json([
+            'success' => true,
+            'data' => [
+                'commentId' => $commentWithAuthor->commentId,
+                'postId' => $commentWithAuthor->postId,
+                'text' => $commentWithAuthor->text,
+                'createdAt' => $commentWithAuthor->createdAt,
+                'deleted' => $commentWithAuthor->deleted,
+                'parentCommentId' => $commentWithAuthor->parentCommentId,
+                'author' => [
+                    'userId' => $commentWithAuthor->author->userId,
+                    'firstName' => $commentWithAuthor->author->firstName,
+                    'lastName' => $commentWithAuthor->author->lastName,
+                ]
             ]
-        ]), 201, ['Content-Type' => 'application/json']);
+        ], 201);
     }
 
     #[Post("/api/posts/create")]
@@ -123,7 +126,10 @@ class PostController extends BaseController {
                     ]
                 ];
             }, $comments);
-        return new Response(json_encode($commentsArray), 200, ['Content-Type' => 'application/json']);
+        return Response::create()->json([
+            'success' => true,
+            'data' => $commentsArray
+        ]);
     }
 
     #[Delete("/api/posts/:postid")]
@@ -138,12 +144,21 @@ class PostController extends BaseController {
             $this->postService->deletePost((int)$postId, $userId);
             if ($request->getReferer() === null || str_contains($request->getReferer(), '/posts/')) {
                 // If the request comes from the post detail page, redirect to home
-                return new Response(json_encode(['success' => true, 'redirect' => '/']), 200, ['Content-Type' => 'application/json']);
+                return Response::create()->json([
+                    'success' => true,
+                    'redirect' => '/'
+                ]);
             } else {
-                return new Response(json_encode(['success' => true, 'redirect' => $request->getReferer()]), 200, ['Content-Type' => 'application/json']);
+                return Response::create()->json([
+                    'success' => true,
+                    'redirect' => $request->getReferer()
+                ]);
             }
         } catch (\Exception $e) {
-            return new Response(json_encode(['success' => false, 'message' => $e->getMessage()]), 403, ['Content-Type' => 'application/json']);
+            return Response::create()->json([
+                'success' => false,
+                'errors' => [$e->getMessage()]
+            ], 403);
         }
     }
     
@@ -162,7 +177,10 @@ class PostController extends BaseController {
         }
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $this->commentService->deleteComment((int)$commentId, (int)$postId, $userId);
-        return new Response(json_encode(['text' => 'Comment deleted']), 200);
+        return Response::create()->json([
+            'success' => true,
+            'message' => 'Comment deleted'
+        ]);
     }
 
     #[Post("/api/posts/:postid/like")]
@@ -174,9 +192,15 @@ class PostController extends BaseController {
 
         try {
             $result = $this->postService->toggleLike((int)$postId, $userId);
-            return new Response(json_encode($result), 200, ['Content-Type' => 'application/json']);
+            return Response::create()->json([
+                'success' => true,
+                'data' => $result
+            ]);
         } catch (\Exception $e) {
-            return new Response(json_encode(['error' => $e->getMessage()]), 400, ['Content-Type' => 'application/json']);
+            return Response::create()->json([
+                'success' => false,
+                'errors' => [$e->getMessage()]
+            ], 400);
         }
     }
 
@@ -187,9 +211,15 @@ class PostController extends BaseController {
 
         try {
             $result = $this->postService->toggleDislike((int)$postId, $userId);
-            return new Response(json_encode($result), 200, ['Content-Type' => 'application/json']);
+            return Response::create()->json([
+                'success' => true,
+                'data' => $result
+            ]);
         } catch (\Exception $e) {
-            return new Response(json_encode(['error' => $e->getMessage()]), 400, ['Content-Type' => 'application/json']);
+            return Response::create()->json([
+                'success' => false,
+                'errors' => [$e->getMessage()]
+            ], 400);
         }
     }
 }

@@ -10,7 +10,12 @@ export async function deletePost(postId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.errors ? result.errors.join(', ') : 'Failed to delete post');
+        }
+        
+        return result;
     } catch (error) {
         console.error('Error deleting post:', error);
         throw error;
@@ -30,7 +35,12 @@ export async function likePost(postId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.errors ? result.errors.join(', ') : 'Failed to like post');
+        }
+        
+        return result.data;
     } catch (error) {
         console.error('Error liking post:', error);
         throw error;
@@ -50,7 +60,12 @@ export async function dislikePost(postId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.errors ? result.errors.join(', ') : 'Failed to dislike post');
+        }
+        
+        return result.data;
     } catch (error) {
         console.error('Error disliking post:', error);
         throw error;
