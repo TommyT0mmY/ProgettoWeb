@@ -134,7 +134,12 @@ export class CommentManager {
             commentEl.classList.add('comment-deleted');
         }
         
-        commentEl.querySelector('.comment-author-name').textContent = `${comment.author.firstName} ${comment.author.lastName}`;
+        const authorNameElement = commentEl.querySelector('.comment-author-name');
+        authorNameElement.innerHTML = '';
+        const authorLink = document.createElement('a');
+        authorLink.href = `/user-profile/${comment.author.userId}`;
+        authorLink.textContent = `${comment.author.firstName} ${comment.author.lastName}`;
+        authorNameElement.appendChild(authorLink);
         
         const dateElement = commentEl.querySelector('.comment-date');
         dateElement.textContent = comment.createdAt;
@@ -175,12 +180,13 @@ export class CommentManager {
         
         // If it's a reply, add @mention to parent author
         if (parentAuthor) {
-            const mention = document.createElement('span');
+            const mention = document.createElement('a');
             mention.className = 'comment-mention';
-            mention.textContent = `@${parentAuthor.userId} `;
+            mention.href = `/user-profile/${parentAuthor.userId}`;
+            mention.textContent = `@${parentAuthor.userId}`;
             textElement.innerHTML = '';
             textElement.appendChild(mention);
-            textElement.appendChild(document.createTextNode(comment.text));
+            textElement.appendChild(document.createTextNode(' ' + comment.text));
         } else {
             textElement.textContent = comment.text;
         }

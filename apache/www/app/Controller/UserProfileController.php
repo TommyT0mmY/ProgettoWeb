@@ -35,7 +35,7 @@ class UserProfileController extends BaseController {
     }
 
     /** get user profile */
-    #[Get('/user-profile')]
+    #[Get('/user-profile/:userid')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getUserProfilePosts(Request $request): Response {
         $postQuery = null;
