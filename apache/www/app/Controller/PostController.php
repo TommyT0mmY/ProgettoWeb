@@ -205,7 +205,9 @@ class PostController extends BaseController {
     }
 
     #[Post("/api/posts/:postid/dislike")]
-    public function dislikePost(array $params, Request $request): Response {
+    #[AuthMiddleware(Role::USER)]
+    public function dislikePost(Request $request): Response {
+        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
 
