@@ -10,6 +10,7 @@ use Unibostu\Core\Http\Request;
 use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\router\middleware\AuthMiddleware;
+use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
@@ -50,7 +51,7 @@ class PostController extends BaseController {
 
     #[Post("/api/posts/:postid/comments")]
     #[AuthMiddleware(Role::USER)]
-    #[ValidationException()]
+    #[ValidationMiddleware()]
     public function addComment(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
@@ -91,7 +92,7 @@ class PostController extends BaseController {
 
     #[Post("/api/posts/create")]
     #[AuthMiddleware(Role::USER)]
-    #[ValidationException()]
+    #[ValidationMiddleware()]
     public function createPost(Request $request): Response {
         return new Response();
     }
@@ -128,7 +129,7 @@ class PostController extends BaseController {
 
     #[Delete("/api/posts/:postid")]
     #[AuthMiddleware(Role::USER)]
-    #[ValidationException()]
+    #[ValidationMiddleware()]
     public function deletePost(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
@@ -139,7 +140,7 @@ class PostController extends BaseController {
 
     #[Delete("/api/posts/:postid/comments/:commentid")]
     #[AuthMiddleware(Role::USER)]
-    #[ValidationException()]
+    #[ValidationMiddleware()]
     public function deleteComment(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PARAMETERS);
         $postId = $params['postid'] ?? null;
