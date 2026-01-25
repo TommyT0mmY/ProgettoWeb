@@ -11,7 +11,7 @@ enum RequestAttribute: string {
     /**
      * The URL path variables.
      */
-    case PARAMETERS = "parameters";
+    case PATH_VARIABLES = "path_variables";
     /**
      * The role of the client making the request.
      */

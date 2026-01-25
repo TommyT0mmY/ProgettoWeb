@@ -35,7 +35,7 @@ class CommunityController extends BaseController {
     #[Get("/courses/:courseId")]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getCommunityPosts(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
+        $params = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $courseId = $params['courseId'];
         $postQuery = null;
         $userId = null; //per testing usare "laura.monti"

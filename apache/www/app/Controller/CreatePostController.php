@@ -35,8 +35,8 @@ class CreatePostController extends BaseController {
     #[Get('/courses/:courseId/createpost')]
     #[AuthMiddleware(Role::USER)]
     public function createPosts(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
-        $courseId = $params['courseId'];
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $courseId = $pathVars['courseId'];
 
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID); 
         $user = $this->userService->getUserProfile($userId);

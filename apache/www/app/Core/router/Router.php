@@ -178,7 +178,7 @@ class Router {
         if (!$result->found || !isset($result->callback)) {
             throw new \RuntimeException("404 Not Found\n", 404);
         }
-        $request = $request->withAttribute(RequestAttribute::PARAMETERS, $result->params); // Adding route parameters to the request
+        $request = $request->withAttribute(RequestAttribute::PATH_VARIABLES, $result->params); // Adding route parameters to the request
         $controllerName = $result->callback->controllerClassname;
         $action = $result->callback->action; // Method name
         $controller = $this->istantiateController($controllerName, $container);

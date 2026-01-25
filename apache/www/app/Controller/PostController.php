@@ -35,8 +35,8 @@ class PostController extends BaseController {
     #[Get("/posts/:postid")]
     #[AuthMiddleware(Role::USER)]
     public function getPost(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
-        $postId = $params['postid'] ?? null;
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $postId = $pathVars['postid'] ?? null;
         if ($postId === null) {
             throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
         }
@@ -53,8 +53,8 @@ class PostController extends BaseController {
     #[AuthMiddleware(Role::USER)]
     #[ValidationMiddleware()]
     public function addComment(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
-        $postId = $params['postid'] ?? null;
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $postId = $pathVars['postid'] ?? null;
         if ($postId === null) {
             throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
         }
@@ -106,8 +106,8 @@ class PostController extends BaseController {
     #[Get("/api/posts/:postid/comments")]
     #[AuthMiddleware(Role::USER)]
     public function showComments(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
-        $postId = $params['postid'] ?? null;
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $postId = $pathVars['postid'] ?? null;
         $comments = $this->commentService->getCommentsByPostId((int)$postId);
         $commentsArray = array_map(function($commentDTO) {
                 return [
@@ -131,8 +131,8 @@ class PostController extends BaseController {
     #[AuthMiddleware(Role::USER)]
     #[ValidationMiddleware()]
     public function deletePost(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
-        $postId = $params['postid'] ?? null;
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $postId = $pathVars['postid'] ?? null;
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $this->postService->deletePost((int)$postId, $userId);
         return new Response('Post deleted', 200); // TODO JSON
@@ -142,9 +142,9 @@ class PostController extends BaseController {
     #[AuthMiddleware(Role::USER)]
     #[ValidationMiddleware()]
     public function deleteComment(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
-        $postId = $params['postid'] ?? null;
-        $commentId = $params['commentid'] ?? null;
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $postId = $pathVars['postid'] ?? null;
+        $commentId = $pathVars['commentid'] ?? null;
         if ($postId === null) {
             throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
         }
@@ -159,8 +159,8 @@ class PostController extends BaseController {
     #[Post("/api/posts/:postid/like")]
     #[AuthMiddleware(Role::USER)]
     public function likePost(Request $request): Response {
-        $params = $request->getAttribute(RequestAttribute::PARAMETERS);
-        $postId = $params['postid'] ?? null;
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $postId = $pathVars['postid'] ?? null;
         return new Response();
     }
 }
