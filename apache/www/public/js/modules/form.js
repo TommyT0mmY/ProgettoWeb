@@ -37,7 +37,7 @@ class Form {
                 }
                 // Requesting submission
                 const formData = Object.fromEntries(new FormData(this.#form).entries());
-                // Aggiunta CSRF token e key come campi separati
+                // Adding CSRF tokens as separate fields
                 formData['csrf-key'] = window.csrfKey;
                 formData['csrf-token'] = window.csrfToken;
                 
