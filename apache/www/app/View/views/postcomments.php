@@ -13,9 +13,9 @@ $this->extend('main-layout', [
     'userId' => $userId,
     'additionalHeadCode' => [
         '<script type="module" src="/js/navbar-css.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">',
+        '<script type="module" src="/js/posts/single-post.js"></script>',
         '<script type="module" src="/js/comments/main.js"></script>',
-        '<script type="module" src="/js/posts/main.js"></script>',
+        '<link rel="stylesheet" href="/css/style2.css">',
         '<link rel="stylesheet" href="/css/comments.css">',
         ],
     ]);

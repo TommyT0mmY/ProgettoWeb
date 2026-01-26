@@ -1,11 +1,12 @@
 import { PostManager } from './PostManager.js';
+import { InfiniteScroll } from './infinitescroll.js';
 
-// Inizializza il PostManager quando il DOM è pronto
 document.addEventListener('DOMContentLoaded', () => {
     const userId = window.currentUser || null;
     
     if (userId) {
-        new PostManager(userId);
+        const postManager = new PostManager(userId);
+        new InfiniteScroll(postManager);
     } else {
         console.warn('Utente non autenticato.');
     }

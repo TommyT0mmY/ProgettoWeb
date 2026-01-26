@@ -56,5 +56,60 @@ class HomeController extends BaseController {
             "categoryId" => $postQuery->getCategory()
         ]);
     }
+
+    #[Get('/api/posts')]
+    #[AuthMiddleware(Role::USER, Role::ADMIN)]
+    public function getHomepagePostsApi(Request $request): Response {
+        $postQuery = null;
+        $userId = null;
+        $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        
+        if ($currentRole === Role::ADMIN) {
+            $postQuery = PostQuery::create()
+                ->forAdmin(true);
+        } else if ($currentRole === Role::USER) {
+            $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+            $postQuery = PostQuery::create()
+                ->forUser($userId)
+                ->inCategory($request->get('categoryId'))
+                ->sortedBy($request->get('sortOrder'))
+                ->afterPost($request->get('lastPostId') ?? ($request->get('sortOrder') === 'asc' ? 0 : PHP_INT_MAX));
+        }
+
+        $posts = $this->postService->getPosts($postQuery);
+        
+        $postsArray = array_map(function($post) {
+            return [
+                'postId' => $post->postId,
+                'title' => $post->title,
+                'description' => $post->description,
+                'createdAt' => $post->createdAt,
+                'attachmentPath' => $post->attachmentPath,
+                'likes' => $post->likes,
+                'dislikes' => $post->dislikes,
+                'likedByUser' => $post->likedByUser,
+                'author' => [
+                    'userId' => $post->author->userId,
+                    'firstName' => $post->author->firstName,
+                    'lastName' => $post->author->lastName
+                ],
+                'course' => [
+                    'courseId' => $post->course->courseId,
+                    'courseName' => $post->course->courseName
+                ],
+                'category' => $post->category ? [
+                    'categoryId' => $post->category->categoryId,
+                    'categoryName' => $post->category->categoryName
+                ] : null,
+                'tags' => $post->tags
+            ];
+        }, $posts);
+
+        return Response::create()->json([
+            'success' => true,
+            'data' => $postsArray
+        ]);
+    }
+
 }
 
