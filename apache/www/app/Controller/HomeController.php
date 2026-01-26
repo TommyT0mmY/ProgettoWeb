@@ -42,7 +42,6 @@ class HomeController extends BaseController {
             $postQuery = PostQuery::create()
                 ->forUser($userId)
                 ->inCategory($request->get('categoryId'))
-                ->withTags($request->get('tags'))
                 ->sortedBy($request->get('sortOrder'));
         }
 
@@ -52,7 +51,9 @@ class HomeController extends BaseController {
             "posts" => $posts,
             "courses" => $this->courseService->getCoursesByUser($userId),
             "categories" => $this->categoryService->getAllCategories(),
-            "userId" => $userId
+            "userId" => $userId,
+            "sortOrder" => $postQuery->getSortOrder(),
+            "categoryId" => $postQuery->getCategory()
         ]);
     }
 }

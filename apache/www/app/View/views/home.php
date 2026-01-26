@@ -27,7 +27,10 @@ $this->extend('main-layout', [
                 <select id="filter-type" name="categoryId">
                     <option value="">All categories</option>
                     <?php foreach ($categories ?? [] as $category): ?>
-                        <option value="<?= htmlspecialchars($category->categoryId) ?>"><?= htmlspecialchars($category->categoryName) ?></option>
+                        <option value="<?= htmlspecialchars($category->categoryId) ?>" 
+                            <?= (isset($categoryId) && $categoryId == $category->categoryId) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($category->categoryName) ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </p>
@@ -35,8 +38,8 @@ $this->extend('main-layout', [
             <p>
                 <label for="ordering">Order by date:</label>
                 <select id="ordering" name="sortOrder">
-                    <option value="desc">Newest post first</option>
-                    <option value="asc">Oldest post first</option>
+                    <option value="desc" <?= (!isset($sortOrder) || strtolower($sortOrder) === 'desc') ? 'selected' : '' ?>>Newest post first</option>
+                    <option value="asc" <?= (isset($sortOrder) && strtolower($sortOrder) === 'asc') ? 'selected' : '' ?>>Oldest post first</option>
                 </select>
             </p>
 
