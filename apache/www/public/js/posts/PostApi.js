@@ -2,8 +2,17 @@ const API_BASE = '/api';
 
 export async function deletePost(postId) {
     try {
+        const body = {
+            'csrf-key': window.csrfKey,
+            'csrf-token': window.csrfToken
+        };
+        
         const response = await fetch(`${API_BASE}/posts/${postId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
         });
         
         if (!response.ok) {
@@ -24,11 +33,17 @@ export async function deletePost(postId) {
 
 export async function likePost(postId) {
     try {
+        const body = {
+            'csrf-key': window.csrfKey,
+            'csrf-token': window.csrfToken
+        };
+        
         const response = await fetch(`${API_BASE}/posts/${postId}/like`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            body: JSON.stringify(body)
         });
 
         if (!response.ok) {
@@ -49,11 +64,17 @@ export async function likePost(postId) {
 
 export async function dislikePost(postId) {
     try {
+        const body = {
+            'csrf-key': window.csrfKey,
+            'csrf-token': window.csrfToken
+        };
+        
         const response = await fetch(`${API_BASE}/posts/${postId}/dislike`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            body: JSON.stringify(body)
         });
 
         if (!response.ok) {

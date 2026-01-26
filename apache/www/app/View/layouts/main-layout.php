@@ -36,8 +36,11 @@
         </section>
     </template>
 
+    <?php ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true); ?>
     <script>
         window.currentUser = '<?= isset($userId) ? htmlspecialchars($userId) : '' ?>';
+        window.csrfToken = '<?= $csrfToken ?>';
+        window.csrfKey = '<?= $csrfKey ?>';
     </script>
 </body>
 </html>

@@ -22,6 +22,9 @@ export async function fetchComments(postId) {
 
 export async function postComment(commentData) {
     try {
+        commentData['csrf-key'] = window.csrfKey;
+        commentData['csrf-token'] = window.csrfToken;
+        
         const response = await fetch(`${API_BASE}/posts/${commentData.postid}/comments`, {
             method: 'POST',
             headers: {
@@ -48,8 +51,17 @@ export async function postComment(commentData) {
 
 export async function deleteComment(postId, commentId) {
     try {
+        const body = {
+            'csrf-key': window.csrfKey,
+            'csrf-token': window.csrfToken
+        };
+        
         const response = await fetch(`${API_BASE}/posts/${postId}/comments/${commentId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
         });
         
         if (!response.ok) {

@@ -36,12 +36,17 @@ class Form {
                     return;
                 }
                 // Requesting submission
+                const formData = Object.fromEntries(new FormData(this.#form).entries());
+                // Aggiunta CSRF token e key come campi separati
+                formData['csrf-key'] = window.csrfKey;
+                formData['csrf-token'] = window.csrfToken;
+                
                 const response = await fetch(this.#configs.endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(Object.fromEntries(new FormData(this.#form).entries())) //This ignores duplicate field names, keeping last one 
+                    body: JSON.stringify(formData)
                 });
                 if (!response.ok) { // HTTP response status codes not in 200-299 range
                     throw new Error("Network or server error, response code: " + response.status);
