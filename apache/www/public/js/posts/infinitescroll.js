@@ -38,9 +38,10 @@ export class InfiniteScroll {
         const scrollTop = window.scrollY;
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
+        const offset = windowHeight * 0.1;
 
-        // Loads more posts when near the bottom of the page
-        if (scrollTop + windowHeight >= documentHeight - 500) {
+        // When the bottom of the window is within 'offset' pixels of the bottom of the document, load more posts
+        if (scrollTop + windowHeight >= documentHeight - offset) {
             this.loadMorePosts();
         }
     }
