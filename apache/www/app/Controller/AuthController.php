@@ -116,6 +116,7 @@ class AuthController extends BaseController {
     }
 
     #[Post("/api/auth/logout")]
+    #[ValidationMiddleware()]
     public function logout(): Response {
         $this->auth->logout();
         return Response::create()->json([

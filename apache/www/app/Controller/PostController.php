@@ -51,7 +51,9 @@ class PostController extends BaseController {
 
     #[Post("/api/posts/:postid/comments")]
     #[AuthMiddleware(Role::USER)]
-    #[ValidationMiddleware()]
+    #[ValidationMiddleware([
+        "text" => ValidationErrorCode::COMMENT_TEXT_REQUIRED
+    ], ["parentCommentId"])]
     public function addComment(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
@@ -59,16 +61,8 @@ class PostController extends BaseController {
             throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
         }
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-        $text = $request->post("text");
-        if ($text === null || trim($text) === '') {
-            throw new ValidationException(errors: [ValidationErrorCode::COMMENT_TEXT_REQUIRED]);
-        }
-        $parentCommentId = $request->post("parentCommentId");
-        if (isset($parentCommentId)) {
-            $parentCommentId = (int)$parentCommentId;
-        } else {
-            $parentCommentId = null;
-        }
+        [ "text" => $text, "parentCommentId" => $parentCommentId ] = $request->getAttribute(RequestAttribute::FIELDS);
+        $parentCommentId = isset($parentCommentId) ? (int)$parentCommentId : null;
         $commentWithAuthor = $this->commentService->createComment(new CreateCommentDTO(
             postId: (int)$postId,
             userId: $userId,
@@ -186,6 +180,7 @@ class PostController extends BaseController {
 
     #[Post("/api/posts/:postid/like")]
     #[AuthMiddleware(Role::USER)]
+    #[ValidationMiddleware()]
     public function likePost(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
@@ -207,6 +202,7 @@ class PostController extends BaseController {
 
     #[Post("/api/posts/:postid/dislike")]
     #[AuthMiddleware(Role::USER)]
+    #[ValidationMiddleware()]
     public function dislikePost(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
