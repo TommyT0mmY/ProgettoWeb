@@ -15,7 +15,7 @@ class PostQuery {
     /** Last element ID for pagination (if ($sortOrder = 'DESC') => $lastPostId = PHP_INT_MAX; else 0) for first page */
     private int $lastPostId = PHP_INT_MAX;
     /** Limit for query results */
-    private int $limit = 10;
+    private int $limit = 5;
     /** User ID for filtering posts by author */
     private ?string $authorId = null;
     /** User ID for filtering posts by user */
