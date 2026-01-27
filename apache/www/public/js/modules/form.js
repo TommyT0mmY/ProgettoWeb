@@ -37,10 +37,12 @@ class Form {
                 }
                 // Requesting submission
                 const formData = Object.fromEntries(new FormData(this.#form).entries());
-                // Adding CSRF tokens as separate fields
-                formData['csrf-key'] = window.csrfKey;
-                formData['csrf-token'] = window.csrfToken;
-                
+                // Adding CSRF tokens as separate fields if not already present
+                if (!formData['csrf-key'])
+                    formData['csrf-key'] = window.csrfKey;
+                if (!formData['csrf-token'])
+                    formData['csrf-token'] = window.csrfToken;
+                console.log('Submitting form data:', formData);
                 const response = await fetch(this.#configs.endpoint, {
                     method: 'POST',
                     headers: {
