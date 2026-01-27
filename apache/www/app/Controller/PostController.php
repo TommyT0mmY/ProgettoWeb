@@ -15,7 +15,8 @@ use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\security\Role;
-use Unibostu\Model\DTO\CreateCommentDTO; 
+use Unibostu\Model\DTO\CreateCommentDTO;
+use Unibostu\Model\DTO\CreatePostDTO;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CommentService;
 use Unibostu\Model\Service\CourseService;
@@ -89,9 +90,46 @@ class PostController extends BaseController {
 
     #[Post("/api/posts/create")]
     #[AuthMiddleware(Role::USER)]
-    #[ValidationMiddleware()]
+    #[ValidationMiddleware([
+        "title" => ValidationErrorCode::TITLE_REQUIRED,
+        "description" => ValidationErrorCode::DESCRIPTION_REQUIRED,
+        "courseId" => ValidationErrorCode::COURSE_REQUIRED
+    ], ["categoryId", "tags", "file"])]
     public function createPost(Request $request): Response {
-        return new Response();
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $fields = $request->getAttribute(RequestAttribute::FIELDS);
+        
+        // Parse tags
+        $tags = [];
+        if (isset($fields['tags']) && is_array($fields['tags'])) {
+            $tags = array_map(function($tagId) use ($fields) {
+                return [
+                    'tagId' => (int)$tagId,
+                    'courseId' => (int)$fields['courseId']
+                ];
+            }, $fields['tags']);
+        }
+        
+        // Handle file upload
+        $attachmentPath = null;
+        // TODO
+        
+        $createPostDTO = new CreatePostDTO(
+            userId: $userId,
+            courseId: (int)$fields['courseId'],
+            title: $fields['title'],
+            description: $fields['description'],
+            tags: $tags,
+            category: isset($fields['categoryId']) && $fields['categoryId'] !== '' ? (int)$fields['categoryId'] : null,
+            attachmentPath: $attachmentPath
+        );
+        
+        $this->postService->createPost($createPostDTO);
+        
+        return Response::create()->json([
+            'success' => true,
+            'redirect' => '/courses/' . $fields['courseId']
+        ]);
     }
 
     #[Post("/api/posts/search")]

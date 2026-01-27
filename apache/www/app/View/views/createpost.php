@@ -10,6 +10,7 @@ $this->extend('main-layout', ['title' => 'Unibostu - Create post',
      'courses' => $courses ,
     'additionalHeadCode' => [
         '<script type="module" src="/js/navbar-css.js"></script>',
+        '<script type="module" src="/js/posts/create-post.js"></script>',
         '<link rel="stylesheet" href="/css/style2.css">'
         ] ]
     ); 
@@ -17,12 +18,15 @@ $this->extend('main-layout', ['title' => 'Unibostu - Create post',
  
 <h2 class="createPost">Create post for: <?= htmlspecialchars($thisCourse->courseName) ?></h2>
 
-<form action="#" method="post" enctype="multipart/form-data">
+<form method="post" id="create-post-form" novalidate>
+    <input type="hidden" name="courseId" value="<?= htmlspecialchars($thisCourse->courseId) ?>" />
     <fieldset>
         <legend>Post information</legend>
+        <output class="form-error-message" role="alert"></output>
         <p>
-            <label for="postTitle">Title:</label>
-            <input type="text" name="title" id="postTitle" placeholder="Insert post title" required />
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" placeholder="Insert post title" required />
+            <output id="title-error" class="field-error-message"></output>
         </p>
         <p>
             <label for="type">Category:</label>
@@ -32,6 +36,7 @@ $this->extend('main-layout', ['title' => 'Unibostu - Create post',
                     <option value="<?= htmlspecialchars($category->categoryId) ?>"><?= htmlspecialchars($category->categoryName) ?></option>
                 <?php endforeach; ?>
             </select>
+            <output id="type-error" class="field-error-message"></output>
         </p>
     </fieldset>
     
@@ -40,7 +45,7 @@ $this->extend('main-layout', ['title' => 'Unibostu - Create post',
         <div>
             <?php foreach ($tags ?? [] as $tag): ?>
                 <p>
-                    <input type="checkbox" name="tag" id="tag_<?= htmlspecialchars($tag->tagId) ?>" value="<?= htmlspecialchars($tag->tagId) ?>" />
+                    <input type="checkbox" name="tags[]" id="tag_<?= htmlspecialchars($tag->tagId) ?>" value="<?= htmlspecialchars($tag->tagId) ?>" />
                     <label for="tag_<?= htmlspecialchars($tag->tagId) ?>"><?= htmlspecialchars($tag->tag_name) ?></label>
                 </p>
             <?php endforeach; ?>
@@ -52,14 +57,16 @@ $this->extend('main-layout', ['title' => 'Unibostu - Create post',
         <p>
             <label for="description">Description:</label>
             <textarea id="description" name="description" rows="4" placeholder="Write your post here..." required></textarea>
+            <output id="description-error" class="field-error-message"></output>
         </p>
         <p>
             <label for="notesFile">Upload your notes:</label>
             <input type="file" name="file" id="notesFile" />
+            <output id="notesFile-error" class="field-error-message"></output>
         </p>
     </fieldset>
     
     <p>
-        <input type="submit" value="CREATE POST" />
+        <button type="submit">CREATE POST</button>
     </p>
 </form>
