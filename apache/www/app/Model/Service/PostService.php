@@ -57,8 +57,7 @@ class PostService {
         }
 
         // Verifica che l'utente sia iscritto al corso
-        $course = $this->courseRepository->findById($dto->courseId);
-        if (!$course || $course->facultyId !== $user->facultyId) {
+        if (!$this->courseRepository->isUserEnrolled($dto->userId, $dto->courseId)) {
             throw new \Exception("L'utente non è iscritto a questo corso");
         }
 
