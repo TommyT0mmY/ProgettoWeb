@@ -50,9 +50,6 @@ class Form {
                     },
                     body: JSON.stringify(formData)
                 });
-                if (!response.ok) { // HTTP response status codes not in 200-299 range
-                    throw new Error("Network or server error, response code: " + response.status);
-                }
                 // Response handling
                 const responseData = await response.json();
                 if (!responseData.success) { // Displaying errors
@@ -62,6 +59,9 @@ class Form {
                         (!field) ? this.#setGeneralError(message) : this.#setFieldError(field, message);
                     });
                     return;
+                }
+                if (!response.ok) { // HTTP response status codes not in 200-299 range
+                    throw new Error("Network or server error, response code: " + response.status);
                 }
                 if (responseData.redirect) {
                     window.location.href = responseData.redirect;
