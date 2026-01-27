@@ -80,6 +80,9 @@ class CommunityController extends BaseController {
             "tags" => $this->tagService->getTagsByCourse((int)$courseId),
             "courseId" => $courseId,
             "userId" => $userId,
+            "selectedCategoryId" => $request->get('categoryId'),
+            "selectedSortOrder" => $request->get('sortOrder') ?? 'desc',
+            "selectedTags" => $request->get('tags') ?? [],
             ]);
     }
 
