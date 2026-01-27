@@ -18,6 +18,11 @@ final class CsrfProtection {
     public const KEY_CSRF_KEY = "csrf-key";             // Request parameter name for CSRF token key
     public const KEY_CSRF_TOKEN = "csrf-token";         // Request parameter name for CSRF token value
 
+    // Light probabilistic GC plus hard cap safety
+    private const GC_PROBABILITY = 2;    // 2% of calls trigger GC
+    private const GC_DIVISOR = 100;
+    private const MAX_TOKENS_PER_SESSION = 100; // If above this, force GC
+
     public function __construct(
         private readonly SessionManager $session
     ) {}
@@ -30,6 +35,7 @@ final class CsrfProtection {
      * @return string The generated CSRF token.
      */
     public function generateToken(string $key, bool $multiUse = false): string {
+        $this->maybeGarbageCollect();
         $token = bin2hex(random_bytes(32));
         self::getTokens()[$key] = [
             'token' => $token,
@@ -48,6 +54,7 @@ final class CsrfProtection {
      * @return bool True if the token is valid, false otherwise.
      */
     public function validateToken(string $key, string $token): bool {
+        $this->maybeGarbageCollect();
         if (!isset(self::getTokens()[$key])) {
             return false;
         }
@@ -116,6 +123,31 @@ final class CsrfProtection {
             $this->session->set(self::KEY_CSRF_TOKENS, []);
         }
         return $this->session->getRef(self::KEY_CSRF_TOKENS);
+    }
+
+    /**
+     * Probabilistic GC: runs with small probability or when too many tokens are stored.
+     * Removes expired tokens only, keeping multi-use tokens until they expire.
+     */
+    private function maybeGarbageCollect(): void {
+        $tokens = &self::getTokens();
+        $count = count($tokens);
+
+        $shouldRun = (
+            $count > self::MAX_TOKENS_PER_SESSION ||
+            mt_rand(1, self::GC_DIVISOR) <= self::GC_PROBABILITY
+        );
+
+        if (!$shouldRun) {
+            return;
+        }
+
+        $now = time();
+        foreach ($tokens as $k => $data) {
+            if ($now > $data['expires']) {
+                unset($tokens[$k]);
+            }
+        }
     }
 }
 ?>

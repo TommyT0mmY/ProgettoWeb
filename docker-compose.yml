@@ -26,6 +26,7 @@ services:
   www: #Container del server web Apache con PHP
     build: ./apache # Si basa sul Dockerfile in apache
     restart: always
+    command: ["/bin/sh", "-c", "chown -R www-data:www-data /var/lib/php/sessions && apache2-foreground"]
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -36,6 +37,7 @@ services:
       - db
     volumes:
       - "./apache/www:/var/www/html:ro" # Sola lettura
+      - "php_sessions:/var/lib/php/sessions"
     ports:
       - 80:80
     networks:
@@ -75,8 +77,21 @@ services:
         - action: rebuild
           path: ./python/requirements.txt
 
+  session-gc:
+    build: ./cron
+    restart: always
+    environment:
+      - SESSION_PATH=/var/lib/php/sessions
+      - SESSION_MAX_LIFETIME=3600
+      - CRON_SCHEDULE=*/5 * * * *
+    volumes:
+      - "php_sessions:/var/lib/php/sessions"
+    networks:
+      - lamp_docker
+
 volumes:
   db_data:
+  php_sessions:
 
 networks:
   lamp_docker:
