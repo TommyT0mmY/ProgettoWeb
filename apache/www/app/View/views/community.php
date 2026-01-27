@@ -3,6 +3,7 @@
  * @var \Unibostu\core\RenderingEngine $this
  * @var \Unibostu\Dto\CourseDto[] $courses
  * @var \Unibostu\Dto\CategoryDto[] $categories
+ * @var \Unibostu\Dto\TagDto[] $tags
  * @var \Unibostu\Dto\PostDto[] $posts
  * @var \Unibostu\Dto\CourseDto $thisCourse
  * @var string $userId
@@ -10,7 +11,10 @@
 $this->extend('main-layout', [
     'title' => 'Unibostu - Community',
     'userId' => $userId,
-    'courses' => $courses
+    'courses' => $courses,
+    'additionalHeadCode' => [
+        '<script type="module" src="/js/posts/multi-post.js"></script>',
+    ],
 ]);
 ?>
 
@@ -38,6 +42,16 @@ $this->extend('main-layout', [
                 <option value="asc">Oldest post first</option>
             </select>
         </p>
+
+        <fieldset>
+            <legend>Filter by tags:</legend>
+            <?php foreach ($tags ?? [] as $tag): ?>
+                <p>
+                    <input type="checkbox" name="tags[]" id="tag_<?= htmlspecialchars($tag->tagId) ?>" value="<?= htmlspecialchars($tag->tagId) ?>" />
+                    <label for="tag_<?= htmlspecialchars($tag->tagId) ?>"><?= htmlspecialchars($tag->tag_name) ?></label>
+                </p>
+            <?php endforeach; ?>
+        </fieldset>
 
         <p><input type="submit" value="Filter" /></p>
     </form>
