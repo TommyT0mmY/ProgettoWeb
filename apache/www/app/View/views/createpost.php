@@ -6,8 +6,10 @@
  * @var \Unibostu\Dto\CourseDto[] $courses
  */
 
-$this->extend('main-layout', ['title' => 'Unibostu - Create post',
-     'courses' => $courses ,
+$this->extend('main-layout', [
+    'title' => 'Unibostu - Create post',
+    'courses' => $courses ,
+    'userId' => $userId,
     'additionalHeadCode' => [
         '<script type="module" src="/js/navbar-css.js"></script>',
         '<script type="module" src="/js/posts/create-post.js"></script>',

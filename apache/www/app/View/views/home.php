@@ -5,18 +5,18 @@
  * @var \Unibostu\Dto\CategoryDto[] $categories
  * @var \Unibostu\Dto\PostDto[] $posts
  * @var int $userId
+ * @var string|null $sortOrder
+ * @var string|null $categoryId
  */
 
 $this->extend('main-layout', [
     'title' => 'Unibostu - Homepage',
-    'courses' => $courses,
-    'userId' => $userId,
     'additionalHeadCode' => [
-        '<script type="module" src="js/navbar-css.js"></script>',
         '<script type="module" src="/js/posts/multi-post.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">'
-        ],
-    ]);
+    ],
+    'userId' => $userId,
+    'courses' => $courses,
+]);
 ?>
 
     <section class="post-filters">

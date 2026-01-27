@@ -42,6 +42,7 @@ class CreatePostController extends BaseController {
         $user = $this->userService->getUserProfile($userId);
         
         return $this->render("createpost", [
+            "userId" => $userId,
             "courses" => $this->courseService->getCoursesByUser($userId),
             "thisCourse" => $this->courseService->getCourseDetails((int)$courseId),
             "categories" => $this->categoryService->getAllCategories(),

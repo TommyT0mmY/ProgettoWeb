@@ -4,16 +4,14 @@
  * @var \Unibostu\Dto\CourseDto[] $courses
  * @var \Unibostu\Dto\CategoryDto[] $categories
  * @var \Unibostu\Dto\PostDto[] $posts
+ * @var \Unibostu\Dto\CourseDto $thisCourse
+ * @var string $userId
  */
-
 $this->extend('main-layout', [
     'title' => 'Unibostu - Community',
-    'courses' => $courses,
-    'additionalHeadCode' => [
-        '<script type="module" src="/js/navbar-css.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">'
-        ],
-    ]);
+    'userId' => $userId,
+    'courses' => $courses
+]);
 ?>
 
 <h2><?= htmlspecialchars($thisCourse->courseName) ?></h2>

@@ -2,16 +2,14 @@
 /**
  * @var \Unibostu\Dto\CourseDto[] $courses
  * @var \Unibostu\Dto\FacultyDto $faculty
+ * @var string $userId
 */
 
 $this->extend('main-layout', [
     'title' => 'Unibostu - Student Preferences',
-    'courses' => $courses,
-    'additionalHeadCode' => [
-        '<script type="module" src="/js/navbar-css.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">'
-        ],
-    ]);
+    'userId' => $userId,
+    'courses' => $courses
+]);
 ?>
 
 <h2>Student preferences</h2>

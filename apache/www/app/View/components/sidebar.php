@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var array<\Unibostu\Model\DTO\CourseDTO> $courses
+ */
+?>
 <nav id="navbar" aria-label="Main navigation">
   <div>
     <ul class="nav-main">

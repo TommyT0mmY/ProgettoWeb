@@ -1,7 +1,7 @@
 <?php 
 /**
  * @var \Unibostu\Core\RenderingEngine $this
- * @var Unibostu\Model\DTO\FacultyDTO[] $faculties
+ * @var \Unibostu\Model\DTO\FacultyDTO[] $faculties
  */
 
 $this->extend('loggedout-layout', [

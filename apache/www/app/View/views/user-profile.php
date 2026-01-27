@@ -1,12 +1,17 @@
 <?php
+/**
+ * @var \Unibostu\core\RenderingEngine $this
+ * @var \Unibostu\Dto\CourseDto[] $courses
+ * @var \Unibostu\Dto\FacultyDto $faculty
+ * @var \Unibostu\Dto\PostDto[] $posts
+ * @var \Unibostu\Dto\CategoryDto[] $categories
+ * @var \Unibostu\Dto\UserDto $user
+ */
 $this->extend('main-layout', [
     'title' => 'Unibostu - User Profile',
-    'courses' => $courses,
-    'additionalHeadCode' => [
-        '<script type="module" src="/js/navbar-css.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">'
-        ],
-    ]);
+    'userId' => $user->userId,
+    'courses' => $courses
+]);
 ?>
 
 <div class="container">  
@@ -41,7 +46,7 @@ $this->extend('main-layout', [
 
     <div class="post-filters">
         <h3>Filters</h3>
-        <form action="/courses/<?= htmlspecialchars($thisCourse->courseId) ?>" method="get" id="filter-form">
+        <form action="/users/<?= htmlspecialchars($user->userId) ?>" method="get" id="filter-form">
             <p>
                 <label for="filter-type">Category:</label>
                 <select id="filter-type" name="categoryId">

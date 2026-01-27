@@ -1,3 +1,21 @@
+<?php
+/** 
+ * @var \Unibostu\Core\RenderingEngine $this 
+ * @var string|null $title
+ * @var string $content
+ * @var array<string> $additionalHeadCode
+ */
+
+/**
+ * This layout is intended for public pages of the application (login, register, etc.).
+ *
+ * Views using this layout must provide:
+ * - $title: The page title;
+ * - $additionalHeadCode: An array of strings containing additional HTML code to be included in the head section;
+ *
+ * Note that $content is automatically provided by the rendering engine.
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

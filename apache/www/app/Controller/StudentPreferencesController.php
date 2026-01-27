@@ -46,7 +46,8 @@ class StudentPreferencesController extends BaseController {
     public function getSelectCourses(Request $request): Response {
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         return $this->render("select-courses", [
-            'subscribedCourses' => $this->courseService->getCoursesByUser($userId)
+            'subscribedCourses' => $this->courseService->getCoursesByUser($userId),
+            'faculties' => $this->facultyService->getAllFaculties()
         ]);
     }
 }
