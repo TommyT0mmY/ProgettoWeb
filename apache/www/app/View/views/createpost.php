@@ -6,13 +6,11 @@
  * @var \Unibostu\Dto\CourseDto[] $courses
  */
 
-$this->extend('main-layout', ['title' => 'Unibostu - Create post',
-     'courses' => $courses ,
-    'additionalHeadCode' => [
-        '<script type="module" src="/js/navbar-css.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">'
-        ] ]
-    ); 
+$this->extend('main-layout', [
+    'title' => 'Unibostu - Create post',
+    'userId' => $userId,
+    'courses' => $courses
+]);
 ?>
  
 <h2 class="createPost">Create post for: <?= htmlspecialchars($thisCourse->courseName) ?></h2>

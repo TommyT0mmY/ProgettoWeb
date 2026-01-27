@@ -1,3 +1,27 @@
+<?php
+/** 
+ * @var \Unibostu\Core\RenderingEngine $this 
+ * @var string|null $title
+ * @var string $content
+ * @var array<string> $additionalHeadCode
+ * @var string $userId
+ * @var array<Unibostu\Model\DTO\CourseDTO> $courses
+ */
+
+/**
+ * This layout is intended for the pages of the main application after user authentication.
+ * Do not use it for public pages (use 'loggedout-layout' instead) and administration pages
+ * (use 'admin-layout' instead).
+ *
+ * Views using this layout must provide:
+ * - $title: The page title;
+ * - $additionalHeadCode: An array of strings containing additional HTML code to be included in the head section;
+ * - $userId: The ID of the current user;
+ * - $courses: An array of CourseDTO objects representing the user's courses;
+ *
+ * Note that $content is automatically provided by the rendering engine.
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +34,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" media="print" onload="this.media='all'" />
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/popup.css" />
-
+    <script type="module" src="/js/navbar-css.js"></script>
+    <link rel="stylesheet" href="/css/style2.css">
     <?php if (!empty($additionalHeadCode)): ?>
         <?php foreach ($additionalHeadCode as $code): ?>
             <?= $code ?>

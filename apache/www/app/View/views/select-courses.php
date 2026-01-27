@@ -2,6 +2,7 @@
 /** 
  * @var \Unibostu\Core\RenderingEngine $this 
  * @var array $subscribedCourses 
+ * @var array<Unibostu\Model\DTO\FacultyDTO> $faculties
  */
 $this->extend('loggedout-layout', [
     'title' => 'Select Courses - Unibostu',

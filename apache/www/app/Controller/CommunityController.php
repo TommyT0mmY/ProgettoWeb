@@ -61,7 +61,8 @@ class CommunityController extends BaseController {
             "courses" => $this->courseService->getCoursesByUser($userId),
             "thisCourse" => $this->courseService->getCourseDetails((int)$courseId),
             "categories" => $this->categoryService->getAllCategories(),
-            "courseId" => $courseId
+            "courseId" => $courseId,
+            "userId" => $userId,
             ]);
     }
 

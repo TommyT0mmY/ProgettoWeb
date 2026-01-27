@@ -9,16 +9,14 @@
 
 $this->extend('main-layout', [
     'title' => 'Unibostu - Post details',
-    'courses' => $courses,
-    'userId' => $userId,
     'additionalHeadCode' => [
-        '<script type="module" src="/js/navbar-css.js"></script>',
         '<script type="module" src="/js/posts/single-post.js"></script>',
         '<script type="module" src="/js/comments/main.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">',
         '<link rel="stylesheet" href="/css/comments.css">',
-        ],
-    ]);
+    ],
+    'userId' => $userId,
+    'courses' => $courses,
+]);
 ?>
 
 <a href="/">Go back to homepage</a>
