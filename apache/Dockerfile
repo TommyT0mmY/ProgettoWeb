@@ -7,6 +7,11 @@ RUN apt-get update && apt-get install -y \
     libzip-dev zip \
     && docker-php-ext-install -j$(nproc) pdo pdo_mysql mysqli zip
 
+# Prepare session directory with safe permissions
+RUN mkdir -p /var/lib/php/sessions \
+    && chown -R www-data:www-data /var/lib/php/sessions \
+    && chmod 1733 /var/lib/php/sessions
+
 # Abilita il modulo rewrite e headers di Apache
 RUN a2enmod rewrite headers
 
