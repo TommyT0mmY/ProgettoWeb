@@ -50,6 +50,7 @@
             <?= $content ?>
         </main>
     </div>
+    <div id="overlay"></div>
     <!-- Popup Template -->
     <template id="popup-template">
         <section class="popup" aria-label="Popup di errore">

@@ -34,6 +34,7 @@ class UserProfileController extends BaseController {
         $this->categoryService = new CategoryService();
     }
 
+
     /** get user profile */
     #[Get('/users/:userid')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
@@ -62,6 +63,29 @@ class UserProfileController extends BaseController {
             'courses' => $this->courseService->getCoursesByUser($userId),
             'faculty' => $this->facultyService->getFacultyDetails($user->facultyId),
             'categories' => $this->categoryService->getAllCategories()
+        ]);
+    }
+
+    #[Get('/studentpreferences')]
+    #[AuthMiddleware(Role::USER)]
+    public function getStudentPreferences(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $user = $this->userService->getUserProfile($userId);
+
+        return $this->render("studentpreferences", [
+            'user' => $user,
+            'courses' => $this->courseService->getCoursesByFaculty($user->facultyId),
+            'faculty' => $this->facultyService->getFacultyDetails($user->facultyId)
+        ]);
+    }
+
+    #[Get('/select-courses')]
+    #[AuthMiddleware(Role::USER)]
+    public function getSelectCourses(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        return $this->render("select-courses", [
+            'subscribedCourses' => $this->courseService->getCoursesByUser($userId),
+            'faculties' => $this->facultyService->getAllFaculties()
         ]);
     }
 }

@@ -12,10 +12,10 @@
         </button>
       </li>
       <li><a href="/">Home</a></li>
-      <li><a href="/register.php">Register</a></li>
-      <li><a href="/login.php">Login</a></li>
-      <li><a href="/logout.php">Logout</a></li>
-      <li><a href="/studentpreferences.php">Preferences</a></li>
+      <li><a href="/register">Register</a></li>
+      <li><a href="/login">Login</a></li>
+      <li><a href="/logout">Logout</a></li>
+      <li><a href="/studentpreferences">Preferences</a></li>
     </ul>
     
     <section>
@@ -26,6 +26,9 @@
             <a href="/courses/<?= htmlspecialchars($course->courseId); ?>"><?= htmlspecialchars($course->courseName); ?></a>
           </li>
         <?php endforeach; ?>
+          <li>
+            <a href="/select-courses">Browse all courses</a>
+          </li>
       </ul>
     </section>
   </div>

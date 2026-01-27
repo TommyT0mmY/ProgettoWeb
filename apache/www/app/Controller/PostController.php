@@ -20,18 +20,46 @@ use Unibostu\Model\DTO\CreatePostDTO;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CommentService;
 use Unibostu\Model\Service\CourseService;
+use Unibostu\Model\Service\CategoryService;
+use Unibostu\Model\Service\TagService;
+use Unibostu\Model\Service\UserService;
+
 
 class PostController extends BaseController {
     private $postService;
     private $commentService;
     private $courseService;
+    private $categoryService;
+    private $tagService;
+    private $userService;
 
     public function __construct(Container $container) {
         parent::__construct($container);
         $this->postService = new PostService();
         $this->commentService = new CommentService();
         $this->courseService = new CourseService();
+        $this->categoryService = new CategoryService();
+        $this->tagService = new TagService();
+        $this->userService = new UserService();
     }
+
+    #[Get('/courses/:courseId/createpost')]
+    #[AuthMiddleware(Role::USER)]
+    public function createPosts(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $courseId = $pathVars['courseId'];
+
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID); 
+        $user = $this->userService->getUserProfile($userId);
+        
+        return $this->render("createpost", [
+            "userId" => $userId,
+            "courses" => $this->courseService->getCoursesByUser($userId),
+            "thisCourse" => $this->courseService->getCourseDetails((int)$courseId),
+            "categories" => $this->categoryService->getAllCategories(),
+            "tags" => $this->tagService->getTagsByCourse((int)$courseId)             
+        ]);
+    }   
 
     #[Get("/posts/:postid")]
     #[AuthMiddleware(Role::USER)]
