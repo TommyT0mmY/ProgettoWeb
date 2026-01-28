@@ -11,7 +11,7 @@
         <img src="/images/icons/logo.png" alt="UniboStu Logo" />          
         <figcaption><h1>UniboStu</h1></figcaption>
     </figure>
-    <a href="/users/<?= htmlspecialchars($userId) ?> " aria-label="Go to user profile">
+    <a href="/users/<?= htmlspecialchars($userId) ?>" aria-label="Go to user profile">
         <img class="profile-container" src="/images/icons/user-profile.svg" alt="" />
     </a>    
  </header>
