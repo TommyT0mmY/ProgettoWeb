@@ -230,7 +230,9 @@ INSERT INTO `users` (`user_id`, `first_name`, `last_name`, `faculty_id`, `passwo
 ('simone.neri', 'Simone', 'Neri', 2, ''),
 ('alice.testa', 'Alice', 'Testa', 3, ''),
 ('matteo.longo', 'Matteo', 'Longo', 3, ''),
-('laura.monti', 'Laura', 'Monti', 3, '');
+('laura.monti', 'Laura', 'Monti', 3, ''),
+-- password: 'aaaaaa'
+('a', 'a', 'a', 1, '$2y$12$IopdjTqt.gNIuYN7FDXZJOZo.02BGca/Jw0uf0v0xhsN89gf9HoCW');
 
 INSERT INTO `user_courses` (`user_id`, `course_id`) VALUES 
 ('mrossi', 1),
@@ -243,7 +245,13 @@ INSERT INTO `user_courses` (`user_id`, `course_id`) VALUES
 ('simone.neri', 4),
 ('alice.testa', 5),
 ('matteo.longo', 5),
-('laura.monti', 6);
+('laura.monti', 6),
+('a', 1),
+('a', 2),
+('a', 3),
+('a', 4),
+('a', 5),
+('a', 6);
 
 INSERT INTO `posts` (`post_id`, `title`, `description`, `created_at`, `user_id`, `course_id`, `category_id`) VALUES 
 (1, 'Domanda su Matrici', 'Come si calcola il determinante di una matrice 3x3?', '2024-01-15 10:00:00', 'mrossi', 1, 1),
@@ -255,7 +263,8 @@ INSERT INTO `posts` (`post_id`, `title`, `description`, `created_at`, `user_id`,
 (7, 'Domanda su Reazioni Chimiche', 'Come bilanciare una reazione redox?', '2024-01-21 13:10:00', 'laura.monti', 6, 1),
 (8, 'Notizie sul Laboratorio di Chimica', 'Il laboratorio di questa settimana è cancellato.', '2024-01-22 15:30:00', 'matteo.longo', 6, 3),
 (9, 'Informazioni Esami di Analisi 1', "L'esame coprirà i primi tre capitoli.", '2024-01-23 10:50:00', 'mrossi', 2, 4),
-(10, 'Appunti su Spazi Vettoriali', 'Ecco gli appunti sugli spazi vettoriali.', '2024-01-24 09:40:00', 'l.bianchi', 1, 2);
+(10, 'Appunti su Spazi Vettoriali', 'Ecco gli appunti sugli spazi vettoriali.', '2024-01-24 09:40:00', 'l.bianchi', 1, 2),
+(11, 'Domanda su Integrali', 'Qual è il metodo migliore per calcolare integrali impropri?', '2024-01-25 14:25:00', 'a', 2, 1);
 
 INSERT INTO `comments` (`comment_id`, `post_id`, `comment_text`, `created_at`, `user_id`, `parent_comment_id`) VALUES 
 (1, 1, 'Puoi usare la regola di Sarrus per calcolare il determinante.', '2024-01-15', 'giulia_verdi', NULL),
