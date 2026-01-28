@@ -15,22 +15,51 @@ use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\security\Role;
-use Unibostu\Model\DTO\CreateCommentDTO; 
+use Unibostu\Model\DTO\CreateCommentDTO;
+use Unibostu\Model\DTO\CreatePostDTO;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CommentService;
 use Unibostu\Model\Service\CourseService;
+use Unibostu\Model\Service\CategoryService;
+use Unibostu\Model\Service\TagService;
+use Unibostu\Model\Service\UserService;
+
 
 class PostController extends BaseController {
     private $postService;
     private $commentService;
     private $courseService;
+    private $categoryService;
+    private $tagService;
+    private $userService;
 
     public function __construct(Container $container) {
         parent::__construct($container);
         $this->postService = new PostService();
         $this->commentService = new CommentService();
         $this->courseService = new CourseService();
+        $this->categoryService = new CategoryService();
+        $this->tagService = new TagService();
+        $this->userService = new UserService();
     }
+
+    #[Get('/courses/:courseId/createpost')]
+    #[AuthMiddleware(Role::USER)]
+    public function createPosts(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $courseId = $pathVars['courseId'];
+
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID); 
+        $user = $this->userService->getUserProfile($userId);
+        
+        return $this->render("createpost", [
+            "userId" => $userId,
+            "courses" => $this->courseService->getCoursesByUser($userId),
+            "thisCourse" => $this->courseService->getCourseDetails((int)$courseId),
+            "categories" => $this->categoryService->getAllCategories(),
+            "tags" => $this->tagService->getTagsByCourse((int)$courseId)             
+        ]);
+    }   
 
     #[Get("/posts/:postid")]
     #[AuthMiddleware(Role::USER)]
@@ -89,9 +118,46 @@ class PostController extends BaseController {
 
     #[Post("/api/posts/create")]
     #[AuthMiddleware(Role::USER)]
-    #[ValidationMiddleware()]
+    #[ValidationMiddleware([
+        "title" => ValidationErrorCode::TITLE_REQUIRED,
+        "description" => ValidationErrorCode::DESCRIPTION_REQUIRED,
+        "courseId" => ValidationErrorCode::COURSE_REQUIRED
+    ], ["categoryId", "tags", "file"])]
     public function createPost(Request $request): Response {
-        return new Response();
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $fields = $request->getAttribute(RequestAttribute::FIELDS);
+        
+        // Parse tags
+        $tags = [];
+        if (isset($fields['tags']) && is_array($fields['tags'])) {
+            $tags = array_map(function($tagId) use ($fields) {
+                return [
+                    'tagId' => (int)$tagId,
+                    'courseId' => (int)$fields['courseId']
+                ];
+            }, $fields['tags']);
+        }
+        
+        // Handle file upload
+        $attachmentPath = null;
+        // TODO
+        
+        $createPostDTO = new CreatePostDTO(
+            userId: $userId,
+            courseId: (int)$fields['courseId'],
+            title: $fields['title'],
+            description: $fields['description'],
+            tags: $tags,
+            category: isset($fields['categoryId']) && $fields['categoryId'] !== '' ? (int)$fields['categoryId'] : null,
+            attachmentPath: $attachmentPath
+        );
+        
+        $this->postService->createPost($createPostDTO);
+        
+        return Response::create()->json([
+            'success' => true,
+            'redirect' => '/courses/' . $fields['courseId']
+        ]);
     }
 
     #[Post("/api/posts/search")]

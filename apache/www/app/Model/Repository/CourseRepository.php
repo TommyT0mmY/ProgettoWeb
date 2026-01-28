@@ -135,6 +135,20 @@ class CourseRepository {
         }
     }
 
+    /**
+     * Verifica se un utente è iscritto a un corso
+     */
+    public function isUserEnrolled(string $userId, int $courseId): bool {
+        $stmt = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM user_courses WHERE user_id = :userId AND course_id = :courseId"
+        );
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchColumn() > 0;
+    }
+
     private function rowToDTO(array $row): CourseDTO {
         return new CourseDTO(
             (int)$row['course_id'],

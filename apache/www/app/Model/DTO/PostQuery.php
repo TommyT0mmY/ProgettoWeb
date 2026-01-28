@@ -8,7 +8,7 @@ class PostQuery {
     private ?int $courseId = null;
     /** @var int Array of category IDs */
     private ?int $category = null;
-    /** @var array[] Array of tags ['tagId' => int, 'courseId' => int] (for course filtering) */
+    /** @var array[['tagId' => int, 'courseId' => int]] Array of tags ['tagId' => int, 'courseId' => int] (for course filtering) */
     private array $tags = [];
     /** Sort order: 'ASC' for ascending, 'DESC' for descending */
     private string $sortOrder = 'DESC';

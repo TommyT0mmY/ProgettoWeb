@@ -15,6 +15,7 @@ use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\UserService;
+use Unibostu\Model\Service\TagService;
 
 class CommunityController extends BaseController {
     
@@ -22,6 +23,7 @@ class CommunityController extends BaseController {
     private $courseService;
     private $categoryService;
     private $userService;
+    private $tagService;
 
     public function __construct(Container $container) {
         parent::__construct($container);
@@ -29,6 +31,7 @@ class CommunityController extends BaseController {
         $this->courseService = new CourseService();
         $this->categoryService = new CategoryService();
         $this->userService = new UserService();
+        $this->tagService = new TagService();
     }
 
     /** get Community posts */
@@ -45,12 +48,25 @@ class CommunityController extends BaseController {
                 ->forAdmin(true);                                  
         } else if ($currentRole === Role::USER) {
             $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+            
+            // Costruisce array di tags con formato corretto
+            $tags = [];
+            $tagIds = $request->get('tags');
+            if (is_array($tagIds)) {
+                foreach ($tagIds as $tagId) {
+                    $tags[] = [
+                        'tagId' => (int)$tagId,
+                        'courseId' => (int)$courseId
+                    ];
+                }
+            }
+            
             $postQuery = PostQuery::create()
                 ->forUser($userId)
                 ->authoredBy($userId)
                 ->inCourse($courseId)
                 ->inCategory($request->get('categoryId'))
-                ->withTags($request->get('tags'))
+                ->withTags($tags)
                 ->sortedBy($request->get('sortOrder'));
         }
 
@@ -61,8 +77,12 @@ class CommunityController extends BaseController {
             "courses" => $this->courseService->getCoursesByUser($userId),
             "thisCourse" => $this->courseService->getCourseDetails((int)$courseId),
             "categories" => $this->categoryService->getAllCategories(),
+            "tags" => $this->tagService->getTagsByCourse((int)$courseId),
             "courseId" => $courseId,
             "userId" => $userId,
+            "selectedCategoryId" => $request->get('categoryId'),
+            "selectedSortOrder" => $request->get('sortOrder') ?? 'desc',
+            "selectedTags" => $request->get('tags') ?? [],
             ]);
     }
 
