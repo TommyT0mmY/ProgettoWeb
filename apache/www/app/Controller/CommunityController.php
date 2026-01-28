@@ -34,43 +34,38 @@ class CommunityController extends BaseController {
         $this->tagService = new TagService();
     }
 
-    /** get Community posts */
     #[Get("/courses/:courseId")]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getCommunityPosts(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $courseId = $params['courseId'];
         $postQuery = null;
-        $userId = null; //per testing usare "laura.monti"
+        $userId = null;
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
         if ($currentRole === Role::ADMIN) {
             $postQuery = PostQuery::create()
-                ->forAdmin(true);                                  
+                ->forAdmin(true);
         } else if ($currentRole === Role::USER) {
             $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-            
-            // Costruisce array di tags con formato corretto
-            $tags = [];
-            $tagIds = $request->get('tags');
-            if (is_array($tagIds)) {
-                foreach ($tagIds as $tagId) {
-                    $tags[] = [
-                        'tagId' => (int)$tagId,
-                        'courseId' => (int)$courseId
-                    ];
-                }
+        
+        $tags = [];
+        $tagIds = $request->get('tags');
+        if (is_array($tagIds)) {
+            foreach ($tagIds as $tagId) {
+                $tags[] = [
+                    'tagId' => (int)$tagId,
+                    'courseId' => (int)$courseId
+                ];
             }
-            
-            $postQuery = PostQuery::create()
-                ->forUser($userId)
-                ->authoredBy($userId)
-                ->inCourse($courseId)
-                ->inCategory($request->get('categoryId'))
-                ->withTags($tags)
-                ->sortedBy($request->get('sortOrder'));
         }
-
-        $user = $this->userService->getUserProfile($userId);
+        
+        $postQuery = PostQuery::create()
+            ->forUser($userId)
+            ->inCourse($courseId)
+            ->inCategory($request->get('categoryId'))
+            ->withTags($tags)
+            ->sortedBy($request->get('sortOrder'));
+        }
 
         return $this->render("community", [
             "posts" => $this->postService->getPosts($postQuery),
@@ -82,8 +77,8 @@ class CommunityController extends BaseController {
             "userId" => $userId,
             "selectedCategoryId" => $request->get('categoryId'),
             "selectedSortOrder" => $request->get('sortOrder') ?? 'desc',
-            "selectedTags" => $request->get('tags') ?? [],
-            ]);
+            "selectedTags" => $request->get('tags') ?? []
+        ]);
     }
 
 }
