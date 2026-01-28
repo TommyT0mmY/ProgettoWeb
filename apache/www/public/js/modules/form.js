@@ -112,6 +112,8 @@ class Form {
         // Adding CSRF tokens as separate fields if not already present
         if (!formData['csrf-key']) formData['csrf-key'] = window.csrfKey;
         if (!formData['csrf-token']) formData['csrf-token'] = window.csrfToken;
+
+        return formData;
     }
 
     /**
