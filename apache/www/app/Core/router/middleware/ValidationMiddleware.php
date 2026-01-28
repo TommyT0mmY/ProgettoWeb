@@ -20,13 +20,14 @@ class ValidationMiddleware extends AbstractMiddleware {
         /** @var array<string, ValidationErrorCode> */
         private array $mandatoryBodyFields = [],
         /** @var string[] */
-        private array $optionalBodyFields = []
+        private array $optionalBodyFields = [],
+        private bool $validateCsrf = true
     ) {}
 
     public function process(Request $request, RequestHandlerInterface $handler): Response {
         // Csrf protection
         $csrfProtection = $this->container->get(CsrfProtection::class);
-        if (!$csrfProtection->validateRequest($request)) {
+        if ($this->validateCsrf && !$csrfProtection->validateRequest($request)) {
             return Response::create()->json([
                 "success" => false,
                 "errors" => [DomainErrorCode::GENERIC_ERROR->name]
