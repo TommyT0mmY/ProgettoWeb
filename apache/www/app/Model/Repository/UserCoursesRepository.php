@@ -73,6 +73,24 @@ class UserCoursesRepository {
         }
     }
 
+    public function subscribeUserToCourse(string $userId, int $courseId): void {
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO user_courses (user_id, course_id) VALUES (:userId, :courseId)"
+        );
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function unsubscribeUserFromCourse(string $userId, int $courseId): void {
+        $stmt = $this->pdo->prepare(
+            "DELETE FROM user_courses WHERE user_id = :userId AND course_id = :courseId"
+        );
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
     private function rowToDTO(array $row): CourseDTO {
         return new CourseDTO(
             (int)$row['course_id'],
