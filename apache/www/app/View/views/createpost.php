@@ -9,12 +9,11 @@
 $this->extend('main-layout', [
     'title' => 'Unibostu - Create post',
     'courses' => $courses,
+    'userId' => $userId,
     'additionalHeadCode' => [
-        '<script type="module" src="/js/navbar-css.js"></script>',
         '<script type="module" src="/js/posts/create-post.js"></script>',
-        '<link rel="stylesheet" href="/css/style2.css">'
-        ] ]
-    ); 
+        ] 
+    ]); 
 ?>
  
 <h2 class="createPost">Create post for: <?= htmlspecialchars($thisCourse->courseName) ?></h2>
