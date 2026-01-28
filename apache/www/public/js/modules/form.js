@@ -21,11 +21,11 @@ class Form {
 
     init() {
         this.#generalErrorElement = this.#form.querySelector('.form-error-message');
-        this.#inputFields = [...this.#form.querySelectorAll('input, textarea, select')];
         this.#submitButton = this.#form.querySelector('button[type="submit"]');
 
         this.#form.addEventListener('submit', async (event) => {
             event.preventDefault();
+            this.#inputFields = [...this.#form.querySelectorAll('input, textarea, select')];
             // if configs.before is a function, call it 
             if (typeof this.#configs?.before === 'function') {
                 const shouldContinue = await this.#configs.before();
@@ -42,25 +42,15 @@ class Form {
                 if (!isValid) {
                     return;
                 }
-                // Requesting submission
-                let formData = {};
-                const fd = new FormData(this.#form);
-
-                for (const name of fd.keys()) {
-                const values = fd.getAll(name);
-                formData[name] = values.length > 1 ? values : values[0];
+                // Submitting form data 
+                const formData = this.serializeForm();
+                if (typeof this.#configs?.getPayload === 'function') { // If a custom payload function is provided
+                    const customPayload = await this.#configs.getPayload();
+                    if (customPayload === false) {
+                        return;
+                    }
+                    formData = customPayload;
                 }
-                for (const key in formData) {
-                if (key.endsWith('[]')) {
-                    formData[key.slice(0, -2)] = Array.isArray(formData[key]) ? formData[key] : [formData[key]];
-                    delete formData[key];
-                }
-                }
-                // Adding CSRF tokens as separate fields if not already present
-                if (!formData['csrf-key'])
-                    formData['csrf-key'] = window.csrfKey;
-                if (!formData['csrf-token'])
-                    formData['csrf-token'] = window.csrfToken;
                 console.log('Submitting form data:', formData); // Debug log
                 const response = await fetch(this.#configs.endpoint, {
                     method: 'POST',
@@ -103,6 +93,25 @@ class Form {
         });
         // If everything is set up correctly, enable the submit button
         this.#submitButton.disabled = false;
+    }
+
+    serializeForm() {
+        let formData = {};
+        const fd = new FormData(this.#form);
+
+        for (const name of fd.keys()) {
+            const values = fd.getAll(name);
+            formData[name] = values.length > 1 ? values : values[0];
+        }
+        for (const key in formData) {
+            if (key.endsWith('[]')) {
+                formData[key.slice(0, -2)] = Array.isArray(formData[key]) ? formData[key] : [formData[key]];
+                delete formData[key];
+            }
+        }
+        // Adding CSRF tokens as separate fields if not already present
+        if (!formData['csrf-key']) formData['csrf-key'] = window.csrfKey;
+        if (!formData['csrf-token']) formData['csrf-token'] = window.csrfToken;
     }
 
     /**
