@@ -7,6 +7,7 @@ enum ValidationErrorCode {
     case USERNAME_ALREADY_EXISTS;
     case USERNAME_REQUIRED;
     case FACULTY_INVALID;
+    case COURSE_INVALID;
     case FACULTY_REQUIRED;
     case FIRSTNAME_REQUIRED;
     case LASTNAME_REQUIRED;
@@ -14,4 +15,5 @@ enum ValidationErrorCode {
     case COMMENT_TEXT_REQUIRED;
     case POST_ID_REQUIRED;
     case COMMENT_ID_REQUIRED;
+    case COURSE_REQUIRED;
 }
