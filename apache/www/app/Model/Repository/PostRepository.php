@@ -58,6 +58,8 @@ class PostRepository {
         $sql = "SELECT DISTINCT p.* FROM posts p";
         $conditions = [];
         $params = [];
+        $needsGroupBy = false;
+        $tagCount = 0;
 
         // se filtro è null ritorna tutti i post
         if ($postQuery->getIsAdminView() === false) {
@@ -67,9 +69,9 @@ class PostRepository {
                 $params[] = $postQuery->getCategory();
             }
 
-            // Join per tag se filtrati
+            // Join per tag se filtrati - trova post che hanno TUTTI i tag
             if (!empty($postQuery->getTags())) {
-                $sql .= " LEFT JOIN post_tags pt ON p.post_id = pt.post_id";
+                $sql .= " INNER JOIN post_tags pt ON p.post_id = pt.post_id";
                 $tagConditions = [];
                 foreach ($postQuery->getTags() as $tag) {
                     $tagConditions[] = "(pt.tag_id = ? AND pt.course_id = ?)";
@@ -79,6 +81,8 @@ class PostRepository {
                 if (!empty($tagConditions)) {
                     $conditions[] = "(" . implode(" OR ", $tagConditions) . ")";
                 }
+                $needsGroupBy = true;
+                $tagCount = count($postQuery->getTags());
             }
 
             // Filtro per corsi
@@ -111,6 +115,12 @@ class PostRepository {
             $sql .= " p.post_id < ?";
         }
         $params[] = $postQuery->getLastPostId();
+
+        // GROUP BY e HAVING per assicurare che il post abbia TUTTI i tag richiesti
+        if ($needsGroupBy) {
+            $sql .= " GROUP BY p.post_id HAVING COUNT(DISTINCT pt.tag_id) = ?";
+            $params[] = $tagCount;
+        }
 
         // Ordinamento
         $sql .= " ORDER BY p.created_at " . $postQuery->getSortOrder();
