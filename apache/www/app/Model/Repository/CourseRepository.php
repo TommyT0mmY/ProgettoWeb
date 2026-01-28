@@ -14,6 +14,18 @@ class CourseRepository {
         $this->pdo = Database::getConnection();
     }
 
+
+    public function exists(int $courseId): bool {
+        $stmt = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM courses WHERE course_id = :courseId"
+        );
+        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
+        $stmt->execute();
+        $count = (int)$stmt->fetchColumn();
+
+        return $count > 0;
+    }
+
     /**
      * Recupera un corso tramite ID
      */
@@ -52,6 +64,23 @@ class CourseRepository {
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        return array_map([$this, 'rowToDTO'], $rows);
+    }
+
+    /**
+     * Gets the courses of a faculty and an user
+     */
+    public function findByFacultyAndUser(int $facultyId, string $userId): array {
+        $stmt = $this->pdo->prepare(
+            "SELECT c.* FROM courses c
+             JOIN user_courses uc ON c.course_id = uc.course_id
+             WHERE c.faculty_id = :facultyId AND uc.user_id = :userId
+             ORDER BY c.course_name"
+        );
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map([$this, 'rowToDTO'], $rows);
     }
 

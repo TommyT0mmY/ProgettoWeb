@@ -6,7 +6,6 @@ namespace Unibostu\Model\Service;
 use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\CourseDTO;
 use Unibostu\Model\Repository\UserCoursesRepository;
-use Unibostu\Model\Repository\UserRepository;
 
 class CourseService {
     private CourseRepository $courseRepository;
@@ -40,6 +39,14 @@ class CourseService {
     public function getCoursesByFaculty(int $facultyId): array {
         return $this->courseRepository->findByFaculty($facultyId);
     }
+
+    public function getCoursesByFacultyAndUser(int $facultyId, string $userId): array {
+        $courses = $this->courseRepository->findByFacultyAndUser($facultyId, $userId);
+        foreach ($courses as $course) {
+            $course = $course->withSubscribed(true);
+        }
+        return $courses;
+    }
     
     /**
      * Recupera i corsi di un utente
@@ -55,6 +62,22 @@ class CourseService {
      */
     public function saveUserCourses(string $userId, array $courseIds): void {
         $this->userCoursesRepository->saveUserCourses($userId, $courseIds);
+    }
+
+    public function subscribeUserToCourses(string $userId, array $courseIds): void {
+        foreach ($courseIds as $courseId) {
+            $this->userCoursesRepository->subscribeUserToCourse($userId, $courseId);
+        }
+    }
+
+    public function unsubscribeUserFromCourses(string $userId, array $courseIds): void {
+        foreach ($courseIds as $courseId) {
+            $this->userCoursesRepository->unsubscribeUserFromCourse($userId, $courseId);
+        }
+    }
+
+    public function courseExists(int $courseId): bool {
+        return $this->courseRepository->exists($courseId);
     }
 
     /**
