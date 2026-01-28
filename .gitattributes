@@ -1,0 +1,24 @@
+# Auto detect text files and normalize line endings to LF
+* text=auto
+
+# Bash scripts must always have LF line endings
+*.sh text eol=lf
+
+# Docker files
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
+
+# PHP files
+*.php text eol=lf
+*.ini text eol=lf
+
+# SQL files
+*.sql text eol=lf
+
+# Config comuni
+*.yml text eol=lf
+*.yaml text eol=lf
+*.conf text eol=lf
+
+# Environment files
+*.env text eol=lf
