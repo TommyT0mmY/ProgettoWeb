@@ -17,7 +17,6 @@ use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\UserService;
 use Unibostu\Model\Service\FacultyService;
 
-
 class UserProfileController extends BaseController {
     private $postService;
     private $courseService;
@@ -33,7 +32,6 @@ class UserProfileController extends BaseController {
         $this->facultyService = new FacultyService();
         $this->categoryService = new CategoryService();
     }
-
 
     /** get user profile */
     #[Get('/users/:userid')]
@@ -81,11 +79,12 @@ class UserProfileController extends BaseController {
 
     #[Get('/select-courses')]
     #[AuthMiddleware(Role::USER)]
-    public function getSelectCourses(Request $request): Response {
+    public function index(Request $request): Response {
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         return $this->render("select-courses", [
-            'subscribedCourses' => $this->courseService->getCoursesByUser($userId),
-            'faculties' => $this->facultyService->getAllFaculties()
+            "faculties" => $this->facultyService->getAllFaculties(),
+            "userFacultyId" => $this->userService->getUserProfile($userId)->facultyId,
+            "userId" => $userId
         ]);
     }
 }
