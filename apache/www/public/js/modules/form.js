@@ -43,13 +43,25 @@ class Form {
                     return;
                 }
                 // Requesting submission
-                const formData = Object.fromEntries(new FormData(this.#form).entries());
+                let formData = {};
+                const fd = new FormData(this.#form);
+
+                for (const name of fd.keys()) {
+                const values = fd.getAll(name);
+                formData[name] = values.length > 1 ? values : values[0];
+                }
+                for (const key in formData) {
+                if (key.endsWith('[]')) {
+                    formData[key.slice(0, -2)] = Array.isArray(formData[key]) ? formData[key] : [formData[key]];
+                    delete formData[key];
+                }
+                }
                 // Adding CSRF tokens as separate fields if not already present
                 if (!formData['csrf-key'])
                     formData['csrf-key'] = window.csrfKey;
                 if (!formData['csrf-token'])
                     formData['csrf-token'] = window.csrfToken;
-                console.log('Submitting form data:', formData);
+                console.log('Submitting form data:', formData); // Debug log
                 const response = await fetch(this.#configs.endpoint, {
                     method: 'POST',
                     headers: {
