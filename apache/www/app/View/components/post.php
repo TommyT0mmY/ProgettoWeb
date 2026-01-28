@@ -49,9 +49,11 @@
                     </button>
                     <data value="<?= $post->dislikes ?>"><?= $post->dislikes ?></data>
                 </li>
+                <?php if (isset($commentsButton) ? $commentsButton : true): ?>
                 <li>
                     <a href="/posts/<?= htmlspecialchars($post->postId) ?>" aria-label="Go to post comments">Comments</a>
                 </li>
+                <?php endif; ?>
         </ul>            
    </footer>
 </article>

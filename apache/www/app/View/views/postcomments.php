@@ -23,7 +23,7 @@ $this->extend('main-layout', [
 
 <div class="post_container"> 
     <?php if (!empty($post)): ?>
-        <?= $this->component('post', ['post' => $post, 'userId' => $userId]) ?>
+        <?= $this->component('post', ['post' => $post, 'userId' => $userId, 'commentsButton' => false]) ?>
     <?php else: ?>
         <p>Post not found.</p>
     <?php endif; ?>
