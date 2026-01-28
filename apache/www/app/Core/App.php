@@ -43,7 +43,8 @@ class App {
             Ctrl\AuthController::class,
             Ctrl\CommunityController::class,
             Ctrl\UserProfileController::class,
-            Ctrl\DebugController::class
+            Ctrl\DebugController::class,
+            Ctrl\CommentController::class
         );
         return;
     }
