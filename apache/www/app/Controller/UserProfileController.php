@@ -4,19 +4,22 @@ declare(strict_types=1);
 namespace Unibostu\Controller;
 
 use Unibostu\Core\Container;
+use Unibostu\Core\exceptions\ValidationErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\Http\Request;
 use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\router\middleware\AuthMiddleware;
+use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Core\router\routes\Get;
+use Unibostu\Core\router\routes\Post;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\UserService;
 use Unibostu\Model\Service\FacultyService;
-
 
 class UserProfileController extends BaseController {
     private $postService;
@@ -33,7 +36,6 @@ class UserProfileController extends BaseController {
         $this->facultyService = new FacultyService();
         $this->categoryService = new CategoryService();
     }
-
 
     /** get user profile */
     #[Get('/users/:userid')]
@@ -86,11 +88,56 @@ class UserProfileController extends BaseController {
 
     #[Get('/select-courses')]
     #[AuthMiddleware(Role::USER)]
-    public function getSelectCourses(Request $request): Response {
+    public function index(Request $request): Response {
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         return $this->render("select-courses", [
-            'subscribedCourses' => $this->courseService->getCoursesByUser($userId),
-            'faculties' => $this->facultyService->getAllFaculties()
+            "faculties" => $this->facultyService->getAllFaculties(),
+            "userFacultyId" => $this->userService->getUserProfile($userId)->facultyId,
+            "userId" => $userId
+        ]);
+    }
+
+    #[Get('/api/select-courses/faculty/:facultyId')]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationMiddleware(validateCsrf: false)]
+    public function getList(Request $request): Response {
+        $facultyId = (int)($request->getAttribute(RequestAttribute::PATH_VARIABLES)['facultyId']);
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        if (!$this->facultyService->facultyExists($facultyId)) {
+            ValidationException::build()->addError(ValidationErrorCode::FACULTY_INVALID)->throwIfAny();
+        }
+        $courses = $this->courseService->getCoursesByFaculty($facultyId);
+        $subscribedCourses = $this->courseService->getCoursesByFacultyAndUser($facultyId, $userId);
+        return Response::create()->json([
+            "success" => true,
+            "courses" => $courses,
+            "subscribedCourses" => $subscribedCourses
+        ]);
+    }
+
+    /**
+     * Post requests must contain:
+     * - subscribeTo: array of course IDs to subscribe to
+     * - unsubscribeFrom: array of course IDs to unsubscribe from
+     * - a valid csrf pair 
+     */
+    #[Post('/api/select-courses')]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationMiddleware()]
+    public function applyCourseSelection(Request $request): Response {
+        $subscribeTo = $request->post("subscribeTo", []);
+        $unsubscribeFrom = $request->post("unsubscribeFrom", []);
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        foreach (array_merge($subscribeTo, $unsubscribeFrom) as $courseId) { // Validating every course id
+            if (!$this->courseService->courseExists((int)$courseId)) {
+                ValidationException::build()->addError(ValidationErrorCode::COURSE_INVALID)->throwIfAny();
+            }
+        }
+        // Apply subscriptions
+        $this->courseService->subscribeUserToCourses($userId, array_map('intval', $subscribeTo));
+        $this->courseService->unsubscribeUserFromCourses($userId, array_map('intval', $unsubscribeFrom));
+        return Response::create()->json([
+            "success" => true
         ]);
     }
 }
