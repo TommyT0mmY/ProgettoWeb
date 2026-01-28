@@ -33,13 +33,14 @@ $this->extend('loggedout-layout', [
             <label for="faculty-selector">Faculty</label>
             <output class="field-error-message" id="faculty-selector-error" for="faculty-selector"></output>
         </div>
-
         <!-- Courses Container -->
         <div id="courses-container" aria-label="Courses list">
         </div>
-
         <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>" />
         <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>" />
+
+        <output class="form-status-message" for="courses" role="alert">ciao</output>
+
         <div class="controls-container">
             <button type="button" onclick="history.back()">Back</button>
             <button type="submit" id="select-courses-submit" disabled>Save</button>
