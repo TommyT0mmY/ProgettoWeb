@@ -10,7 +10,10 @@
 $this->extend('main-layout', [
     'title' => 'Unibostu - User Profile',
     'userId' => $user->userId,
-    'courses' => $courses
+    'courses' => $courses,
+    'additionalHeadCode' => [
+        '<script type="module" src="/js/posts/multi-post.js"></script>',
+    ],
 ]);
 ?>
 
