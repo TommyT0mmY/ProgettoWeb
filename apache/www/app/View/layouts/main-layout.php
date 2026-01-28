@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/popup.css" />
     <script type="module" src="/js/navbar-css.js"></script>
-    <link rel="stylesheet" href="/css/style2.css">
+    <link rel="stylesheet" href="/css/style.css">
     <?php if (!empty($additionalHeadCode)): ?>
         <?php foreach ($additionalHeadCode as $code): ?>
             <?= $code ?>
@@ -43,7 +43,7 @@
     <?php endif; ?>
 </head>
 <body>
-    <?= $this->component('header') ?>
+    <?= $this->component('header', ['userId' => $userId]) ?>
     <div class="containerNavMain">
         <?= $this->component('sidebar', ['courses' => $courses]) ?>
         <main>

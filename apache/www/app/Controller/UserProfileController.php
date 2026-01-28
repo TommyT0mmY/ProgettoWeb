@@ -60,7 +60,11 @@ class UserProfileController extends BaseController {
             'posts' => $this->postService->getPosts($postQuery),
             'courses' => $this->courseService->getCoursesByUser($userId),
             'faculty' => $this->facultyService->getFacultyDetails($user->facultyId),
-            'categories' => $this->categoryService->getAllCategories()
+            'categories' => $this->categoryService->getAllCategories(),
+            'userId' => $userId,
+            'sortOrder' => $postQuery->getSortOrder(),
+            'categoryId' => $postQuery->getCategory(),
+            'tags' => $postQuery->getTags()
         ]);
     }
 
@@ -73,7 +77,8 @@ class UserProfileController extends BaseController {
         return $this->render("studentpreferences", [
             'user' => $user,
             'courses' => $this->courseService->getCoursesByFaculty($user->facultyId),
-            'faculty' => $this->facultyService->getFacultyDetails($user->facultyId)
+            'faculty' => $this->facultyService->getFacultyDetails($user->facultyId),
+            'userId' => $userId
         ]);
     }
 
