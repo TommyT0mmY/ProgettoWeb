@@ -27,4 +27,4 @@ $this->extend('main-layout', [
         </fieldset>
         <p><input type="submit" value="Save" /></p>
     </form>
-    <p><a href="/users">Go back to profile</a></p>
+    <p><a href="/users/<?= htmlspecialchars($userId) ?>">Go back to profile</a></p>
