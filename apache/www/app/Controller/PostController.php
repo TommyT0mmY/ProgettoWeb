@@ -15,7 +15,7 @@ use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\security\Role;
-use Unibostu\Model\DTO\CreateCommentDTO;
+use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Model\DTO\CreatePostDTO;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CommentService;
@@ -200,5 +200,73 @@ class PostController extends BaseController {
                 'errors' => [$e->getMessage()]
             ], 400);
         }
+    }
+        
+    #[Get('/api/posts')]
+    #[AuthMiddleware(Role::USER, Role::ADMIN)]
+    public function getPostsApi(Request $request): Response {
+        $postQuery = null;
+        $userId = null;
+        $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        
+        if ($currentRole === Role::ADMIN) {
+            $postQuery = PostQuery::create()
+                ->forAdmin(true);
+        } else if ($currentRole === Role::USER) {
+            $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+            $postQuery = PostQuery::create()
+                ->inCategory($request->get('categoryId'))
+                ->sortedBy($request->get('sortOrder'))
+                ->afterPost($request->get('lastPostId') ?? ($request->get('sortOrder') === 'asc' ? 0 : PHP_INT_MAX));
+
+            if (str_contains($request->getReferer(), '/courses')) {
+                // i am not using forUser as if i did it would show posts from all his courses
+                $postQuery
+                    ->inCourse($request->get('courseId'))
+                    ->withTags($request->get('tags') ?? []);
+            } else if (str_contains($request->getReferer(), '/users')) {
+                $postQuery
+                    ->authoredBy($userId);
+            } else {
+                //homepage posts
+                $postQuery
+                    ->forUser($userId);
+            }
+
+        }
+
+        $posts = $this->postService->getPosts($postQuery);
+        
+        $postsArray = array_map(function($post) {
+            return [
+                'postId' => $post->postId,
+                'title' => $post->title,
+                'description' => $post->description,
+                'createdAt' => $post->createdAt,
+                'attachmentPath' => $post->attachmentPath,
+                'likes' => $post->likes,
+                'dislikes' => $post->dislikes,
+                'likedByUser' => $post->likedByUser,
+                'author' => [
+                    'userId' => $post->author->userId,
+                    'firstName' => $post->author->firstName,
+                    'lastName' => $post->author->lastName
+                ],
+                'course' => [
+                    'courseId' => $post->course->courseId,
+                    'courseName' => $post->course->courseName
+                ],
+                'category' => $post->category ? [
+                    'categoryId' => $post->category->categoryId,
+                    'categoryName' => $post->category->categoryName
+                ] : null,
+                'tags' => $post->tags
+            ];
+        }, $posts);
+
+        return Response::create()->json([
+            'success' => true,
+            'data' => $postsArray
+        ]);
     }
 }
