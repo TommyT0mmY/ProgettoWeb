@@ -26,6 +26,13 @@ class Form {
 
         this.#form.addEventListener('submit', async (event) => {
             event.preventDefault();
+            // if configs.before is a function, call it 
+            if (typeof this.#configs?.before === 'function') {
+                const shouldContinue = await this.#configs.before();
+                if (shouldContinue === false) {
+                    return;
+                }
+            }
             this.#submitButton.disabled = true;
             const originalButtonText = this.#submitButton.textContent;
             this.#submitButton.textContent = this.#configs?.submitButtonText || 'Submitting...';
