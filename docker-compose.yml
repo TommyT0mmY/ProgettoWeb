@@ -82,7 +82,7 @@ services:
     restart: always
     environment:
       - SESSION_PATH=/var/lib/php/sessions
-      - SESSION_MAX_LIFETIME=3600
+      - SESSION_MAX_LIFETIME=86400
       - CRON_SCHEDULE=*/5 * * * *
     volumes:
       - "php_sessions:/var/lib/php/sessions"
