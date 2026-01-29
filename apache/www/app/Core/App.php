@@ -44,7 +44,8 @@ class App {
             Ctrl\CommunityController::class,
             Ctrl\UserProfileController::class,
             Ctrl\DebugController::class,
-            Ctrl\CommentController::class
+            Ctrl\CommentController::class,
+            Ctrl\DashboardController::class
         );
         return;
     }

@@ -46,7 +46,15 @@ class HomeController extends BaseController {
         }
 
         $posts = $this->postService->getPosts($postQuery);
-
+        if ($currentRole === Role::ADMIN) {
+            return $this->render("admin-home", [
+                "posts" => $posts,
+                "categories" => $this->categoryService->getAllCategories(),
+                "userId" => $userId,
+                "sortOrder" => $postQuery->getSortOrder(),
+                "categoryId" => $postQuery->getCategory()
+            ]);
+        } else {
         return $this->render("home", [
             "posts" => $posts,
             "courses" => $this->courseService->getCoursesByUser($userId),
@@ -55,6 +63,7 @@ class HomeController extends BaseController {
             "sortOrder" => $postQuery->getSortOrder(),
             "categoryId" => $postQuery->getCategory()
         ]);
+        }
     }
 }
 
