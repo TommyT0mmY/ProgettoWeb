@@ -1,11 +1,16 @@
 /*header,posts,navbar*/
 
+:root {
+    --header-height: 3.5rem;
+    --sidebar-width: 12.5rem;
+}
+
 main,h1,ul,p{
     margin: 0;
     padding: 0;
 }
 body{
-    padding-top: 68px;
+    padding-top: var(--header-height);
     padding-bottom: var(--space-md);
     background-color: #e3effa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,7 +23,7 @@ img{
 body > header {
     display: flex;
     justify-content: space-between; 
-    height: 3 * var(--space-md);
+    height: var(--header-height);
     align-items: center; 
     background-color: var(--color-bg-light); 
     position: fixed;
@@ -27,7 +32,7 @@ body > header {
     left: 0;
     padding: var(--space-xs) var(--space-md);
     border-bottom: 1px solid var(--color-gray-300);
-    z-index: 1;
+    z-index: 4;
     color: var(--color-blue-700);
     box-sizing: border-box;
 }
@@ -289,75 +294,104 @@ ul.tags {
     pointer-events: none;
 }
 
-/*NAVBAR*/
+/*SIDEBAR/NAVBAR*/
 
-nav{ 
+nav {
   background-color: var(--color-bg-light);
   position: fixed;
-  top: 0;
-  left: -100%;
-  height: 100vh;
-  width: 75%;
+  top: var(--header-height);
+  left: calc(-1 * var(--sidebar-width));
+  bottom: 0;
+  width: var(--sidebar-width);
   z-index: 3;
-  transition: left 300ms;
+  transition: left 300ms ease-in-out;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid var(--color-gray-200);
 }
 
-nav.show{
+nav.show {
   left: 0;
 }
 
-nav ul{
+.sidebar-content {
+  padding: var(--space-xs);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+nav ul {
   list-style: none;
-  width: 100%; 
+  padding: 0 var(--space-xs);
+  margin: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-md); 
+  gap: var(--space-xs);
 }
 
-nav ul li{ 
+nav ul li {
   width: 100%;
 }
-nav ul li:first-of-type{
-   display: flex;            
-  justify-content: flex-start;   
-  align-items: center;         
-}/*per allineare l'icona a sinistra e il testo al centro*/
 
-nav a{
+nav a {
   text-decoration: none;
-  color: var(--color-text);
-  width: 100%;  
-  display: flex;            
-  justify-content: center;
-  align-items: center;
+  color: var(--color-white);
+  background-color: var(--color-blue-700);
   width: 100%;
-  height: 50px;
-  border: 1px solid var(--color-gray-300);
+  display: block;
+  text-align: center;
+  padding: var(--space-xs);
+  border-radius: var(--space-xs);
+  font-weight: var(--fw-semibold);
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  border: 1px solid var(--color-blue-700);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
-#open-sidebar-button,#close-sidebar-button{
-  display: block;  
-  cursor: pointer;
-}/*icone navbar*/
+nav a:hover {
+  color: var(--color-blue-700);
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
 
-#overlay{
-  background: rgba(255, 255, 255, 0.25);
+nav section {
+  margin-top: var(--space-md);
+}
+
+nav h2 {
+  color: var(--color-blue-700);
+  font-size: 0.9rem;
+  font-weight: var(--fw-bold);
+  margin-bottom: var(--space-sm);
+  padding-left: var(--space-xs);
+}
+
+#open-sidebar-button {
+  display: block;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+#open-sidebar-button:hover {
+  opacity: 0.7;
+}
+
+#overlay {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
   position: fixed;
   display: none;
   inset: 0;
   z-index: 2;
-}/*spazio overlay*/
-
-/*  HOVER NAV */
-nav ul li a,form input[type="submit"] {
-    background-color: var(--color-blue-700);
-    color: #fff;
-}
-nav ul li a:hover, form input[type="submit"]:hover{
-    color: var(--color-blue-700);
-    background-color: #fff;
+  transition: opacity 200ms;
 }
 
 /* 2. MEDIA QUERY (DESKTOP) - navbar */
@@ -366,31 +400,33 @@ nav ul li a:hover, form input[type="submit"]:hover{
     display: flex;
     flex-direction: row;
     min-height: 100vh;
-    gap: var(--space-xs); 
-    padding-left: var(--space-xs);
-    padding-right: var(--space-xs);
+    gap: var(--space-md);
   }
 
   nav {
-    display: none;      /* Nasconde la nav di base su desktop */
-    position: static;   /* Rimuove il fixed */
-    width: auto;        /* Rimuove il 75% */
+    display: none;
+    position: static;
+    width: auto;
+    max-width: none;
     height: auto;
-    transition: none;   /* Rimuove animazioni non necessarie */
+    box-shadow: var(--shadow-md);
+    border-right: 1px solid var(--color-gray-200);
+    border-radius: var(--space-sm);
+    transition: none;
   }
 
   nav.show {
-    display: flex;      /* Appare al click */
-    flex: 2;            /* Rapporto 1 */
+    display: flex;
+    flex: 0 0 280px;
   }
 
   main {
-    flex: 7;            /* Rapporto 7 (occupa il resto se nav è chiusa è 100%) */
-    /* Se nav è display:none, main occupa tutto il container automaticamente */
+    flex: 1;
+    min-width: 0;
   }
 
   #overlay {
-    display: none !important; /* Mai overlay su desktop */
+    display: none !important;
   }
 }
 

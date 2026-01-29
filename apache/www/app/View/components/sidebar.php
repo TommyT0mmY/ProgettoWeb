@@ -4,13 +4,8 @@
  */
 ?>
 <nav id="navbar" aria-label="Main navigation">
-  <div>
+  <div class="sidebar-content">
     <ul class="nav-main">
-      <li>
-        <button id="close-sidebar-button" aria-label="Close navigation menu">
-          <img class="menu-container" src="/images/icons/close-sidebar.svg" alt="" />
-        </button>
-      </li>
       <li><a href="/">Home</a></li>
       <li><a href="/register">Register</a></li>
       <li><a href="/login">Login</a></li>
