@@ -5,9 +5,9 @@ main,h1,ul,p{
     padding: 0;
 }
 body{
-    padding-top: 50px;/* per header fisso*/
-    padding-bottom: 10px;
-    background-color: #e3effa; /* Celeste ghiaccio */
+    padding-top: 68px;
+    padding-bottom: var(--space-md);
+    background-color: #e3effa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 img{
@@ -17,39 +17,62 @@ img{
 /*HEADER*/
 body > header {
     display: flex;
-    width:100%;
     justify-content: space-between; 
-    height:38px;/*38px su 50 rispetto al body, position fixed*/
+    height: 3 * var(--space-md);
     align-items: center; 
-    background-color: #ffffff; 
+    background-color: var(--color-bg-light); 
     position: fixed;
     top: 0;
     right: 0;
-    left:0;
-    padding: 5px 0;
-    border-bottom: 1px solid #000;
+    left: 0;
+    padding: var(--space-xs) var(--space-md);
+    border-bottom: 1px solid var(--color-gray-300);
     z-index: 1;
-    color: #0757a9;
+    color: var(--color-blue-700);
+    box-sizing: border-box;
 }
-body > header > button{
-    height: 30px;
-    width:40px;
-    background-color: #fff;
-    border:#fff;
 
+body > header > button{
+    height: 38px;
+    width: 38px;
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
 } 
-body > header > .profile-container{
-    width:30px;
-    height:30px;
-    border:#fff;
+
+body > header > a {
+    display: flex;
+    align-items: center;
 }
+
+body > header > .profile-container{
+    width: 32px;
+    height: 32px;
+}
+
 body > header > .title_with_logo,
 body > header > a.title_with_logo {
     display: flex; 
     flex-direction: row;
+    align-items: center;
+    gap: var(--space-xs);
     text-decoration: none;
     color: inherit;
     cursor: pointer;
+}
+
+body > header > a.title_with_logo img {
+    width: 38px;
+    height: 38px;
+}
+
+body > header > a.title_with_logo h1 {
+    margin: 0;
+    font-size: 1.2rem;
 }
 
 body > header > a.title_with_logo:hover {
@@ -66,14 +89,14 @@ body > header > a.title_with_logo:hover {
     justify-content: center;
     margin-left: 3%;
     margin-right: 3%;
-    gap: 10px;   
+    gap: var(--space-md);   
 }
 /* La Card del Post */
 .Post {
     width: 100%;
     background: var(--color-bg-light);
     border-radius: 16px;
-    padding: 3px;
+    padding: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
@@ -84,12 +107,12 @@ body > header > a.title_with_logo:hover {
 .Post footer {
     margin-top: 33px;
     padding-top: 8px;
-    border-top: 1px solid #0757a9;
+    border-top: 1px solid var(--color-blue-700);
 }
 
 /* Header e Titolo */
 .Post header h3 {
-    color: #0757a9; 
+    color: var(--color-blue-700); 
     margin: 0 0 4px 0;
     font-size: 1.1rem;
 }
@@ -99,9 +122,9 @@ body > header > a.title_with_logo:hover {
 .post-metadata {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin: 8px 0;
-    padding: 8px;
+    gap: var(--space-xs);
+    margin: var(--space-xs) 0;
+    padding: var(--space-xs);
     background-color: #f8f9fa;
     border-radius: 8px;
 }
@@ -114,9 +137,9 @@ body > header > a.title_with_logo:hover {
 }
 
 .metadata-label {
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     font-size: 0.85rem;
-    color: #0757a9;
+    color: var(--color-blue-700);
     min-width: 85px;
     flex-shrink: 0;
 }
@@ -135,7 +158,7 @@ body > header > a.title_with_logo:hover {
     padding: 3px 8px;
     text-decoration: none;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: var(--fw-semibold);
     border-radius: 8px;
     transition: 0.3s;
     display: inline-block;
@@ -164,7 +187,7 @@ ul.tags {
     padding: 2px 6px;
     text-decoration: none;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: var(--fw-semibold);
     border-radius: 8px;
     transition: 0.3s;
 }
@@ -172,8 +195,8 @@ ul.tags {
 /* Colori differenziati per tipo di tag */
 .tag.subject a { 
   background: #d1e3f8; 
-  color: #0757a9; 
-  border: 1px solid #0757a9;
+  color: var(--color-blue-700); 
+  border: 1px solid var(--color-blue-700);
  }
 .tag.type a { 
   background: #fdf2d2; 
@@ -202,33 +225,33 @@ ul.tags {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--space-xs);
     padding: 0;
 }
 
 .review li {
-    border: 1px solid #0757a9;
-    border-radius: 8px;
-    padding: 5px 12px;
-    background: white;
+    border: 1px solid var(--color-blue-700);
+    border-radius: var(--space-xs);
+    padding: var(--space-xs) var(--space-xs);
+    background: var(--color-bg-light);
     display: flex;
     align-items: center;
     transition: 0.2s;
 }
 
 .review li:hover {
-    background-color: #0757a9;
+    background-color: var(--color-blue-700);
 }
 
 .review li a, .review li data {
-    color: #0757a9;
+    color: var(--color-blue-700);
     text-decoration: none;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: var(--fw-semibold);
 }
 
 .review li:hover a, .review li:hover data {
-    color: white;
+    color: var(--color-white);
 }
 
 /* Pulsanti icone */
@@ -237,7 +260,7 @@ ul.tags {
     border: none;
     cursor: pointer;
     padding: 0;
-    margin-right: 5px;
+    margin-right: var(--space-xs);
     display: flex;
 }
 
@@ -254,16 +277,16 @@ ul.tags {
 /*NAVBAR*/
 
 nav{ 
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-light);
   position: fixed;
   top: 0;
   left: -100%;
-  height: 100vh;/* vh viewport*/
+  height: 100vh;
   width: 75%;
-  z-index:3;
-  transition: left 300ms ;
-  overflow-y: auto;/*in caso di overflow*/
-  }
+  z-index: 3;
+  transition: left 300ms;
+  overflow-y: auto;
+}
 
 nav.show{
   left: 0;
@@ -274,8 +297,8 @@ nav ul{
   width: 100%; 
   display: flex;
   flex-direction: column;
-  align-items:center; /* Centra i li orizzontalmente */
-  gap:15px; 
+  align-items: center;
+  gap: var(--space-md); 
 }
 
 nav ul li{ 
@@ -289,14 +312,14 @@ nav ul li:first-of-type{
 
 nav a{
   text-decoration: none;
-  color: #000;
+  color: var(--color-text);
   width: 100%;  
   display: flex;            
-  justify-content: center;   /* Centra orizzontalmente il contenuto (testo) */
-  align-items: center;       /* Centra verticalmente il contenuto */
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 50px;
-  border: 1px solid #c3c3c3;
+  border: 1px solid var(--color-gray-300);
 }
 
 #open-sidebar-button,#close-sidebar-button{
@@ -314,23 +337,23 @@ nav a{
 
 /*  HOVER NAV */
 nav ul li a,form input[type="submit"] {
-    background-color: #0757a9;
+    background-color: var(--color-blue-700);
     color: #fff;
 }
 nav ul li a:hover, form input[type="submit"]:hover{
-    color: #0757a9;
+    color: var(--color-blue-700);
     background-color: #fff;
 }
 
 /* 2. MEDIA QUERY (DESKTOP) - navbar */
 @media screen and (min-width: 768px) {
   body > div {
-    display: flex; /* Allinea Nav e Main orizzontalmente */
+    display: flex;
     flex-direction: row;
     min-height: 100vh;
-    gap: 15px; 
-    padding-left: 10px;
-    padding-right: 10px;
+    gap: var(--space-md); 
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
   }
 
   nav {
