@@ -72,20 +72,6 @@ class UserProfileController extends BaseController {
         ]);
     }
 
-    #[Get('/studentpreferences')]
-    #[AuthMiddleware(Role::USER)]
-    public function getStudentPreferences(Request $request): Response {
-        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-        $user = $this->userService->getUserProfile($userId);
-
-        return $this->render("studentpreferences", [
-            'user' => $user,
-            'courses' => $this->courseService->getCoursesByFaculty($user->facultyId),
-            'faculty' => $this->facultyService->getFacultyDetails($user->facultyId),
-            'userId' => $userId
-        ]);
-    }
-
     #[Get('/select-courses')]
     #[AuthMiddleware(Role::USER)]
     public function index(Request $request): Response {
@@ -136,6 +122,63 @@ class UserProfileController extends BaseController {
         // Apply subscriptions
         $this->courseService->subscribeUserToCourses($userId, array_map('intval', $subscribeTo));
         $this->courseService->unsubscribeUserFromCourses($userId, array_map('intval', $unsubscribeFrom));
+        return Response::create()->json([
+            "success" => true
+        ]);
+    }
+
+    #[Get('/edit-profile')]
+    #[AuthMiddleware(Role::USER)]
+    public function editProfilePage(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $user = $this->userService->getUserProfile($userId);
+        
+        return $this->render("edit-profile", [
+            "user" => $user,
+            "faculties" => $this->facultyService->getAllFaculties(),
+            "userId" => $userId
+        ]);
+    }
+
+    #[Post('/api/edit-profile')]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationMiddleware([
+        "firstname" => ValidationErrorCode::FIRSTNAME_REQUIRED,
+        "lastname" => ValidationErrorCode::LASTNAME_REQUIRED,
+        "facultyid" => ValidationErrorCode::FACULTY_REQUIRED,
+    ])]
+    public function updateProfile(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $firstName = $request->post("firstname");
+        $lastName = $request->post("lastname");
+        $facultyId = (int)$request->post("facultyid");
+        
+        $this->userService->updateBasicProfile($userId, $firstName, $lastName, $facultyId);
+        
+        return Response::create()->json([
+            "success" => true
+        ]);
+    }
+
+    #[Get('/change-password')]
+    #[AuthMiddleware(Role::USER)]
+    public function changePasswordPage(Request $request): Response {
+        return $this->render("change-password", []);
+    }
+
+    #[Post('/api/change-password')]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationMiddleware([
+        "currentpassword" => ValidationErrorCode::PASSWORD_REQUIRED,
+        "newpassword" => ValidationErrorCode::PASSWORD_REQUIRED,
+    ])]
+    public function updatePassword(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $currentPassword = $request->post("currentpassword");
+        $newPassword = $request->post("newpassword");
+        
+        $this->userService->updatePassword($userId, $currentPassword, $newPassword);
+        
         return Response::create()->json([
             "success" => true
         ]);

@@ -104,6 +104,44 @@ class UserRepository {
         }
     }
 
+    /**
+     * Updates basic user profile information (without password).
+     *
+     * @throws \RuntimeException in case of error
+     */
+    public function updateBasicProfile(string $userId, string $firstName, string $lastName, int $facultyId): void {
+        $stmt = $this->pdo->prepare(
+            "UPDATE users 
+             SET first_name = :firstName, last_name = :lastName, faculty_id = :facultyId
+             WHERE user_id = :userId"
+        );
+        $stmt->bindValue(':firstName', $firstName, PDO::PARAM_STR);
+        $stmt->bindValue(':lastName', $lastName, PDO::PARAM_STR);
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        if (!$stmt->execute()) {
+            throw new \RuntimeException("Error during user profile update");
+        }
+    }
+
+    /**
+     * Updates user password.
+     *
+     * @throws \RuntimeException in case of error
+     */
+    public function updatePassword(string $userId, string $newPassword): void {
+        $stmt = $this->pdo->prepare(
+            "UPDATE users 
+             SET password = :password
+             WHERE user_id = :userId"
+        );
+        $stmt->bindValue(':password', password_hash($newPassword, PASSWORD_BCRYPT), PDO::PARAM_STR);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        if (!$stmt->execute()) {
+            throw new \RuntimeException("Error during password update");
+        }
+    }
+
     private function rowToPrivateDTO(array $row): UserDTO {
         return new UserDTO(
             userId: $row['user_id'],

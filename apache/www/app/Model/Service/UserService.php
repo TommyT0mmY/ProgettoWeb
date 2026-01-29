@@ -119,4 +119,60 @@ class UserService implements RoleService {
         }
         $this->userRepository->suspendUser($userId);
     }
+
+    /**
+     * Updates basic profile information (without password) for an existing user.
+     *
+     * @throws ValidationException if validation fails
+     */
+    public function updateBasicProfile(string $userId, string $firstName, string $lastName, int $facultyId): void {
+        $exceptionBuilder = ValidationException::build();
+        
+        $user = $this->getUserProfile($userId);
+        if (!$user) {
+            $exceptionBuilder->addError(ValidationErrorCode::USERNAME_REQUIRED);
+        }
+        if (empty($firstName)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FIRSTNAME_REQUIRED);
+        }
+        if (empty($lastName)) {
+            $exceptionBuilder->addError(ValidationErrorCode::LASTNAME_REQUIRED);
+        }
+        if (empty($facultyId)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_REQUIRED);
+        }
+        if (!$this->facultyService->facultyExists($facultyId)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_INVALID);
+        }
+        
+        $exceptionBuilder->throwIfAny();
+        $this->userRepository->updateBasicProfile($userId, $firstName, $lastName, $facultyId);
+    }
+
+    /**
+     * Updates user password after verifying the current password.
+     *
+     * @throws ValidationException if validation fails or current password is incorrect
+     */
+    public function updatePassword(string $userId, string $currentPassword, string $newPassword): void {
+        $exceptionBuilder = ValidationException::build();
+        
+        $user = $this->getUserProfile($userId);
+        if (!$user) {
+            $exceptionBuilder->addError(ValidationErrorCode::USERNAME_REQUIRED);
+            $exceptionBuilder->throwIfAny();
+        }
+        
+        // Verify current password
+        if (!password_verify($currentPassword, $user->password)) {
+            $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_INVALID);
+        }
+        
+        if (empty($newPassword)) {
+            $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_REQUIRED);
+        }
+        
+        $exceptionBuilder->throwIfAny();
+        $this->userRepository->updatePassword($userId, $newPassword);
+    }
 }

@@ -62,7 +62,7 @@ class App {
 
     public function handleError(\Exception $e): void {
         $code = $e->getCode() ?: 500;
-        http_response_code($code);
+        http_response_code(intval($code));
         echo "An error occurred: " . htmlspecialchars($e->getMessage()); 
     }
 }
