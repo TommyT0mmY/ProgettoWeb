@@ -1,171 +1,242 @@
 import Form from '/js/modules/form.js';
 
-const configs = {
-    endpoint: '/api/select-courses',
-    submitButtonText: 'Saving...',
-    validityMessages: {
-    },
-    responseErrorsMapping: {
-        GENERIC_ERROR: {
-            message: 'An error occurred. Please try again.'
-        },
-        FACULTY_INVALID: {
-            field: 'facultyid',
-            message: 'The selected faculty is invalid.'
-        }
-    },
-    getPayload: getPayload
-}
+/**
+ * Course Selection Manager
+ * 
+ * Tracks user's course subscription changes across multiple faculties
+ * and submits only the differences (subscribe/unsubscribe) to the server.
+ */
 
-let courseCache = {};
-let prevFaculty = null;
-let payload = {
-    "unsubscribeFrom": [],
-    "subscribeTo": [],
-    "csrf-key": window.csrfKey,
-    "csrf-token": window.csrfToken
-};
+// ============================================================================
+// State
+// ============================================================================
+
+/** 
+ * Original subscriptions from server, keyed by facultyId
+ * @type {Object<string, Set<string>>} 
+ */
+const serverState = {};
+
+/** 
+ * Current user selections (may differ from server), keyed by facultyId  
+ * @type {Object<string, Object<string, {id: string, name: string, selected: boolean}>>}
+ */
+const currentState = {};
+
+/** Currently displayed faculty */
+let activeFacultyId = null;
+
+// ============================================================================
+// DOM Elements
+// ============================================================================
 
 const formElement = document.getElementById('select-courses-form');
-const selectCoursesForm = new Form(formElement, configs);
-selectCoursesForm.init();
-
 const facultySelector = document.getElementById('facultyid');
-facultySelector.addEventListener('change', onFacultyChange);
-onFacultyChange();
+const coursesContainer = document.querySelector('.courses-container');
+const courseTemplate = document.getElementById('course-template');
 
-const coursesContainer = document.querySelectorAll('.courses-container')[0];
+// ============================================================================
+// Form Setup
+// ============================================================================
 
+const form = new Form(formElement, {
+    endpoint: '/api/select-courses',
+    submitButtonText: 'Saving...',
+    responseErrorsMapping: {
+        GENERIC_ERROR: { message: 'An error occurred. Please try again.' },
+        FACULTY_INVALID: { field: 'facultyid', message: 'The selected faculty is invalid.' }
+    },
+    getPayload: buildPayload,
+    onSuccess: handleSubmitSuccess
+});
 
+form.init();
 
+// ============================================================================
+// Event Handlers
+// ============================================================================
 
-/*        return Response::create()->json([
-            "success" => true,
-            "courses" => $courses,
-            "subscribedCourses" => $subscribedCourses
-        ]);
-*/
+facultySelector.addEventListener('change', handleFacultyChange);
 
-async function onFacultyChange() {
-    if (prevFaculty !== null) { //store previous checkboxes in courseCache and payload
-        storeCurrentSelections();
-    }
+// Initial load
+handleFacultyChange();
+
+// ============================================================================
+// Core Functions
+// ============================================================================
+
+/**
+ * Handles faculty selection change.
+ * Saves current selections before switching, then loads new faculty's courses.
+ */
+async function handleFacultyChange() {
+    // Save current checkbox states before switching
+    saveCurrentSelections();
+    
     const facultyId = facultySelector.value;
-    prevFaculty = facultyId;
-    selectCoursesForm.setStatusMessage('Loading courses...');
-    // Check if already in cache
-    if (courseCache[facultyId]) {
-        fillContainer(courseCache[facultyId]);
+    activeFacultyId = facultyId;
+    
+    // If we already have data for this faculty, just render it
+    if (currentState[facultyId]) {
+        renderCourses(facultyId);
         return;
     }
-    const response = await fetch('/api/select-courses/faculty/' + facultyId);
-    if (!response.ok) {
-        selectCoursesForm.setGeneralError("An error occurred while loading courses.");
-        return;
-    }
-    let responseData = await response.json();
-    if (!responseData.success) {
-        selectCoursesForm.setGeneralError("An error occurred while loading courses.");
-        return;
-    }
-    let finalData = {"courses": {}};
-    const { courses, subscribedCourses } = responseData;
-    courses.forEach(course => {
-        finalData.courses[course.courseId] = {
-            id: course.courseId,
-            name: course.courseName,
-            subscribed: false
-        }
-    });
-    subscribedCourses.forEach(subsCourse => {
-        finalData.courses[subsCourse.courseId].subscribed = true;
-    });
-
-
-
-    courseCache[facultyId] = finalData;
-    fillContainer(finalData);
+    
+    // Fetch from server
+    await fetchCourses(facultyId);
 }
 
 /**
- * Stores the current selections of courses into the payload object
- * by comparing with the cached data.
+ * Fetches courses for a faculty from the server.
  */
-function storeCurrentSelections() {
-    if (!prevFaculty || !courseCache[prevFaculty]) {
+async function fetchCourses(facultyId) {
+    form.setStatusMessage('Loading courses...');
+    
+    try {
+        const response = await fetch(`/api/select-courses/faculty/${facultyId}`);
+        
+        if (!response.ok) {
+            throw new Error('Network error');
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error('Server error');
+        }
+        
+        // Initialize state for this faculty
+        initializeFacultyState(facultyId, data.courses, data.subscribedCourses);
+        renderCourses(facultyId);
+        
+    } catch (error) {
+        form.setGeneralError('An error occurred while loading courses.');
+    }
+}
+
+/**
+ * Initializes state for a faculty based on server response.
+ */
+function initializeFacultyState(facultyId, courses, subscribedCourses) {
+    // Store original server state (which courses are subscribed)
+    const subscribedIds = new Set(subscribedCourses.map(c => String(c.courseId)));
+    serverState[facultyId] = subscribedIds;
+    
+    // Initialize current state with server values
+    currentState[facultyId] = {};
+    
+    courses.forEach(course => {
+        const courseId = String(course.courseId);
+        currentState[facultyId][courseId] = {
+            id: courseId,
+            name: course.courseName,
+            selected: subscribedIds.has(courseId)
+        };
+    });
+}
+
+/**
+ * Saves the current checkbox selections to state.
+ * Called before switching faculty or submitting.
+ */
+function saveCurrentSelections() {
+    if (!activeFacultyId || !currentState[activeFacultyId]) {
         return;
     }
-    const cachedData = courseCache[prevFaculty];
+    
     const checkboxes = coursesContainer.querySelectorAll('input[type="checkbox"]');
     
     checkboxes.forEach(checkbox => {
         const courseId = checkbox.value;
-        const isCurrentlyChecked = checkbox.checked;
-        const wasOriginallySubscribed = cachedData.courses[courseId]?.subscribed ?? false;
-        
-        // Update the cache with current selection state
-        if (cachedData.courses[courseId]) {
-            cachedData.courses[courseId].subscribed = isCurrentlyChecked;
-        }
-        
-        // Determine if this is a subscription or unsubscription change
-        if (isCurrentlyChecked && !wasOriginallySubscribed) {
-            // User wants to subscribe to this course
-            if (!payload.subscribeTo.includes(courseId)) {
-                payload.subscribeTo.push(courseId);
-            }
-            // Remove from unsubscribe if it was there
-            const unsubIndex = payload.unsubscribeFrom.indexOf(courseId);
-            if (unsubIndex > -1) {
-                payload.unsubscribeFrom.splice(unsubIndex, 1);
-            }
-        } else if (!isCurrentlyChecked && wasOriginallySubscribed) {
-            // User wants to unsubscribe from this course
-            if (!payload.unsubscribeFrom.includes(courseId)) {
-                payload.unsubscribeFrom.push(courseId);
-            }
-            // Remove from subscribe if it was there
-            const subIndex = payload.subscribeTo.indexOf(courseId);
-            if (subIndex > -1) {
-                payload.subscribeTo.splice(subIndex, 1);
-            }
+        if (currentState[activeFacultyId][courseId]) {
+            currentState[activeFacultyId][courseId].selected = checkbox.checked;
         }
     });
 }
 
-
-function fillContainer(data) {
-    const courseTemplate =  document.getElementById('course-template');
-    coursesContainer.textContent = '';
-    for (let courseId in data.courses) {
-        const courseElement = courseTemplate.content.cloneNode(true);
-        const { name, id, subscribed } = data.courses[courseId];
-        const labelElement = courseElement.querySelector('label');
-        const checkboxElement = courseElement.querySelector('input[type="checkbox"]');
-        labelElement.textContent = name;
-        checkboxElement.value = id;
-        if (subscribed) {
-            checkboxElement.checked = true;
-        }
-        coursesContainer.appendChild(courseElement);
-    }
-
-    selectCoursesForm.setStatusMessage();
+/**
+ * Renders the courses for a faculty.
+ */
+function renderCourses(facultyId) {
+    coursesContainer.innerHTML = '';
+    
+    const courses = currentState[facultyId];
+    if (!courses) return;
+    
+    Object.values(courses).forEach(course => {
+        const fragment = courseTemplate.content.cloneNode(true);
+        const checkbox = fragment.querySelector('input[type="checkbox"]');
+        const label = fragment.querySelector('label');
+        
+        checkbox.value = course.id;
+        checkbox.id = `course-${course.id}`;
+        checkbox.checked = course.selected;
+        
+        label.textContent = course.name;
+        label.setAttribute('for', `course-${course.id}`);
+        
+        coursesContainer.appendChild(fragment);
+    });
+    
+    form.setStatusMessage('');
 }
 
 /**
- * @returns {Object|false|Promise<Object|false>}
+ * Builds the payload for form submission.
+ * Compares current selections with original server state to determine changes.
  */
-async function getPayload() {
-    storeCurrentSelections();
-    // clone payload and invalidate cache and reset payload 
-    let payloadClone = {...payload};
-    payload = {
-        "unsubscribeFrom": [],
-        "subscribeTo": [],
-        "csrf-key": window.csrfKey,
-        "csrf-token": window.csrfToken
+function buildPayload() {
+    // Save any pending selections first
+    saveCurrentSelections();
+    
+    const subscribeTo = [];
+    const unsubscribeFrom = [];
+    
+    // Compare current state with server state for all faculties
+    for (const facultyId in currentState) {
+        const original = serverState[facultyId] || new Set();
+        const courses = currentState[facultyId];
+        
+        for (const courseId in courses) {
+            const isSelected = courses[courseId].selected;
+            const wasSubscribed = original.has(courseId);
+            
+            if (isSelected && !wasSubscribed) {
+                subscribeTo.push(courseId);
+            } else if (!isSelected && wasSubscribed) {
+                unsubscribeFrom.push(courseId);
+            }
+        }
+    }
+    
+    // Build payload
+    const payload = {
+        subscribeTo,
+        unsubscribeFrom,
+        'csrf-key': window.csrfKey,
+        'csrf-token': window.csrfToken
     };
-    courseCache = {};
-    return payloadClone;
+    
+    // Don't reset here - wait for server confirmation via onSuccess callback
+    return payload;
+}
+
+/**
+ * Handles successful form submission.
+ * Resets state and reloads fresh data from server.
+ */
+async function handleSubmitSuccess() {
+    resetState();
+    await handleFacultyChange(); // Reload with updated server data
+    form.setStatusMessage('Preferences saved successfully!');
+}
+
+/**
+ * Resets all state after successful submission.
+ */
+function resetState() {
+    // Clear all cached state
+    for (const key in serverState) delete serverState[key];
+    for (const key in currentState) delete currentState[key];
+    activeFacultyId = null;
 }

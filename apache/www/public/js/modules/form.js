@@ -5,6 +5,8 @@ class Form {
     #configs;
     /** @type {HTMLOutputElement} */
     #generalErrorElement;
+    /** @type {HTMLOutputElement} */
+    #generalStatusMessage;
     /** @type {HTMLButtonElement} */
     #submitButton;
     /** @type {Array.<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>} */
@@ -21,6 +23,7 @@ class Form {
 
     init() {
         this.#generalErrorElement = this.#form.querySelector('.form-error-message');
+        this.#generalStatusMessage = this.#form.querySelector('.form-status-message');
         this.#submitButton = this.#form.querySelector('button[type="submit"]');
 
         this.#form.addEventListener('submit', async (event) => {
@@ -43,7 +46,7 @@ class Form {
                     return;
                 }
                 // Submitting form data 
-                const formData = this.serializeForm();
+                let formData = this.serializeForm();
                 if (typeof this.#configs?.getPayload === 'function') { // If a custom payload function is provided
                     const customPayload = await this.#configs.getPayload();
                     if (customPayload === false) {
@@ -51,7 +54,6 @@ class Form {
                     }
                     formData = customPayload;
                 }
-                console.log('Submitting form data:', formData); // Debug log
                 const response = await fetch(this.#configs.endpoint, {
                     method: 'POST',
                     headers: {
@@ -65,7 +67,7 @@ class Form {
                     const errorMapping = this.#configs?.responseErrorsMapping ?? {};
                     responseData?.errors?.forEach(errorCode => {
                         const { field, message = 'Invalid input.' } = errorMapping[errorCode] ?? {};
-                        (!field) ? this.#setGeneralError(message) : this.#setFieldError(field, message);
+                        (!field) ? this.setGeneralError(message) : this.#setFieldError(field, message);
                     });
                     return;
                 }
@@ -76,9 +78,12 @@ class Form {
                     window.location.href = responseData.redirect;
                     return;
                 }
+                // Call onSuccess callback if provided
+                if (typeof this.#configs?.onSuccess === 'function') {
+                    await this.#configs.onSuccess(responseData);
+                }
             } catch (error) {
-                this.#setGeneralError('An error occurred. Please try again.');
-                console.error('Form submission error:', error);
+                this.setGeneralError('An error occurred. Please try again.');
             } finally { // Re-enable the submit button
                 this.#submitButton.disabled = false;
                 this.#submitButton.textContent = originalButtonText;
@@ -88,7 +93,7 @@ class Form {
         this.#form.addEventListener('input', (e) => {
             this.#clearFieldError(e.target);
             this.#setFieldError('');
-            this.#setGeneralError('');
+            this.setGeneralError('');
             e.target.classList.toggle('has-value', Boolean(e.target.value));
         });
         // If everything is set up correctly, enable the submit button
@@ -192,11 +197,18 @@ class Form {
         inputElement.setAttribute('aria-invalid', 'false');
     }
 
-    #setGeneralError(message) {
+    setGeneralError(message) {
         if (!message) {
             message = '';
         }
         this.#generalErrorElement.textContent = message;
+    }
+
+    setStatusMessage(message) {
+        if (!message) {
+            message = '';
+        }
+        this.#generalStatusMessage.textContent = message;
     }
 }
 

@@ -1,50 +1,54 @@
 <?php 
 /** 
- * @var \Unibostu\Core\RenderingEngine $this
- * @var \Unibostu\Model\DTO\FacultyDTO[] $faculties
- * @var int|null $userFacultyId
+ * @var \Unibostu\Core\RenderingEngine $this 
+ * @var array<Unibostu\Model\DTO\FacultyDTO> $faculties
+ * @var int $userId
+ * @var int $userFacultyId The faculty ID of the user, preselect this in the dropdown
  */
 $this->extend('loggedout-layout', [
     'title' => 'Select Courses - Unibostu',
     'additionalHeadCode' => [
         '<script type="module" src="/js/select-courses.js"></script>',
         '<link rel="stylesheet" href="/css/fsform.css" />',
-        '<link rel="stylesheet" href="/css/select-courses.css" />',
     ],
 ]);
 ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true);
-
 ?>
 
 <form class="fullscreen-form" id="select-courses-form" method="post" novalidate>
     <fieldset>
         <legend>Manage Courses</legend>
-        <output class="form-error-message" for="courses" role="alert"></output>
+        <output class="form-error-message" for="course" role="alert"></output>
 
-        <!-- Faculty Selector -->
         <div class="field-holder">
-            <select id="faculty-selector" aria-describedby="faculty-selector-error">
+            <select name="facultyid" id="facultyid" aria-describedby="facultyid-error" required>
                 <?php foreach ($faculties as $faculty): ?>
-                <option value="<?= htmlspecialchars($faculty->facultyId); ?>"<?= $userFacultyId === $faculty->facultyId ? ' selected' : ''; ?>>
-                    <?= htmlspecialchars($faculty->facultyName); ?>
-                </option>
+
+                <option value="<?=htmlspecialchars($faculty->facultyId);?>" <?=($faculty->facultyId === $userFacultyId) ? 'selected ' : '';?>><?=htmlspecialchars($faculty->facultyName);?></options>
+
                 <?php endforeach; ?>
             </select>
-            <label for="faculty-selector">Faculty</label>
-            <output class="field-error-message" id="faculty-selector-error" for="faculty-selector"></output>
+            <label for="facultyid">Faculty ID</label>
+            <output class="field-error-message" id="facultyid-error" for="facultyid"></output>
         </div>
-        <!-- Courses Container -->
-        <div id="courses-container" aria-label="Courses list">
+        <div class="courses-container">
+            <!-- Courses will be dynamically loaded here based on faculty selection -->
         </div>
         <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>" />
         <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>" />
-
-        <output class="form-status-message" for="courses" role="alert">ciao</output>
-
+        <output class="form-status-message" role="status"></output>
         <div class="controls-container">
-            <button type="button" onclick="history.back()">Back</button>
-            <button type="submit" id="select-courses-submit" disabled>Save</button>
+            <button type="button" id="select-courses-back" onclick="history.back();">Back</button>
+            <button type="submit" id="select-courses-submit" disabled>Save Preferences</button>
         </div>
     </fieldset>
 </form>
+
+
+<template id="course-template">
+    <div class="field-holder course-item">
+        <input type="checkbox" name="courses[]" id="" value="" />
+        <label for=""></label>
+    </div>
+</template>
 

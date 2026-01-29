@@ -49,5 +49,12 @@
           </div>
         </section>
     </template>
+
+    <?php ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true); ?>
+    <script>
+        window.currentUser = '<?= isset($userId) ? htmlspecialchars($userId) : '' ?>';
+        window.csrfToken = '<?= htmlspecialchars($csrfToken) ?>';
+        window.csrfKey = '<?= htmlspecialchars($csrfKey) ?>';
+    </script>
 </body>
 </html>

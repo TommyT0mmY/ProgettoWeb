@@ -42,9 +42,6 @@ class CourseService {
 
     public function getCoursesByFacultyAndUser(int $facultyId, string $userId): array {
         $courses = $this->courseRepository->findByFacultyAndUser($facultyId, $userId);
-        foreach ($courses as $course) {
-            $course = $course->withSubscribed(true);
-        }
         return $courses;
     }
     

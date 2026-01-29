@@ -75,7 +75,7 @@ class UserCoursesRepository {
 
     public function subscribeUserToCourse(string $userId, int $courseId): void {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO user_courses (user_id, course_id) VALUES (:userId, :courseId)"
+            "INSERT IGNORE INTO user_courses (user_id, course_id) VALUES (:userId, :courseId)"
         );
         $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);

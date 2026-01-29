@@ -66,7 +66,7 @@ main {
 }
 
 /* Label inside the input field */
-.field-holder label {
+.field-holder:not(.course-item) label {
     position: absolute;
     top: 0;
     left: 0;
@@ -83,10 +83,10 @@ main {
 }
 
 /* Move label up when input is focused or has value */
-.field-holder input:focus + label,
-.field-holder input:valid + label,
-.field-holder input.has-value + label,
-.field-holder select + label {
+.field-holder:not(.course-item) input:focus + label,
+.field-holder:not(.course-item) input:valid + label,
+.field-holder:not(.course-item) input.has-value + label,
+.field-holder:not(.course-item) select + label {
     transform: translateY(-50%);
     font-size: 1em;
 }
@@ -115,7 +115,7 @@ main {
     display: flex;
     justify-content: center;
     color: var(--color-gray-300);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-xl);
 }
 
 .fullscreen-form button {
@@ -142,9 +142,7 @@ main {
     box-shadow: var(--shadow-md);
 }
 .fullscreen-form button:focus-visible {
-    box-shadow:
-        var(--shadow-md),
-        var(--focus-ring);
+    box-shadow: var(--shadow-md), var(--focus-ring);
 } 
 
 /* Button disabled style */
@@ -204,4 +202,81 @@ a#adminlogin-redirect {
     align-items: center;
     gap: var(--space-md);
     margin-bottom: var(--space-lg);
+}
+
+/* ============================================================================
+   Course Checkbox Styles
+   ============================================================================ */
+
+.courses-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+/* Course item - checkbox styled as rectangular button */
+.course-item {
+    position: relative;
+    margin-bottom: 0;
+}
+
+/* Hide native checkbox */
+.course-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+/* Label acts as the visible checkbox button */
+.course-item label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 2.5rem;
+    padding: 0 var(--space-md);
+    background-color: var(--color-bg-light);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    user-select: none;
+    transition: 
+        background-color 0.2s ease-in-out,
+        box-shadow 0.2s ease-in-out,
+        color 0.2s ease-in-out;
+    transform: none;
+    pointer-events: auto;
+}
+
+/* Hover state */
+.course-item label:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* Focus state */
+.course-item input[type="checkbox"]:focus-visible + label {
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-gray-300);
+}
+
+/* Selected/Checked state - blue background */
+.course-item input[type="checkbox"]:checked + label {
+    background-color: var(--color-blue-400);
+    color: var(--color-white);
+    box-shadow: var(--shadow-md);
+}
+
+/* Selected + hover */
+.course-item input[type="checkbox"]:checked + label:hover {
+    background-color: var(--color-blue-500);
+}
+
+/* Selected + focus */
+.course-item input[type="checkbox"]:checked:focus-visible + label {
+    background-color: var(--color-blue-500);
+    box-shadow: var(--shadow-md), var(--focus-ring);
 }
