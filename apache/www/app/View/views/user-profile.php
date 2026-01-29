@@ -25,7 +25,7 @@ $this->extend('main-layout', [
         <p>Username: <strong><?= htmlspecialchars($user->userId); ?></strong></p>
         <p>Name: <strong><?= htmlspecialchars($user->firstName ?? ''); ?></strong></p>
         <p>Last name: <strong><?= htmlspecialchars($user->lastName ?? ''); ?></strong></p>
-        <button type="button">Change info</button>   
+        <button type="button" onclick="window.location.href='/edit-profile'">Change info</button>   
     </section>
 
     <section>
@@ -39,7 +39,7 @@ $this->extend('main-layout', [
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
-            <p><a href="/studentpreferences">Change chosen courses</a></p>         
+            <p><a href="/select-courses">Change chosen courses</a></p>         
     </section>
 
 </div>

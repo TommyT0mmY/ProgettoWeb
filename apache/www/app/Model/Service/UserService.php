@@ -119,4 +119,33 @@ class UserService implements RoleService {
         }
         $this->userRepository->suspendUser($userId);
     }
+
+    /**
+     * Updates basic profile information (without password) for an existing user.
+     *
+     * @throws ValidationException if validation fails
+     */
+    public function updateBasicProfile(string $userId, string $firstName, string $lastName, int $facultyId): void {
+        $exceptionBuilder = ValidationException::build();
+        
+        $user = $this->getUserProfile($userId);
+        if (!$user) {
+            $exceptionBuilder->addError(ValidationErrorCode::USERNAME_REQUIRED);
+        }
+        if (empty($firstName)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FIRSTNAME_REQUIRED);
+        }
+        if (empty($lastName)) {
+            $exceptionBuilder->addError(ValidationErrorCode::LASTNAME_REQUIRED);
+        }
+        if (empty($facultyId)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_REQUIRED);
+        }
+        if (!$this->facultyService->facultyExists($facultyId)) {
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_INVALID);
+        }
+        
+        $exceptionBuilder->throwIfAny();
+        $this->userRepository->updateBasicProfile($userId, $firstName, $lastName, $facultyId);
+    }
 }
