@@ -124,6 +124,24 @@ class UserRepository {
         }
     }
 
+    /**
+     * Updates user password.
+     *
+     * @throws \RuntimeException in case of error
+     */
+    public function updatePassword(string $userId, string $newPassword): void {
+        $stmt = $this->pdo->prepare(
+            "UPDATE users 
+             SET password = :password
+             WHERE user_id = :userId"
+        );
+        $stmt->bindValue(':password', password_hash($newPassword, PASSWORD_BCRYPT), PDO::PARAM_STR);
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        if (!$stmt->execute()) {
+            throw new \RuntimeException("Error during password update");
+        }
+    }
+
     private function rowToPrivateDTO(array $row): UserDTO {
         return new UserDTO(
             userId: $row['user_id'],

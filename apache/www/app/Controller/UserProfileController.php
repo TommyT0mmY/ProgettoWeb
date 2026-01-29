@@ -159,5 +159,29 @@ class UserProfileController extends BaseController {
             "success" => true
         ]);
     }
+
+    #[Get('/change-password')]
+    #[AuthMiddleware(Role::USER)]
+    public function changePasswordPage(Request $request): Response {
+        return $this->render("change-password", []);
+    }
+
+    #[Post('/api/change-password')]
+    #[AuthMiddleware(Role::USER)]
+    #[ValidationMiddleware([
+        "currentpassword" => ValidationErrorCode::PASSWORD_REQUIRED,
+        "newpassword" => ValidationErrorCode::PASSWORD_REQUIRED,
+    ])]
+    public function updatePassword(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $currentPassword = $request->post("currentpassword");
+        $newPassword = $request->post("newpassword");
+        
+        $this->userService->updatePassword($userId, $currentPassword, $newPassword);
+        
+        return Response::create()->json([
+            "success" => true
+        ]);
+    }
 }
 

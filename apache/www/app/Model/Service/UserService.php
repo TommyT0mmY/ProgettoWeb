@@ -148,4 +148,31 @@ class UserService implements RoleService {
         $exceptionBuilder->throwIfAny();
         $this->userRepository->updateBasicProfile($userId, $firstName, $lastName, $facultyId);
     }
+
+    /**
+     * Updates user password after verifying the current password.
+     *
+     * @throws ValidationException if validation fails or current password is incorrect
+     */
+    public function updatePassword(string $userId, string $currentPassword, string $newPassword): void {
+        $exceptionBuilder = ValidationException::build();
+        
+        $user = $this->getUserProfile($userId);
+        if (!$user) {
+            $exceptionBuilder->addError(ValidationErrorCode::USERNAME_REQUIRED);
+            $exceptionBuilder->throwIfAny();
+        }
+        
+        // Verify current password
+        if (!password_verify($currentPassword, $user->password)) {
+            $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_INVALID);
+        }
+        
+        if (empty($newPassword)) {
+            $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_REQUIRED);
+        }
+        
+        $exceptionBuilder->throwIfAny();
+        $this->userRepository->updatePassword($userId, $newPassword);
+    }
 }
