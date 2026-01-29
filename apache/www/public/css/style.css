@@ -243,14 +243,14 @@ ul.tags {
     background-color: var(--color-blue-700);
 }
 
-.review li a, .review li data {
+.review li a, .review li data, .review li button {
     color: var(--color-blue-700);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: var(--fw-semibold);
 }
 
-.review li:hover a, .review li:hover data {
+.review li:hover a, .review li:hover data, .review li:hover button {
     color: var(--color-white);
 }
 
@@ -264,6 +264,11 @@ ul.tags {
     display: flex;
 }
 
+/* Solo i button dentro reaction non sono cliccabili direttamente */
+.review li.reaction button {
+    pointer-events: none;
+}
+
 .review img {
     width: 16px;
     /* Filtro per rendere l'icona blu come il titolo */
@@ -272,6 +277,16 @@ ul.tags {
 
 .review li:hover img {
     filter: brightness(0) invert(1); /* Bianca su hover */
+}
+
+/* Rende i reaction li completamente cliccabili */
+.review li.reaction {
+    cursor: pointer;
+    user-select: none;
+}
+
+.review li.reaction data {
+    pointer-events: none;
 }
 
 /*NAVBAR*/
@@ -351,9 +366,9 @@ nav ul li a:hover, form input[type="submit"]:hover{
     display: flex;
     flex-direction: row;
     min-height: 100vh;
-    gap: var(--space-md); 
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
+    gap: var(--space-xs); 
+    padding-left: var(--space-xs);
+    padding-right: var(--space-xs);
   }
 
   nav {

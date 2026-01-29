@@ -78,15 +78,15 @@ export class PostManager {
     }
     
     setupReactionButtons(postElement, postId) {
-        const likeBtn = postElement.querySelector('.btn-like');
-        const dislikeBtn = postElement.querySelector('.btn-dislike');
+        const likeLi = postElement.querySelector('.reaction-like');
+        const dislikeLi = postElement.querySelector('.reaction-dislike');
         
-        if (!likeBtn || !dislikeBtn) {
+        if (!likeLi || !dislikeLi) {
             return;
         }
         
-        // Use Button utility for like functionality
-        new Button(likeBtn, {
+        // Use Button utility for like functionality on the entire li element
+        new Button(likeLi, {
             stopPropagation: true,
             loadingText: '',
             onClick: async () => {
@@ -99,8 +99,8 @@ export class PostManager {
             }
         }).init();
         
-        // Use Button utility for dislike functionality
-        new Button(dislikeBtn, {
+        // Use Button utility for dislike functionality on the entire li element
+        new Button(dislikeLi, {
             stopPropagation: true,
             loadingText: '',
             onClick: async () => {
