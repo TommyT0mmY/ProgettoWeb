@@ -7,10 +7,10 @@
     <button id="open-sidebar-button" aria-label="Open navigation menu">
         <img class="menu-container" src="/images/icons/menu.svg" alt="" />
     </button>
-    <figure class="title_with_logo">
+    <a href="/" class="title_with_logo" aria-label="Go to homepage">
         <img src="/images/icons/logo.png" alt="UniboStu Logo" />          
-        <figcaption><h1>UniboStu</h1></figcaption>
-    </figure>
+        <h1>UniboStu</h1>
+    </a>
     <a href="/users/<?= htmlspecialchars($userId) ?>" aria-label="Go to user profile">
         <img class="profile-container" src="/images/icons/user-profile.svg" alt="" />
     </a>    

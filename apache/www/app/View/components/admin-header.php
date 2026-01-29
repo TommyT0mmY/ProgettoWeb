@@ -4,10 +4,10 @@
 */ 
 ?>
 <header>
-    <figure class="title_with_logo">
+    <a href="/" class="title_with_logo" aria-label="Go to homepage">
         <img src="/images/icons/logo.png" alt="UniboStu Logo" />          
-        <figcaption><h1>UniboStu</h1></figcaption>
-    </figure>
+        <h1>UniboStu</h1>
+    </a>
     <button id="open-users-button" aria-label="Open users menu">
         <a href="/users" aria-label="Go to users list">Users</a>
     </button>

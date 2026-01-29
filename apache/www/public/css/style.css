@@ -43,9 +43,18 @@ body > header > .profile-container{
     height:30px;
     border:#fff;
 }
-body > header > .title_with_logo{
+body > header > .title_with_logo,
+body > header > a.title_with_logo {
     display: flex; 
     flex-direction: row;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+body > header > a.title_with_logo:hover {
+    text-decoration: none;
+    opacity: 0.8;
 }
 
 /**********POST-list e POST*************/
