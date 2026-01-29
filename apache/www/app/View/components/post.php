@@ -11,19 +11,34 @@
         </p>
     </header>
     
-    <ul class="tags">
-     <li class="tag subject"><a href="#"><?= htmlspecialchars($post->course->courseName) ?></a></li>
-     <?php if ($post->category): ?>
-     <li class="tag type"><a href="#"><?= htmlspecialchars($post->category->categoryName) ?></a></li>
-     <?php endif; ?><!--dunque la categoria potrebbe non esserci-->
-      <?php if (!empty($post->tags)): ?>
-       <?php foreach ($post->tags as $tag): ?>
-        <li class="tag topic"><a href="#"><?= htmlspecialchars($tag['tag_name']) ?></a></li>
-       <?php endforeach; ?>
-     <?php endif; ?>
-      <!--la cosa è che avevo messo a href cosi potevi cliccare sui tag, magari per il corso e per la categoria lo tolgo?
-      ma mi sembra adatta ai tag del corso per poterli filtrare in base a quello, boh non so-->   
-    </ul>
+    <div class="post-metadata">
+        <div class="metadata-section" data-section="community">
+            <span class="metadata-label">Corso:</span>
+            <ul class="metadata-list community-list">
+                <li class="tag subject"><a href="#"><?= htmlspecialchars($post->course->courseName) ?></a></li>
+            </ul>
+        </div>
+        
+        <?php if ($post->category): ?>
+        <div class="metadata-section" data-section="category">
+            <span class="metadata-label">Categoria:</span>
+            <ul class="metadata-list category-list">
+                <li class="tag type"><a href="#"><?= htmlspecialchars($post->category->categoryName) ?></a></li>
+            </ul>
+        </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($post->tags)): ?>
+        <div class="metadata-section" data-section="tags">
+            <span class="metadata-label">Tag:</span>
+            <ul class="metadata-list tags-list">
+                <?php foreach ($post->tags as $tag): ?>
+                <li class="tag topic"><a href="#"><?= htmlspecialchars($tag['tag_name']) ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
+    </div>
 
     
     <p><?= nl2br(htmlspecialchars($post->description)) ?></p>

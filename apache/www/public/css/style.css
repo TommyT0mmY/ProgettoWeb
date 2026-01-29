@@ -86,14 +86,70 @@ body > header > .title_with_logo{
 }
 
 
-/* Stile dei Tag */
+/* Stile dei Metadata (Community, Categorie, Tag) */
+.post-metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.metadata-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.metadata-label {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #0757a9;
+    min-width: 85px;
+    flex-shrink: 0;
+}
+
+.metadata-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.metadata-list li a {
+    padding: 3px 8px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+/* Media query per desktop - layout orizzontale */
+@media screen and (min-width: 768px) {
+    .metadata-section {
+        align-items: center;
+    }
+    
+    .metadata-label {
+        min-width: 100px;
+    }
+}
+
+/* Legacy support per vecchi tag */
 ul.tags {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
     gap: 3px;   
 }
-
 
 .tags li a {
     padding: 2px 6px;

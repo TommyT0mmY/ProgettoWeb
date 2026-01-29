@@ -103,17 +103,21 @@ export class InfiniteScroll {
         // Set course
         article.querySelector('[data-field="courseName"]').textContent = post.course.courseName;
         
-        const tagsContainer = article.querySelector('[data-field="tags"]');
-        
         // Add category if exists
         if (post.category) {
-            const categoryLi = tagsContainer.insertAdjacentHTML('beforeend', 
+            const categorySection = article.querySelector('[data-section="category"]');
+            const categoryContainer = article.querySelector('[data-field="category"]');
+            categorySection.style.display = '';
+            categoryContainer.insertAdjacentHTML('beforeend', 
                 `<li class="tag type"><a href="#">${this.escapeHtml(post.category.categoryName)}</a></li>`
             );
         }
         
         // Add tags
         if (post.tags && post.tags.length > 0) {
+            const tagsSection = article.querySelector('[data-section="tags"]');
+            const tagsContainer = article.querySelector('[data-field="tags"]');
+            tagsSection.style.display = '';
             post.tags.forEach(tag => {
                 tagsContainer.insertAdjacentHTML('beforeend',
                     `<li class="tag topic"><a href="#">${this.escapeHtml(tag.tag_name)}</a></li>`

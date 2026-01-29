@@ -71,9 +71,24 @@ declare(strict_types=1);
                 </p>
             </header>
             
-            <ul class="tags" data-field="tags">
-                <li class="tag subject"><a href="#" data-field="courseName"></a></li>
-            </ul>
+            <div class="post-metadata">
+                <div class="metadata-section" data-section="community">
+                    <span class="metadata-label">Corso:</span>
+                    <ul class="metadata-list community-list">
+                        <li class="tag subject"><a href="#" data-field="courseName"></a></li>
+                    </ul>
+                </div>
+                
+                <div class="metadata-section" data-section="category" style="display: none;">
+                    <span class="metadata-label">Categoria:</span>
+                    <ul class="metadata-list category-list" data-field="category"></ul>
+                </div>
+                
+                <div class="metadata-section" data-section="tags" style="display: none;">
+                    <span class="metadata-label">Tag:</span>
+                    <ul class="metadata-list tags-list" data-field="tags"></ul>
+                </div>
+            </div>
             
             <p data-field="description"></p>
             
