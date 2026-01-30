@@ -41,8 +41,9 @@ class UserProfileController extends BaseController {
     #[Get('/users/:userid')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getUserProfilePosts(Request $request): Response {
+        $viewedUserId = $request->getAttribute(RequestAttribute::PATH_VARIABLES)['userid'];
+        $userId = null;
         $postQuery = null;
-        $userId = null; //per testing usare "laura.monti"
 
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
         if ($currentRole === Role::ADMIN) {
@@ -52,15 +53,17 @@ class UserProfileController extends BaseController {
             $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
             $postQuery = PostQuery::create()
                 ->forUser($userId)
-                ->authoredBy($userId)
+                ->authoredBy($viewedUserId)
                 ->inCategory($request->get('categoryId'))
                 ->withTags($request->get('tags'))
                 ->sortedBy($request->get('sortOrder'));
         }
         $user = $this->userService->getUserProfile($userId);
+        $viewedUser = $this->userService->getUserProfile($viewedUserId);
 
         return $this->render("user-profile", [
             'user' => $user,
+            'viewedUser' => $viewedUser,
             'posts' => $this->postService->getPosts($postQuery),
             'courses' => $this->courseService->getCoursesByUser($userId),
             'faculty' => $this->facultyService->getFacultyDetails($user->facultyId),
@@ -68,7 +71,9 @@ class UserProfileController extends BaseController {
             'userId' => $userId,
             'sortOrder' => $postQuery->getSortOrder(),
             'categoryId' => $postQuery->getCategory(),
-            'tags' => $postQuery->getTags()
+            'tags' => $postQuery->getTags(),
+            "selectedCategoryId" => $request->get('categoryId'),
+            "selectedSortOrder" => $request->get('sortOrder') ?? 'desc'
         ]);
     }
 

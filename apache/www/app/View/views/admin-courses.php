@@ -19,7 +19,7 @@ $this->extend('admin-layout', [
 </form>
 <button type="button">Add Course</button>
 
-<div class="post_container cards">
+<div class="post-container cards">
 <?php foreach ($courses ?? [] as $course): ?>
     <section class="Post card" >
         <header>

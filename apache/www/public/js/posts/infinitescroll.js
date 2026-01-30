@@ -4,7 +4,7 @@ export class InfiniteScroll {
     constructor(postManager) {
         this.isLoading = false;
         this.hasMorePosts = true;
-        this.postContainer = document.querySelector('.post_container');
+        this.postContainer = document.querySelector('.post-container');
         this.lastPostId = this.getLastPostId();
         this.filters = this.getCurrentFilters();
         this.postManager = postManager;

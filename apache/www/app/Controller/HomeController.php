@@ -34,6 +34,8 @@ class HomeController extends BaseController {
         $postQuery = null; 
         $userId = null;
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        $selectedCategoryId = $request->get('categoryId');
+        $selectedSortOrder = $request->get('sortOrder') ?? 'desc';
         if ($currentRole === Role::ADMIN) {
             $postQuery = PostQuery::create()
                 ->forAdmin(true);
@@ -41,8 +43,8 @@ class HomeController extends BaseController {
             $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
             $postQuery = PostQuery::create()
                 ->forUser($userId)
-                ->inCategory($request->get('categoryId'))
-                ->sortedBy($request->get('sortOrder'));
+                ->inCategory($selectedCategoryId)
+                ->sortedBy($selectedSortOrder);
         }
 
         $posts = $this->postService->getPosts($postQuery);
@@ -55,14 +57,16 @@ class HomeController extends BaseController {
                 "categoryId" => $postQuery->getCategory()
             ]);
         } else {
-        return $this->render("home", [
-            "posts" => $posts,
-            "courses" => $this->courseService->getCoursesByUser($userId),
-            "categories" => $this->categoryService->getAllCategories(),
-            "userId" => $userId,
-            "sortOrder" => $postQuery->getSortOrder(),
-            "categoryId" => $postQuery->getCategory()
-        ]);
+            return $this->render("home", [
+                "posts" => $posts,
+                "courses" => $this->courseService->getCoursesByUser($userId),
+                "categories" => $this->categoryService->getAllCategories(),
+                "userId" => $userId,
+                "sortOrder" => $postQuery->getSortOrder(),
+                "categoryId" => $postQuery->getCategory(),
+                "selectedCategoryId" => $selectedCategoryId,
+                "selectedSortOrder" => $selectedSortOrder
+            ]);
         }
     }
 }

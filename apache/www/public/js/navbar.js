@@ -7,7 +7,7 @@ navbar.inert = true;
 
 // toggle sidebar
 function toggleSidebar() {
-  const isOpen = navbar.classList.contains('show');
+  const isOpen = document.body.classList.contains('nav-is-open');
   
   if (isOpen) {
     closeSidebar();
@@ -17,14 +17,14 @@ function toggleSidebar() {
 }
 
 function openSidebar() {
-  navbar.classList.add('show');
+  document.body.classList.add('nav-is-open');
   navbar.inert = false;
   overlayPage.style.display = 'block';
   toggleButton.setAttribute('aria-expanded', 'true');
 }
 
 function closeSidebar() {
-  navbar.classList.remove('show');
+  document.body.classList.remove('nav-is-open');
   navbar.inert = true;
   overlayPage.style.display = 'none';
   toggleButton.setAttribute('aria-expanded', 'false');

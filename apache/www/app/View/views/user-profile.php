@@ -6,6 +6,9 @@
  * @var \Unibostu\Dto\PostDto[] $posts
  * @var \Unibostu\Dto\CategoryDto[] $categories
  * @var \Unibostu\Dto\UserDto $user
+ * @var \Unibostu\Dto\UserDto $viewedUser
+ * @var int|null $selectedCategoryId
+ * @var string|null $selectedSortOrder
  */
 $this->extend('main-layout', [
     'title' => 'Unibostu - User Profile',
@@ -15,19 +18,20 @@ $this->extend('main-layout', [
         '<script type="module" src="/js/posts/multi-post.js"></script>',
     ],
 ]);
+$isOwnProfile = $user->userId === $viewedUser->userId;
 ?>
 
-<div class="container">  
-
+<article class="user-profile-details">
     <section>
     <h2>Personal details</h2>    
-        <div class="profile"><?= htmlspecialchars(substr($user->firstName ?? '', 0, 1) . '.' . substr($user->lastName ?? '', 0, 1)); ?></div>
-        <p>Username: <strong><?= htmlspecialchars($user->userId); ?></strong></p>
-        <p>Name: <strong><?= htmlspecialchars($user->firstName ?? ''); ?></strong></p>
-        <p>Last name: <strong><?= htmlspecialchars($user->lastName ?? ''); ?></strong></p>
+        <div class="profile"><?= htmlspecialchars(substr($viewedUser->firstName ?? '', 0, 1) . '.' . substr($viewedUser->lastName ?? '', 0, 1)); ?></div>
+        <p>Username: <strong><?= htmlspecialchars($viewedUser->userId); ?></strong></p>
+        <p>Name: <strong><?= htmlspecialchars($viewedUser->firstName ?? ''); ?></strong></p>
+        <p>Last name: <strong><?= htmlspecialchars($viewedUser->lastName ?? ''); ?></strong></p>
+        <?php if ($isOwnProfile): ?>
         <button type="button" onclick="window.location.href='/edit-profile'">Change info</button>   
+        <?php endif; ?>
     </section>
-
     <section>
     <h2>University details</h2>         
         <p>Faculty: <strong><?= htmlspecialchars($faculty->facultyName ?? ''); ?></strong></p> 
@@ -39,42 +43,26 @@ $this->extend('main-layout', [
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
-            <p><a href="/select-courses">Change chosen courses</a></p>         
+            <?php if ($isOwnProfile): ?>
+            <button type="button" onclick="window.location.href='/select-courses'">Change chosen courses</button>
+            <?php endif; ?>
     </section>
-
-</div>
-
-<section>
-    <h2>My posts</h2>
-
-    <div class="post-filters">
-        <h3>Filters</h3>
-        <form action="/users/<?= htmlspecialchars($user->userId) ?>" method="get" id="filter-form">
-            <p>
-                <label for="filter-type">Category:</label>
-                <select id="filter-type" name="categoryId">
-                    <option value="">All categories</option>
-                    <?php foreach ($categories ?? [] as $category): ?>
-                        <option value="<?= htmlspecialchars($category->categoryId) ?>"><?= htmlspecialchars($category->categoryName) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
-
-            <p>
-                <label for="ordering">Order by date:</label>
-                <select id="ordering" name="sortOrder">
-                    <option value="desc">Newest post first</option>
-                    <option value="asc">Oldest post first</option>
-                </select>
-            </p>
-
-            <p><input type="submit" value="Filter" /></p>
-        </form>
-    </div>
-
-    <div class="post_container">
+</article>
+<article class="user-posts">
+    <h2><?= $isOwnProfile ? "My Posts" : htmlspecialchars($viewedUser->firstName . "'s Posts") ?></h2>
+    <?php if (empty($posts)): ?>
+        <p>No posts to show.</p>
+    <?php else: ?>
+    <?= $this->component("posts-filter", [
+        'action' => "/users/{$viewedUser->userId}",
+        'categories' => $categories,
+        'selectedCategoryId' => $selectedCategoryId,
+        'selectedSortOrder' => $selectedSortOrder,
+    ]) ?>
+    <div class="post-container">
     <?php foreach ($posts ?? [] as $post): ?>
         <?= $this->component('post', ['post' => $post]) ?>
     <?php endforeach; ?>
     </div>
-</section>
+    <?php endif; ?>
+</article>

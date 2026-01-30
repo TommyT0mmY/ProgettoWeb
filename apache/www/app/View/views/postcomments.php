@@ -21,7 +21,7 @@ $this->extend('main-layout', [
 
 <a href="/">Go back to homepage</a>
 
-<div class="post_container"> 
+<div class="post-container"> 
     <?php if (!empty($post)): ?>
         <?= $this->component('post', ['post' => $post, 'userId' => $userId, 'commentsButton' => false]) ?>
     <?php else: ?>

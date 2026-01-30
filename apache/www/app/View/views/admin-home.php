@@ -46,7 +46,7 @@ $this->extend('admin-layout', [
         </form>
     </section>
     <hr/>
-<div class="post_container">
+<div class="post-container">
 <?php foreach ($posts ?? [] as $post): ?>
     <?= $this->component('post', ['post' => $post]) ?>
 <?php endforeach; ?>
