@@ -10,6 +10,7 @@ $this->extend('loggedout-layout', [
     'additionalHeadCode' => [
         '<script type="module" src="/js/select-courses.js"></script>',
         '<link rel="stylesheet" href="/css/fsform.css" />',
+        '<link rel="stylesheet" href="/css/select-courses.css" />'
     ],
 ]);
 ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true);
@@ -18,7 +19,7 @@ $this->extend('loggedout-layout', [
 <form class="fullscreen-form" id="select-courses-form" method="post" novalidate>
     <fieldset>
         <legend>Manage Courses</legend>
-        <output class="form-error-message" for="course" role="alert"></output>
+        <output class="form-error-message" role="alert"></output>
 
         <div class="field-holder">
             <select name="facultyid" id="facultyid" aria-describedby="facultyid-error" required>

@@ -176,7 +176,7 @@ class Router {
         }
         $result = $this->dispatchDFS($this->routes, $segments, 0);
         if (!$result->found || !isset($result->callback)) {
-            throw new \RuntimeException("404 Not Found\n", 404);
+            throw new \RuntimeException("Not Found\n", 404);
         }
         $request = $request->withAttribute(RequestAttribute::PATH_VARIABLES, $result->params); // Adding route parameters to the request
         $controllerName = $result->callback->controllerClassname;

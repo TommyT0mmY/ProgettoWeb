@@ -9,7 +9,7 @@
       <li><a href="/">Home</a></li>
       <li><a href="/register">Register</a></li>
       <li><a href="/login">Login</a></li>
-      <li><a href="/logout">Logout</a></li>
+      <li><a href="#" id="logout-link">Logout</a></li>
       <li><a href="/studentpreferences">Preferences</a></li>
     </ul>
     

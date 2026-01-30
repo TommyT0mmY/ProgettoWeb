@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Core\router\middleware;
 
 use Attribute;
+use RuntimeException;
 use Unibostu\Core\Http\Request;
 use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\Http\RequestHandlerInterface;
@@ -33,7 +34,7 @@ class AuthMiddleware extends AbstractMiddleware {
             $isAuthorized = $isAuthorized || $roleAccepted;
         }
         if (!$isAuthorized) {
-            return new Response('Unauthorized', 401);
+            throw new RuntimeException("Unauthorized", 401);
         }
         $request = $request->withAttribute(RequestAttribute::ROLE, $currentRole)->withAttribute(RequestAttribute::ROLE_ID, $auth->getId($currentRole));
         return $handler->handle($request);

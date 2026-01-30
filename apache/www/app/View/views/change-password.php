@@ -38,7 +38,7 @@ $this->extend('loggedout-layout', [
         <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>">
         <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>">
         
-        <output class="form-status-message" role="status"></output>
+        <output class="form-status-message" for="currentpassword newpassword confirmpassword" role="status"></output>
         
         <div class="controls-container">
             <button type="button" onclick="history.back();">Back</button>

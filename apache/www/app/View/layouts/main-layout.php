@@ -34,7 +34,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" media="print" onload="this.media='all'" />
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/popup.css" />
-    <script type="module" src="/js/navbar-css.js"></script>
+    <script type="module" src="/js/navbar.js"></script>
     <link rel="stylesheet" href="/css/style.css">
     <?php if (!empty($additionalHeadCode)): ?>
         <?php foreach ($additionalHeadCode as $code): ?>
