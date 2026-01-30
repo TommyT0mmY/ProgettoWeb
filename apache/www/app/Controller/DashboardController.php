@@ -20,6 +20,7 @@ use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\UserService;
 use Unibostu\Model\Service\FacultyService;
+use Unibostu\Model\Service\TagService;
 
 class DashboardController extends BaseController {
     private $postService;
@@ -27,7 +28,7 @@ class DashboardController extends BaseController {
     private $userService;
     private $facultyService;
     private $categoryService;
-
+    private $tagService;    
     public function __construct(Container $container) {
         parent::__construct($container);
         $this->postService = new PostService();
@@ -35,22 +36,64 @@ class DashboardController extends BaseController {
         $this->userService = new UserService();
         $this->facultyService = new FacultyService();
         $this->categoryService = new CategoryService();
+        $this->tagService = new TagService();
     }
 
     /** get faculties */
     #[Get('/faculties')]
-    #[AuthMiddleware(Role::ADMIN)]
+    #[AuthMiddleware(Role:: ADMIN)]
     public function getFaculties(Request $request): Response {
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $user = $this->userService->getUserProfile($userId);
 
+        $faculties = $this->facultyService->getAllFaculties();
+        $courses = [];
+        foreach ($faculties as $faculty) {
+            $courses[$faculty->facultyId] = $this->courseService->getCoursesByFaculty($faculty->facultyId);
+        }
+        
         return $this->render("admin-faculties", [
             'user' => $user,
-            'faculties' => $this->facultyService->getAllFaculties(),
-            'courses' => $this->courseService->getAllCourses(),
+            'faculties' => $faculties,
+            'courses' => $courses,
             'userId' => $userId
         ]);
     }
+
+    /** get faculty courses */
+    #[Get('/faculties/:facultyId/courses')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function getCourses(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $facultyId = (int)$pathVars['facultyId'];
+        $user = $this->userService->getUserProfile($userId);
+
+        return $this->render("admin-courses", [
+            'user' => $user,
+            'courses' => $this->courseService->getCoursesByFaculty($facultyId),
+            'userId' => $userId
+        ]);
+    }
+
+    /** get course tags */
+    #[Get('/faculties/:facultyId/courses/:courseId/tags')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function getTags(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $facultyId = (int)$pathVars['facultyId'];
+        $courseId = (int)$pathVars['courseId'];
+
+        $user = $this->userService->getUserProfile($userId);
+
+        return $this->render("admin-tags", [
+            'user' => $user,
+            'tags' => $this->tagService->getTagsByCourse($courseId),
+            'userId' => $userId
+        ]);
+    }
+
 
     
 }

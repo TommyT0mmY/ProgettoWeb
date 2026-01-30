@@ -11,22 +11,23 @@ $this->extend('admin-layout', [
 ?>
 
 <header>
-    <h2>Admin - Faculties Management</h2>
+    <h2>Admin - Courses Management</h2>
 </header>
 <form action="#" method="GET">
-    <input type="search" name="search" placeholder="Search faculty" />
+    <input type="search" name="search" placeholder="Search course" />
     <button type="submit">Search</button>
 </form>
-<button type="button">Add Faculty</button>
+<button type="button">Add Course</button>
 
 <div class="post_container cards">
-<?php foreach ($faculties ?? [] as $faculty): ?>
+<?php foreach ($courses ?? [] as $course): ?>
     <section class="Post card" >
         <header>
-            <h3><?= htmlspecialchars($faculty->facultyName) ?></h3>
+            <h3><?= htmlspecialchars($course->courseName) ?></h3>
         </header>
-            <p>Faculty ID: <?= htmlspecialchars($faculty->facultyId) ?></p>
-            <p>Number of Courses: <?= htmlspecialchars(count($courses[$faculty->facultyId] ?? [])) ?></p>   
+            <p>Course ID: <?= htmlspecialchars($course->courseId) ?></p>
+            <p>Faculty ID: <?= htmlspecialchars($course->facultyId) ?></p>
+               
         <footer>
             <ul class="review">
                     <li>
@@ -40,8 +41,8 @@ $this->extend('admin-layout', [
                         </a>
                     </li>
                     <li>
-                        <a href="/faculties/<?= htmlspecialchars($faculty->facultyId) ?>/courses">
-                            View Courses
+                        <a href="#">
+                            View Tags
                         </a>
                     </li>
             </ul>            
