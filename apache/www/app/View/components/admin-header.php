@@ -1,8 +1,3 @@
-<?php 
-/** 
- * @var string $userId 
-*/ 
-?>
 <header>
     <a href="/" class="title-with-logo" aria-label="Go to homepage">
         <img src="/images/icons/logo.png" alt="UniboStu Logo" />          
