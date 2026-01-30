@@ -205,10 +205,22 @@ class PostController extends BaseController {
     #[Get('/api/posts')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getPostsApi(Request $request): Response {
-        $postQuery = null;
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
         $isAdmin = $currentRole === Role::ADMIN;
+        
+        // Parse tags from GET parameters
+        $tags = [];
+        $tagIds = $request->get('tags');
+        $courseId = $request->get('courseId');
+        if (is_array($tagIds) && !empty($courseId)) {
+            foreach ($tagIds as $tagId) {
+                $tags[] = [
+                    'tagId' => (int)$tagId,
+                    'courseId' => (int)$courseId
+                ];
+            }
+        }
         
         // Base query
         $postQuery = PostQuery::create()
@@ -219,8 +231,8 @@ class PostController extends BaseController {
 
         if (str_contains($request->getReferer(), '/courses')) {
             $postQuery
-                ->inCourse($request->get('courseId'))
-                ->withTags($request->get('tags') ?? []);
+                ->inCourse($courseId)
+                ->withTags($tags);
         } else if (str_contains($request->getReferer(), '/users')) {
             $postQuery->authoredBy($request->get('authorId'));
         } else {
