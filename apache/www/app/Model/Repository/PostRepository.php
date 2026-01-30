@@ -61,46 +61,44 @@ class PostRepository {
         $needsGroupBy = false;
         $tagCount = 0;
 
-        // se filtro è null ritorna tutti i post
-        if ($postQuery->getIsAdminView() === false) {
-            // Filtro per categoria
-            if (!empty($postQuery->getCategory())) {
-                $conditions[] = " p.category_id = ?";
-                $params[] = $postQuery->getCategory();
-            }
+        // Filtro per categoria (disponibile per utenti e admin)
+        if (!empty($postQuery->getCategory())) {
+            $conditions[] = " p.category_id = ?";
+            $params[] = $postQuery->getCategory();
+        }
 
-            // Join per tag se filtrati - trova post che hanno TUTTI i tag
-            if (!empty($postQuery->getTags())) {
-                $sql .= " INNER JOIN post_tags pt ON p.post_id = pt.post_id";
-                $tagConditions = [];
-                foreach ($postQuery->getTags() as $tag) {
-                    $tagConditions[] = "(pt.tag_id = ? AND pt.course_id = ?)";
-                    $params[] = $tag['tagId'];
-                    $params[] = $tag['courseId'];
-                }
-                if (!empty($tagConditions)) {
-                    $conditions[] = "(" . implode(" OR ", $tagConditions) . ")";
-                }
-                $needsGroupBy = true;
-                $tagCount = count($postQuery->getTags());
+        // Join per tag se filtrati - trova post che hanno TUTTI i tag (disponibile per utenti e admin)
+        if (!empty($postQuery->getTags())) {
+            $sql .= " INNER JOIN post_tags pt ON p.post_id = pt.post_id";
+            $tagConditions = [];
+            foreach ($postQuery->getTags() as $tag) {
+                $tagConditions[] = "(pt.tag_id = ? AND pt.course_id = ?)";
+                $params[] = $tag['tagId'];
+                $params[] = $tag['courseId'];
             }
+            if (!empty($tagConditions)) {
+                $conditions[] = "(" . implode(" OR ", $tagConditions) . ")";
+            }
+            $needsGroupBy = true;
+            $tagCount = count($postQuery->getTags());
+        }
 
-            // Filtro per corsi
-            if (!empty($postQuery->getCourseId())) {
-                $params[] = $postQuery->getCourseId();
-                $conditions[] = " p.course_id IN (?)";
-            } else {
-                $params[] = $postQuery->getUserId();
-                $conditions[] = " p.course_id IN (
-                    SELECT course_id FROM user_courses WHERE user_id = ?
-                )";
-            }
+        // Filtro per corsi (disponibile per utenti e admin)
+        if (!empty($postQuery->getCourseId())) {
+            $params[] = $postQuery->getCourseId();
+            $conditions[] = " p.course_id IN (?)";
+        } else if (!empty($postQuery->getUserId()) && $postQuery->getIsAdminView() === false) {
+            // Solo gli utenti normali hanno i post limitati ai loro corsi
+            $params[] = $postQuery->getUserId();
+            $conditions[] = " p.course_id IN (
+                SELECT course_id FROM user_courses WHERE user_id = ?
+            )";
+        }
 
-            // Filtro per autore
-            if (!empty($postQuery->getAuthorId())) {
-                $params[] = $postQuery->getAuthorId();
-                $conditions[] = " p.user_id = ?";
-            }
+        // Filtro per autore (disponibile per utenti e admin)
+        if (!empty($postQuery->getAuthorId())) {
+            $params[] = $postQuery->getAuthorId();
+            $conditions[] = " p.user_id = ?";
         }
 
         $sql .= " WHERE ";

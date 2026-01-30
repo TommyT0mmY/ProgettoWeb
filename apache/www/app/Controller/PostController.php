@@ -201,38 +201,33 @@ class PostController extends BaseController {
             ], 400);
         }
     }
-        
+
     #[Get('/api/posts')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getPostsApi(Request $request): Response {
         $postQuery = null;
-        $userId = null;
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        $isAdmin = $currentRole === Role::ADMIN;
         
-        if ($currentRole === Role::ADMIN) {
-            $postQuery = PostQuery::create()
-                ->forAdmin(true);
-        } else if ($currentRole === Role::USER) {
-            $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-            $postQuery = PostQuery::create()
-                ->inCategory($request->get('categoryId'))
-                ->sortedBy($request->get('sortOrder'))
-                ->afterPost($request->get('lastPostId') ?? ($request->get('sortOrder') === 'asc' ? 0 : PHP_INT_MAX));
+        // Base query
+        $postQuery = PostQuery::create()
+            ->forAdmin($isAdmin)
+            ->inCategory($request->get('categoryId'))
+            ->sortedBy($request->get('sortOrder'))
+            ->afterPost($request->get('lastPostId') ?? ($request->get('sortOrder') === 'asc' ? 0 : PHP_INT_MAX));
 
-            if (str_contains($request->getReferer(), '/courses')) {
-                // i am not using forUser as if i did it would show posts from all his courses
-                $postQuery
-                    ->inCourse($request->get('courseId'))
-                    ->withTags($request->get('tags') ?? []);
-            } else if (str_contains($request->getReferer(), '/users')) {
-                $postQuery
-                    ->authoredBy($userId);
-            } else {
-                //homepage posts
-                $postQuery
-                    ->forUser($userId);
+        if (str_contains($request->getReferer(), '/courses')) {
+            $postQuery
+                ->inCourse($request->get('courseId'))
+                ->withTags($request->get('tags') ?? []);
+        } else if (str_contains($request->getReferer(), '/users')) {
+            $postQuery->authoredBy($request->get('authorId'));
+        } else {
+            // Homepage: User sees only posts of the courses they are enrolled in, Admin sees all posts
+            if (!$isAdmin) {
+                $postQuery->forUser($userId);
             }
-
         }
 
         $posts = $this->postService->getPosts($postQuery);
