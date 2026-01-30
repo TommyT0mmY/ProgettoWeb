@@ -5,6 +5,7 @@ namespace Unibostu\Core;
 
 use Unibostu\Controller as Ctrl;
 use Unibostu\Core\Http\Request;
+use Unibostu\Core\Http\Response;
 use Unibostu\Core\router\Router;
 use Unibostu\Core\router\RouteLoader;
 use Unibostu\Core\security\Auth;
@@ -65,25 +66,21 @@ class App {
     public function handleError(\Exception $e, ?Request $request): void {
         $code = intval($e->getCode() ?: 500);
         if ($request === null) {
-            http_response_code(500);
-            echo "Internal Server Error";
+            Response::create()->withStatusCode(500)->withContent("Internal Server Error")->send();
             exit();
         }
         $isApiRequest = str_starts_with($request->getUri(), '/api/');
         // If unauthorized, user is not authenticated and the URI is not for an API endpoint, redirect to login
         if ($code === 401 && !$isApiRequest) {
-            header('Location: /login');
+            Response::create()->redirect('/login')->send();
             exit();
         }
         // For API requests, return JSON error response
         if ($isApiRequest) {
-            http_response_code($code);
-            header('Content-Type: application/json');
-            echo json_encode([
+            Response::create()->withStatusCode($code)->json([
                 "success" => false,
-                "error" => $e->getMessage(),
-                "code" => $code
-            ]);
+                "error" => $e->getMessage()
+            ])->send();
             exit();
         }
         http_response_code(intval($code));
