@@ -13,8 +13,8 @@ body{
     padding-top: var(--header-height);
     padding-bottom: var(--space-md);
     background-color: #e3effa;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 img{
   width: 40px;
 }
@@ -431,4 +431,12 @@ nav h2 {
     display: none !important;
   }
 }
+
+/* FILTER FORMS */
+
+.filter-form {
+    width: 100%;
+    background-color: var(--color-bg);
+}
+
 
