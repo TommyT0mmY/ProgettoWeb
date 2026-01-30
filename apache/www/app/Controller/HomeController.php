@@ -31,20 +31,20 @@ class HomeController extends BaseController {
     #[Get('/')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getHomepagePosts(Request $request): Response {
-        $postQuery = null; 
-        $userId = null;
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        $isAdmin = $currentRole === Role::ADMIN;
         $selectedCategoryId = $request->get('categoryId');
         $selectedSortOrder = $request->get('sortOrder') ?? 'desc';
-        if ($currentRole === Role::ADMIN) {
-            $postQuery = PostQuery::create()
-                ->forAdmin(true);
-        } else if ($currentRole === Role::USER) {
-            $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-            $postQuery = PostQuery::create()
-                ->forUser($userId)
-                ->inCategory($selectedCategoryId)
-                ->sortedBy($selectedSortOrder);
+        
+        // Base query
+        $postQuery = PostQuery::create()
+            ->forAdmin($isAdmin)
+            ->inCategory($selectedCategoryId)
+            ->sortedBy($selectedSortOrder);
+        
+        if (!$isAdmin) {
+            $postQuery->forUser($userId);
         }
 
         $posts = $this->postService->getPosts($postQuery);

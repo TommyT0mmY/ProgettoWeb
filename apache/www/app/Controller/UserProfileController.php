@@ -37,27 +37,20 @@ class UserProfileController extends BaseController {
         $this->categoryService = new CategoryService();
     }
 
-    /** get user profile */
     #[Get('/users/:userid')]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getUserProfilePosts(Request $request): Response {
         $viewedUserId = $request->getAttribute(RequestAttribute::PATH_VARIABLES)['userid'];
-        $userId = null;
-        $postQuery = null;
-
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
-        if ($currentRole === Role::ADMIN) {
-            $postQuery = PostQuery::create()
-                ->forAdmin(true);                                  
-        } else if ($currentRole === Role::USER) {
-            $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-            $postQuery = PostQuery::create()
-                ->forUser($userId)
-                ->authoredBy($viewedUserId)
-                ->inCategory($request->get('categoryId'))
-                ->withTags($request->get('tags'))
-                ->sortedBy($request->get('sortOrder'));
-        }
+        $isAdmin = $currentRole === Role::ADMIN;
+
+        $postQuery = PostQuery::create()
+            ->forAdmin($isAdmin)
+            ->authoredBy($viewedUserId)
+            ->inCategory($request->get('categoryId'))
+            ->withTags($request->get('tags'))
+            ->sortedBy($request->get('sortOrder'));
         $user = $this->userService->getUserProfile($userId);
         $viewedUser = $this->userService->getUserProfile($viewedUserId);
 

@@ -39,14 +39,9 @@ class CommunityController extends BaseController {
     public function getCommunityPosts(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $courseId = $params['courseId'];
-        $postQuery = null;
-        $userId = null;
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
-        if ($currentRole === Role::ADMIN) {
-            $postQuery = PostQuery::create()
-                ->forAdmin(true);
-        } else if ($currentRole === Role::USER) {
-            $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $isAdmin = $currentRole === Role::ADMIN;
         
         $tags = [];
         $tagIds = $request->get('tags');
@@ -60,12 +55,11 @@ class CommunityController extends BaseController {
         }
         
         $postQuery = PostQuery::create()
-            ->forUser($userId)
+            ->forAdmin($isAdmin)
             ->inCourse($courseId)
             ->inCategory($request->get('categoryId'))
             ->withTags($tags)
             ->sortedBy($request->get('sortOrder'));
-        }
 
         return $this->render("community", [
             "posts" => $this->postService->getPosts($postQuery),
