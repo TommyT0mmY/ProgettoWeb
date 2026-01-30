@@ -1,17 +1,19 @@
 <?php 
 /**
- * @var \Unibostu\Dto\FacultyDto[] $faculties
+ * @var \Unibostu\Dto\FacultyDto $faculty
+ * @var \Unibostu\Dto\CourseDto[] $courses
+ * @var \Unibostu\Dto\TagDto[][] $tags
  * @var string $userId
 */
 
 $this->extend('admin-layout', [
-    'title' => 'Unibostu - Student Preferences',
+    'title' => 'Unibostu - Courses',
     'userId' => $userId
 ]);
 ?>
 
 <header>
-    <h2>Admin - Courses Management</h2>
+    <h2>Admin - Courses Management - Faculty: <?= htmlspecialchars($faculty->facultyName) ?></h2>
 </header>
 <form action="#" method="GET">
     <input type="search" name="search" placeholder="Search course" />
@@ -26,7 +28,7 @@ $this->extend('admin-layout', [
             <h3><?= htmlspecialchars($course->courseName) ?></h3>
         </header>
             <p>Course ID: <?= htmlspecialchars($course->courseId) ?></p>
-            <p>Faculty ID: <?= htmlspecialchars($course->facultyId) ?></p>
+            <p>Number of tags: <?= htmlspecialchars(count($tags[$course->courseId] ?? [])) ?></p>
                
         <footer>
             <ul class="review">
@@ -41,7 +43,7 @@ $this->extend('admin-layout', [
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="/faculties/<?= htmlspecialchars($faculty->facultyId) ?>/courses/<?= htmlspecialchars($course->courseId) ?>/tags">
                             View Tags
                         </a>
                     </li>
@@ -50,4 +52,4 @@ $this->extend('admin-layout', [
     </section>
 <?php endforeach; ?>
 </div>
-<p><a href="/">Go back to homepage</a></p>
+<p><a href="/faculties/<?= htmlspecialchars($faculty->facultyId) ?>">Go back to faculties</a></p>

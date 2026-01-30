@@ -41,7 +41,7 @@ class DashboardController extends BaseController {
 
     /** get faculties */
     #[Get('/faculties')]
-    #[AuthMiddleware(Role:: ADMIN)]
+    #[AuthMiddleware(Role::ADMIN)]
     public function getFaculties(Request $request): Response {
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $user = $this->userService->getUserProfile($userId);
@@ -69,9 +69,17 @@ class DashboardController extends BaseController {
         $facultyId = (int)$pathVars['facultyId'];
         $user = $this->userService->getUserProfile($userId);
 
+        $courses = $this->courseService->getCoursesByFaculty($facultyId);
+        $tags = [];
+        foreach ($courses as $course) {
+            $tags[$course->courseId] = $this->tagService->getTagsByCourse($course->courseId);
+        }
+
         return $this->render("admin-courses", [
             'user' => $user,
-            'courses' => $this->courseService->getCoursesByFaculty($facultyId),
+            'courses' => $courses,
+            'faculty' => $this->facultyService->getFacultyDetails($facultyId),
+            'tags' => $tags,
             'userId' => $userId
         ]);
     }
@@ -90,7 +98,9 @@ class DashboardController extends BaseController {
         return $this->render("admin-tags", [
             'user' => $user,
             'tags' => $this->tagService->getTagsByCourse($courseId),
-            'userId' => $userId
+            'faculty' => $this->facultyService->getFacultyDetails($facultyId),
+            'userId' => $userId,
+            'course' => $this->courseService->getCourseDetails($courseId)
         ]);
     }
 
