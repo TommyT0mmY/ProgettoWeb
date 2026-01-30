@@ -1,20 +1,23 @@
-#courses-container {
+/* ============================================================================
+   Course Checkbox Styles
+   ============================================================================ */
+
+.courses-container {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
+    margin-top: var(--space-lg);
     margin-bottom: var(--space-xl);
 }
 
-/* Course checkbox wrapper - each row */
-.course-checkbox-wrapper {
+/* Course item - checkbox styled as rectangular button */
+.course-item {
     position: relative;
-    height: 3rem;
-    display: flex;
-    align-items: center;
+    margin-bottom: 0;
 }
 
 /* Hide native checkbox */
-.course-checkbox {
+.course-item input[type="checkbox"] {
     position: absolute;
     opacity: 0;
     width: 0;
@@ -22,136 +25,52 @@
     pointer-events: none;
 }
 
-/* Course label styling (acts as the visual checkbox) */
-.course-label {
+/* Label acts as the visible checkbox button */
+.course-item label {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
     width: 100%;
-    height: 100%;
+    height: 2.5rem;
     padding: 0 var(--space-md);
     background-color: var(--color-bg-light);
     border-radius: 10px;
+    box-shadow: var(--shadow-sm);
     cursor: pointer;
     user-select: none;
-    transition: all 0.2s ease-in-out;
-    font-weight: 500;
-    position: relative;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-gray-200);
-}
-
-.course-checkbox:focus-visible + .course-label {
-    box-shadow: var(--shadow-md);
-    outline: 2px solid var(--color-blue-400);
-    outline-offset: 2px;
+    transition: 
+        background-color 0.2s ease-in-out,
+        box-shadow 0.2s ease-in-out,
+        color 0.2s ease-in-out;
+    transform: none;
+    pointer-events: auto;
 }
 
 /* Hover state */
-.course-label:hover {
+.course-item label:hover {
     box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
 }
 
-/* Checked state styling */
-.course-checkbox:checked + .course-label {
+/* Focus state */
+.course-item input[type="checkbox"]:focus-visible + label {
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-gray-300);
+}
+
+/* Selected/Checked state - blue background */
+.course-item input[type="checkbox"]:checked + label {
     background-color: var(--color-blue-400);
     color: var(--color-white);
-    border-color: transparent;
     box-shadow: var(--shadow-md);
 }
 
-/* Checked state with focus */
-.course-checkbox:checked:focus-visible + .course-label {
-    outline: 2px solid var(--color-blue-600);
-    outline-offset: 2px;
+/* Selected + hover */
+.course-item input[type="checkbox"]:checked + label:hover {
+    background-color: var(--color-blue-500);
 }
 
-/* Checkmark indicator (pseudo-element) */
-/* Course name and faculty info layout */
-.course-label-content {
-    display: flex;
-    flex-direction: column;
-    margin-left: 0;
-    gap: var(--space-xs);
+/* Selected + focus */
+.course-item input[type="checkbox"]:checked:focus-visible + label {
+    background-color: var(--color-blue-500);
+    box-shadow: var(--shadow-md), var(--focus-ring);
 }
-
-.course-name {
-    font-weight: 500;
-}
-
-.course-faculty {
-    display: none;
-    font-size: 0.85rem;
-    color: inherit;
-    opacity: 0.75;
-}
-
-/* Show faculty when class is applied */
-.course-checkbox:checked + .course-label .course-faculty {
-    display: inline;
-}
-
-/* For the "Currently Subscribed To" section, always show faculty */
-.course-label.show-faculty .course-faculty {
-    display: inline;
-}
-
-/* Disabled state */
-.course-checkbox:disabled + .course-label {
-    opacity: 0.6;
-    cursor: not-allowed;
-    background-color: var(--color-gray-300);
-}
-
-/* Active/pressed state for better UX */
-.course-label:active {
-    transform: translateY(0);
-}
-
-/* Template styling (hidden) */
-template {
-    display: none;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .course-checkbox-wrapper {
-        height: 2.75rem;
-    }
-
-    .course-label {
-        padding: 0 var(--space-sm);
-        font-size: 0.95rem;
-    }
-
-    .course-label-content {
-        margin-left: var(--space-sm);
-    }
-
-    .course-checkbox:checked + .course-label::before {
-        width: 18px;
-        height: 18px;
-        left: var(--space-sm);
-    }
-}
-
-@media (max-width: 480px) {
-    .course-checkbox-wrapper {
-        height: 2.5rem;
-    }
-
-    .course-label {
-        padding: 0 var(--space-sm);
-        font-size: 0.9rem;
-    }
-
-    .course-faculty {
-        font-size: 0.75rem;
-    }
-
-    .course-label-content {
-        gap: var(--space-xs);
-    }
-}
-

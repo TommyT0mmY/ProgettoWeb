@@ -59,8 +59,8 @@ body > header > .profile-container{
     height: 32px;
 }
 
-body > header > .title_with_logo,
-body > header > a.title_with_logo {
+body > header > .title-with-logo,
+body > header > a.title-with-logo {
     display: flex; 
     flex-direction: row;
     align-items: center;
@@ -70,17 +70,17 @@ body > header > a.title_with_logo {
     cursor: pointer;
 }
 
-body > header > a.title_with_logo img {
+body > header > a.title-with-logo img {
     width: 38px;
     height: 38px;
 }
 
-body > header > a.title_with_logo h1 {
+body > header > a.title-with-logo h1 {
     margin: 0;
     font-size: 1.2rem;
 }
 
-body > header > a.title_with_logo:hover {
+body > header > a.title-with-logo:hover {
     text-decoration: none;
     opacity: 0.8;
 }
@@ -265,8 +265,11 @@ ul.tags {
     border: none;
     cursor: pointer;
     padding: 0;
-    margin-right: var(--space-xs);
     display: flex;
+}
+
+.reaction button {
+    margin-right: var(--space-xxs);
 }
 
 /* Solo i button dentro reaction non sono cliccabili direttamente */
@@ -411,7 +414,6 @@ nav h2 {
     height: auto;
     box-shadow: var(--shadow-md);
     border-right: 1px solid var(--color-gray-200);
-    border-radius: var(--space-sm);
     transition: none;
   }
 

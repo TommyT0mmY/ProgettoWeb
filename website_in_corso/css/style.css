@@ -46,7 +46,7 @@ header > .profile-container{
     height:30px;
     border:#fff;
 }
-header > .title_with_logo{
+header > .title-with-logo{
     display: flex; 
     flex-direction: row;
 }

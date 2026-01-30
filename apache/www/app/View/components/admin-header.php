@@ -4,7 +4,7 @@
 */ 
 ?>
 <header>
-    <a href="/" class="title_with_logo" aria-label="Go to homepage">
+    <a href="/" class="title-with-logo" aria-label="Go to homepage">
         <img src="/images/icons/logo.png" alt="UniboStu Logo" />          
         <h1>UniboStu</h1>
     </a>
