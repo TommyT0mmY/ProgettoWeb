@@ -7,7 +7,7 @@
     <header>
         <h3><?= htmlspecialchars($post->title) ?></h3>
         <p>
-            <em>Posted by <?= htmlspecialchars($post->author->userId) ?> on <time datetime="<?= $post->createdAt ?>"><?= $post->createdAt ?></time></em>
+            <em>Posted by <a href="/users/<?= htmlspecialchars($post->author->userId) ?>"><?= htmlspecialchars($post->author->userId) ?></a> on <time datetime="<?= $post->createdAt ?>"><?= $post->createdAt ?></time></em>
         </p>
     </header>
     
