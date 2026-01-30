@@ -840,4 +840,5 @@ INSERT INTO `post_tags` (`post_id`, `course_id`, `tag_id`) VALUES
 (45, 6, 15);
 
 INSERT INTO `administrators` (`admin_id`, `password`) VALUES
-('adminà', '');
+-- password: aaaaaa
+('a', '$2y$12$IopdjTqt.gNIuYN7FDXZJOZo.02BGca/Jw0uf0v0xhsN89gf9HoCW');
