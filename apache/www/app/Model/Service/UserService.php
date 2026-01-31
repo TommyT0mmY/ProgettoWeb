@@ -18,12 +18,12 @@ class UserService implements RoleService {
     }
 
     /**
-     * Gets all users that are not the admin.
+     * Gets all users.
      *
      * @return UserDTO[] Array of UserDTO objects
      */
     public function getAllUsers(): array {
-        return $this->userRepository->findAllNotAdmin();
+        return $this->userRepository->findAllUsers();
     }
 
     /**
