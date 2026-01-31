@@ -1,6 +1,6 @@
 # TODO LIST
 
-- [ ] Fare solo un numero di font size nella base
+- [ ] Fare solo un numero di font size n    ella base
 - [ ] Manca il link agli utenti
 - [ ] Nella visualizzazione di un singolo post il tasto indietro dovrebbe fare history back
 - [ ] Se scrolli la navbar scrolla giu
@@ -22,4 +22,6 @@
 - [ ] Fare dei test per verificare il corretto caricamento dei post (con filtri) anche in infinite scroll
 - [ ] Infinite scroll edge case pagina dezoomata, funziona tutto? fare test
 - [ ] Infinite scroll fa un piccolo scatto
-
+- [ ] like/dislike disattivati x admin
+- [ ] pulsante x sospendere user nel suo profilo.
+- [ ] visualizzazione commenti x admin
