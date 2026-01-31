@@ -41,7 +41,7 @@ class DashboardController extends BaseController {
 
     /** get Dashboard */
     #[Get('/dashboard')]
-    #[AuthMiddleware(Role::USER)]
+    #[AuthMiddleware(Role::ADMIN)]
     public function getDashboard(Request $request): Response {
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $user = $this->userService->getUserProfile($userId);
