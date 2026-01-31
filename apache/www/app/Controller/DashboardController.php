@@ -39,6 +39,63 @@ class DashboardController extends BaseController {
         $this->tagService = new TagService();
     }
 
+    /** get Dashboard */
+    #[Get('/dashboard')]
+    #[AuthMiddleware(Role::USER)]
+    public function getDashboard(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $user = $this->userService->getUserProfile($userId);
+
+        $faculties = $this->facultyService->getAllFaculties();
+        $categories = $this->categoryService->getAllCategories();
+        $users = $this->userService->getAllUsers();
+        
+        return $this->render("admin-dashboard", [
+            'user' => $user,
+            'faculties' => $faculties,
+            'categories' => $categories,
+            'users' => $users,
+            'userId' => $userId
+        ]);
+    }
+
+     /** get users */
+    #[Get('/users')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function getUsers(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $user = $this->userService->getUserProfile($userId);
+
+        $users = $this->userService->getAllUsers();
+        $faculties = [];
+        foreach ($users as $user) {
+            $faculties[$user->userId] = $this->facultyService->getFacultyDetails($user->facultyId);
+        }
+        
+        return $this->render("admin-users", [
+            'user' => $user,
+            'users' => $users,
+            'userId' => $userId,
+            'faculties' => $faculties
+        ]);
+    }
+
+    /** get categories */
+    #[Get('/categories')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function getCategories(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $user = $this->userService->getUserProfile($userId);
+
+        $categories = $this->categoryService->getAllCategories();
+        
+        return $this->render("admin-categories", [
+            'user' => $user,
+            'categories' => $categories,
+            'userId' => $userId
+        ]);
+    }
+
     /** get faculties */
     #[Get('/faculties')]
     #[AuthMiddleware(Role::ADMIN)]
@@ -103,8 +160,5 @@ class DashboardController extends BaseController {
             'course' => $this->courseService->getCourseDetails($courseId)
         ]);
     }
-
-
     
 }
-

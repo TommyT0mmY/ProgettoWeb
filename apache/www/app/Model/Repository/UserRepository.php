@@ -14,6 +14,21 @@ class UserRepository {
         $this->pdo = Database::getConnection();
     }
 
+
+    /**
+     * Recupera tutti gli utenti che non sono admin
+     * 
+     * @return UserDTO[] Array di UserDTO objects
+     */
+    public function findAllNotAdmin(): array {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM users WHERE user_id NOT IN (SELECT user_id FROM administrators)"
+        );
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([$this, 'rowToPrivateDTO'], $rows);
+    }
+
     /**
      * Recupera un utente tramite ID utente
      */

@@ -5,7 +5,7 @@
 */
 
 $this->extend('admin-layout', [
-    'title' => 'Unibostu - Student Preferences',
+    'title' => 'Unibostu - Faculties',
     'userId' => $userId
 ]);
 ?>
