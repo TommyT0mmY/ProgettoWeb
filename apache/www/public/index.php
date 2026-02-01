@@ -5,7 +5,10 @@ declare(strict_types=1);
 // HELPERS //
 /////////////
 
-function h(string $string): string {
+function h(?string $string): string {
+    if ($string === null) {
+        return '';
+    }
     return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 }
 

@@ -1,74 +1,82 @@
 <?php 
 /** 
- * @var \Unibostu\Dto\PostDto $post 
+ * @var ?\Unibostu\Model\DTO\PostDTO $post If null, a default post without data is provided
+ * @var bool $forAdmin Indicates if the post is being rendered in an admin context
 */ 
+
+$postId = $post->postId ?? '';
+$authorId = $post->author->userId ?? '';
+$createdAt = $post->createdAt ?? '';
+$title = $post->title ?? 'Untitled Post';
+$categoryName = $post->category->categoryName ?? '';
+$courseName = $post->course->courseName ?? '';
+$description = $post->description ?? '';
+$tags = $post->tags ?? [];
+$attachmentPath = $post->attachmentPath ?? '';
+$likes = $post->likes ?? 0;
+$dislikes = $post->dislikes ?? 0;
+$likedByUser = $post->likedByUser ?? null;
+$commentsLink = $postId ? "/posts/{$postId}" : '#';
 ?>
-<article class="post" data-post-id="<?= htmlspecialchars($post->postId) ?>" data-author-id="<?= htmlspecialchars($post->author->userId) ?>">
+<article class="post" data-post-id="<?=h($postId)?>" data-author-id="<?=h($authorId)?>">
     <header>
-        <h3><?= htmlspecialchars($post->title) ?></h3>
+        <h3 data-field="title"><?= h($post->title) ?></h3>
         <p>
-            <em>Posted by <a href="/users/<?= htmlspecialchars($post->author->userId) ?>"><?= htmlspecialchars($post->author->userId) ?></a> on <time datetime="<?= $post->createdAt ?>"><?= $post->createdAt ?></time></em>
+            <em>Posted by <a data-field="author" href="<?=h($authorId)?>"><?=h($authorId)?></a> on <time data-field="createdAt" datetime="<?=$createdAt?>"><?=$createdAt?></time></em>
         </p>
     </header>
     
     <div class="post-metadata">
         <div class="metadata-section" data-section="community">
-            <span class="metadata-label">Corso:</span>
+            <span class="metadata-label">Course:</span>
             <ul class="metadata-list community-list">
-                <li class="tag subject"><a href="#"><?= htmlspecialchars($post->course->courseName) ?></a></li>
+                <li class="tag subject"><a href="#" data-field="courseName"><?= h($courseName) ?></a></li>
             </ul>
         </div>
         
-        <?php if ($post->category): ?>
-        <div class="metadata-section" data-section="category">
-            <span class="metadata-label">Categoria:</span>
-            <ul class="metadata-list category-list">
-                <li class="tag type"><a href="#"><?= htmlspecialchars($post->category->categoryName) ?></a></li>
+        <div class="metadata-section" data-section="category" style="display: none;">
+            <span class="metadata-label">Category:</span>
+            <ul class="metadata-list category-list" data-field="category">
+                <?php if ($categoryName): ?>
+                <li class="tag type"><a href="#"><?= h($categoryName) ?></a></li>
+                <?php endif; ?>
             </ul>
         </div>
-        <?php endif; ?>
         
-        <?php if (!empty($post->tags)): ?>
-        <div class="metadata-section" data-section="tags">
+        <?php if (!$post || ($post && !empty($tags))): ?>
+        <div class="metadata-section" data-section="tags" style="display: none;">
             <span class="metadata-label">Tag:</span>
-            <ul class="metadata-list tags-list">
-                <?php foreach ($post->tags as $tag): ?>
-                <li class="tag topic"><a href="#"><?= htmlspecialchars($tag['tag_name']) ?></a></li>
+            <ul class="metadata-list tags-list" data-field="tags">
+                <?php foreach ($tags as $tag): ?>
+                <li class="tag topic"><a href="#"><?= h($tag['tag_name']) ?></a></li>
                 <?php endforeach; ?>
             </ul>
         </div>
         <?php endif; ?>
     </div>
-
-    
-    <p><?= nl2br(htmlspecialchars($post->description)) ?></p>
-    
+    <p data-field="description"><?= nl2br(h($post->description)) ?></p>
     <footer>
-        <ul class="review">
-            <?php if ($post->attachmentPath): ?>
-                <li>
-                    <a href="<?= htmlspecialchars($post->attachmentPath) ?>" download>
-                        Download Notes
-                    </a>
-                </li>
+        <ul class="review" data-field="reviewList">
+            <?php if ($attachmentPath): ?>
+            <li><a href="<?=h($attachmentPath)?>" download>Download Notes</a></li>
             <?php endif; ?>
-                <li class="reaction reaction-like">
-                    <button type="button" class="btn-like <?= $post->likedByUser === true ? 'active' : '' ?>" aria-label="Like">
-                        <img src="/images/icons/like.svg" alt="" />
-                    </button>
-                    <data value="<?= $post->likes ?>"><?= $post->likes ?></data>
-                </li>
-                <li class="reaction reaction-dislike">
-                    <button type="button" class="btn-dislike <?= $post->likedByUser === false ? 'active' : '' ?>" aria-label="Dislike">
-                        <img src="/images/icons/dislike.svg" alt="" />
-                    </button>
-                    <data value="<?= $post->dislikes ?>"><?= $post->dislikes ?></data>
-                </li>
-                <?php if (isset($commentsButton) ? $commentsButton : true): ?>
-                <li>
-                    <a href="/posts/<?= htmlspecialchars($post->postId) ?>" aria-label="Go to post comments">Comments</a>
-                </li>
-                <?php endif; ?>
+            <li class="reaction reaction-like">
+                <button type="button" class="btn-like <?= $likedByUser === true ? 'active' : '' ?>" aria-label="Like">
+                    <img src="/images/icons/like.svg" alt="Like icon">
+                </button>
+                <data data-field="likes" value="<?= $likes ?? 0 ?>"><?= $likes ?? 0 ?></data>
+            </li>
+            <li class="reaction reaction-dislike">
+                <button type="button" class="btn-dislike <?= $likedByUser === false ? 'active' : '' ?>" aria-label="Dislike">
+                    <img src="/images/icons/dislike.svg" alt="Dislike icon" />
+                </button>
+                <data data-field="dislikes" value="<?= $dislikes ?? 0 ?>"><?= $dislikes ?? 0 ?></data>
+            </li>
+            <?php if (isset($commentsButton) ? $commentsButton : true): ?>
+            <li>
+                <a data-field="commentsLink" href="/posts/<?= h($postId) ?>" aria-label="Go to post comments">Comments</a>
+            </li>
+            <?php endif; ?>
         </ul>            
    </footer>
 </article>

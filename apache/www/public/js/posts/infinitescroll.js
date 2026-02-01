@@ -115,7 +115,9 @@ export class InfiniteScroll {
         
         // Set basic fields
         article.querySelector('[data-field="title"]').textContent = post.title;
-        article.querySelector('[data-field="author"]').textContent = post.author.userId;
+        const authorElement = article.querySelector('[data-field="author"]');
+        authorElement.textContent = post.author.userId;
+        authorElement.href = `/users/${post.author.userId}`;
         
         const timeElement = article.querySelector('[data-field="createdAt"]');
         timeElement.textContent = post.createdAt;

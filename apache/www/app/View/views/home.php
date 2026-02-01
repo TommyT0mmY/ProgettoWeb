@@ -9,6 +9,7 @@
  * @var string|null $categoryId
  * @var string|null $selectedCategoryId
  * @var string $selectedSortOrder
+ * @var bool isAdmin
  */
 
 $this->extend('main-layout', [

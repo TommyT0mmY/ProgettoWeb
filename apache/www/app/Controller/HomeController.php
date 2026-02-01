@@ -65,7 +65,8 @@ class HomeController extends BaseController {
                 "sortOrder" => $postQuery->getSortOrder(),
                 "categoryId" => $postQuery->getCategory(),
                 "selectedCategoryId" => $selectedCategoryId,
-                "selectedSortOrder" => $selectedSortOrder
+                "selectedSortOrder" => $selectedSortOrder,
+                "isAdmin" => $isAdmin
             ]);
         }
     }
