@@ -202,17 +202,14 @@ class UserProfileController extends BaseController {
         
         if ($action === 'ban') {
             $this->userService->suspendUser($userId);
-            $message = 'User banned successfully';
         } elseif ($action === 'unban') {
             $this->userService->unsuspendUser($userId);
-            $message = 'User unbanned successfully';
         } else {
             ValidationException::build()->addError(ValidationErrorCode::INVALID_REQUEST)->throwIfAny();
         }
         
         return Response::create()->json([
             'success' => true,
-            'message' => $message
         ]);
     }
 }
