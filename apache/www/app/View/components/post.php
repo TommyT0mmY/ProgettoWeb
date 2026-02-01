@@ -3,7 +3,7 @@
  * @var \Unibostu\Dto\PostDto $post 
 */ 
 ?>
-<article class="Post" data-post-id="<?= htmlspecialchars($post->postId) ?>" data-author-id="<?= htmlspecialchars($post->author->userId) ?>">
+<article class="post" data-post-id="<?= htmlspecialchars($post->postId) ?>" data-author-id="<?= htmlspecialchars($post->author->userId) ?>">
     <header>
         <h3><?= htmlspecialchars($post->title) ?></h3>
         <p>

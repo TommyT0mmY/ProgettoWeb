@@ -64,7 +64,7 @@
 
     <!-- Post Template -->
     <template id="post-template">
-        <article class="Post" data-post-id="" data-author-id="">
+        <article class="post" data-post-id="" data-author-id="">
             <header>
                 <h3 data-field="title"></h3>
                 <p>

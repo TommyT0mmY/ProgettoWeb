@@ -15,7 +15,7 @@ export class PostManager {
     
     init() {
         // Find all posts on the page
-        const posts = document.querySelectorAll('.Post');
+        const posts = document.querySelectorAll('.post');
         
         posts.forEach(post => {
             this.setupPostListeners(post);
