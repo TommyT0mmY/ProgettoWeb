@@ -120,6 +120,23 @@ class UserRepository {
     }
 
     /**
+     * Unsuspends a user account.
+     *
+     * @throws \RuntimeException in case of error
+     */
+    public function unsuspendUser(string $userId): void {
+        $stmt = $this->pdo->prepare(
+            "UPDATE users 
+             SET suspended = false
+             WHERE user_id = :userId"
+        );
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+        if (!$stmt->execute()) {
+            throw new \RuntimeException("Error during user unsuspension");
+        }
+    }
+
+    /**
      * Updates basic user profile information (without password).
      *
      * @throws \RuntimeException in case of error

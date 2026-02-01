@@ -129,6 +129,14 @@ class UserService implements RoleService {
         $this->userRepository->suspendUser($userId);
     }
 
+    public function unsuspendUser(string $userId): void {
+        $user = $this->getUserProfile($userId);
+        if (!$user) {
+            throw new ValidationException(errors: [ValidationErrorCode::USERNAME_REQUIRED]);
+        }
+        $this->userRepository->unsuspendUser($userId);
+    }
+
     /**
      * Updates basic profile information (without password) for an existing user.
      *
