@@ -8,7 +8,7 @@
 - [ ] Fare solo un numero di font size nella base
 - [ ] Manca il link agli utenti
 - [ ] Nella visualizzazione di un singolo post il tasto indietro dovrebbe fare history back
-- [ ] Se scrolli la navbar scrolla giu
+- [x] Se scrolli la navbar scrolla giu
 - [ ] Filter form deve essere un component
 - [ ] Cambiare post-container
 - [ ] Nella navbar separare i corsi per 
