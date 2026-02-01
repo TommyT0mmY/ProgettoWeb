@@ -47,7 +47,7 @@ export class InfiniteScroll {
     }
 
     getLastPostId() {
-        const posts = this.postContainer.querySelectorAll('.Post');
+        const posts = this.postContainer.querySelectorAll('.post');
         if (posts.length === 0) return null;
         
         const lastPost = posts[posts.length - 1];
@@ -106,7 +106,7 @@ export class InfiniteScroll {
 
     createPostElement(post) {
         const template = document.getElementById('post-template');
-        const article = template.content.cloneNode(true).querySelector('.Post');
+        const article = template.content.cloneNode(true).querySelector('.post');
         
         // Set data attributes
         article.dataset.postId = post.postId;

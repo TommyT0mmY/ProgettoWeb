@@ -96,7 +96,7 @@ body > header > a.title-with-logo:hover {
     gap: var(--space-md);   
 }
 /* La Card del Post */
-.Post {
+.post {
     width: 100%;
     background: var(--color-bg-light);
     border-radius: 16px;
@@ -108,14 +108,14 @@ body > header > a.title-with-logo:hover {
 }
 
 
-.Post footer {
+.post footer {
     margin-top: 33px;
     padding-top: 8px;
     border-top: 1px solid var(--color-blue-700);
 }
 
 /* Header e Titolo */
-.Post header h3 {
+.post header h3 {
     color: var(--color-blue-700); 
     margin: 0 0 4px 0;
     font-size: 1.1rem;
@@ -219,7 +219,7 @@ ul.tags {
 
 
 /* Footer e Review (Bordi sui li) */
-.Post footer {
+.post footer {
     margin-top: 0px;
     padding-top: 5px;
     border-top: 1px solid #d1dee7;
