@@ -82,30 +82,28 @@ export class PostManager {
     }
     
     setupReactionButtons(postElement, postId) {
-        const likeLi = postElement.querySelector('.reaction-like');
-        const dislikeLi = postElement.querySelector('.reaction-dislike');
+        const likeBtn = postElement.querySelector('.btn-like');
+        const dislikeBtn = postElement.querySelector('.btn-dislike');
         
-        if (!likeLi || !dislikeLi) {
+        if (!likeBtn || !dislikeBtn) {
             return;
         }
         
         // If admin, disable the buttons visually and functionally
         if (this.#isAdmin) {
-            const likeBtn = likeLi.querySelector('.btn-like');
-            const dislikeBtn = dislikeLi.querySelector('.btn-dislike');
+            likeBtn.disabled = true;
+            likeBtn.style.opacity = '0.5';
+            likeBtn.style.cursor = 'not-allowed';
             
-            if (likeBtn) {
-                likeBtn.disabled = true;
-            }
-            if (dislikeBtn) {
-                dislikeBtn.disabled = true;
-            }
+            dislikeBtn.disabled = true;
+            dislikeBtn.style.opacity = '0.5';
+            dislikeBtn.style.cursor = 'not-allowed';
             
             return; // Don't attach click handlers for admin
         }
         
-        // Use Button utility for like functionality on the entire li element
-        new Button(likeLi, {
+        // Use Button utility for like functionality on the button element
+        new Button(likeBtn, {
             stopPropagation: true,
             loadingText: '',
             onClick: async () => {
@@ -118,8 +116,8 @@ export class PostManager {
             }
         }).init();
         
-        // Use Button utility for dislike functionality on the entire li element
-        new Button(dislikeLi, {
+        // Use Button utility for dislike functionality on the button element
+        new Button(dislikeBtn, {
             stopPropagation: true,
             loadingText: '',
             onClick: async () => {
@@ -141,8 +139,8 @@ export class PostManager {
     updateReactionUI(postElement, result) {
         const likeBtn = postElement.querySelector('.btn-like');
         const dislikeBtn = postElement.querySelector('.btn-dislike');
-        const likeData = postElement.querySelector('.reaction-like data');
-        const dislikeData = postElement.querySelector('.reaction-dislike data');
+        const likeData = likeBtn?.querySelector('data[data-field="likes"]');
+        const dislikeData = dislikeBtn?.querySelector('data[data-field="dislikes"]');
         
         // Update counters
         if (likeData) {

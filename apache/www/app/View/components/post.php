@@ -63,16 +63,16 @@ $categoryLink = $categoryId ? ($currentPageUrl ?? '/') . "?categoryId={$category
             <li><a href="<?=h($attachmentPath)?>" download>Download Notes</a></li>
             <?php endif; ?>
             <li class="reaction reaction-like">
-                <button type="button" class="btn-like <?= $likedByUser === true ? 'active' : '' ?>" aria-label="Like">
-                    <img src="/images/icons/like.svg" alt="Like icon">
+                <button type="button" class="btn-like <?= $likedByUser === true ? 'active' : '' ?>" aria-label="Like this post">
+                    <img src="/images/icons/like.svg" alt="">
+                    <data data-field="likes" value="<?= $likes ?>"><?= $likes ?></data>
                 </button>
-                <data data-field="likes" value="<?= $likes ?>"><?= $likes ?></data>
             </li>
             <li class="reaction reaction-dislike">
-                <button type="button" class="btn-dislike <?= $likedByUser === false ? 'active' : '' ?>" aria-label="Dislike">
-                    <img src="/images/icons/dislike.svg" alt="Dislike icon" />
+                <button type="button" class="btn-dislike <?= $likedByUser === false ? 'active' : '' ?>" aria-label="Dislike this post">
+                    <img src="/images/icons/dislike.svg" alt="">
+                    <data data-field="dislikes" value="<?= $dislikes ?>"><?= $dislikes ?></data>
                 </button>
-                <data data-field="dislikes" value="<?= $dislikes ?>"><?= $dislikes ?></data>
             </li>
             <?php if (isset($commentsButton) ? $commentsButton : true): ?>
             <li>
