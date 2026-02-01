@@ -19,6 +19,7 @@ $layoutParams = [
     'userId' => $user->userId,
     'additionalHeadCode' => [
         '<script type="module" src="/js/posts/multi-post.js"></script>',
+        '<script type="module" src="/js/ban-user.js"></script>',
     ],
 ];
 
@@ -38,8 +39,17 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
         <p>Username: <strong><?= h($viewedUser->userId); ?></strong></p>
         <p>Name: <strong><?= h($viewedUser->firstName ?? ''); ?></strong></p>
         <p>Last name: <strong><?= h($viewedUser->lastName ?? ''); ?></strong></p>
+        <?php if ($viewedUser->suspended): ?>
+        <p class="user-banned">User banned</p>
+        <?php endif; ?>
         <?php if ($isOwnProfile): ?>
         <button type="button" onclick="window.location.href='/edit-profile'">Change info</button>   
+        <?php endif; ?>
+        <?php if ($isAdmin && !$viewedUser->suspended): ?>
+        <button type="button" id="ban-user-btn" class="btn-ban-user" data-user-id="<?= h($viewedUser->userId) ?>">Ban User</button>
+        <?php endif; ?>
+        <?php if ($isAdmin && $viewedUser->suspended): ?>
+        <button type="button" id="unban-user-btn" class="btn-unban-user" data-user-id="<?= h($viewedUser->userId) ?>">Unban User</button>
         <?php endif; ?>
     </section>
     <section>
