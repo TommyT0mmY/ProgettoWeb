@@ -169,19 +169,20 @@ class PostService {
     }
 
     /**
-     * Elimina un post (solo il creatore)
+     * Elimina un post
      * 
      * @param int $postId ID del post da eliminare
-     * @param string|null $userId ID dell'utente che richiede l'eliminazione (null se admin)
+     * @param string $userId ID dell'utente che richiede l'eliminazione
+     * @param bool $isAdmin Se true, l'utente è admin e può cancellare qualsiasi post
      */
-    public function deletePost(int $postId, ?string $userId): void {
+    public function deletePost(int $postId, string $userId, bool $isAdmin = false): void {
         $post = $this->postRepository->findById($postId);
         if (!$post) {
             throw new \Exception("Post non trovato");
         }
 
-        // Verifica che l'utente sia il creatore del post
-        if ($post->author->userId !== $userId && $userId !== null) {
+        // Admin can delete any post, users can only delete their own
+        if (!$isAdmin && $post->author->userId !== $userId) {
             throw new \Exception("Non hai i permessi per eliminare questo post");
         }
 

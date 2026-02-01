@@ -529,6 +529,52 @@ nav h2 {
     box-shadow: var(--shadow-md);
 }
 
+/* User Profile - Ban/Unban */
+.user-banned {
+    color: var(--color-error);
+    font-weight: var(--fw-bold);
+    margin-top: var(--space-sm);
+}
+
+.btn-ban-user,
+.btn-unban-user {
+    padding: var(--space-xs) var(--space-md);
+    border: none;
+    border-radius: var(--space-xs);
+    font-size: 0.9rem;
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, opacity 0.2s;
+    color: var(--color-white);
+    margin-top: var(--space-sm);
+}
+
+.btn-ban-user {
+    background-color: var(--color-error);
+}
+
+.btn-ban-user:hover {
+    box-shadow: var(--shadow-md);
+    opacity: 0.9;
+}
+
+.btn-unban-user {
+    background-color: #28a745;
+}
+
+.btn-unban-user:hover {
+    box-shadow: var(--shadow-md);
+    opacity: 0.9;
+}
+
+.btn-ban-user:focus-visible,
+.btn-unban-user:focus-visible {
+    outline: 2px solid var(--color-blue-400);
+    outline-offset: 2px;
+    box-shadow: var(--shadow-md);
+}
+
 
 
 

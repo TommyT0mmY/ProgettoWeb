@@ -1,10 +1,10 @@
 # TODO LIST
 
-- [ ] Una singola home, non home ed admin home
-- [ ] post template fare un component che riceve isAdmin
+- [x] Una singola home, non home ed admin home
+- [x] post template fare un component che riceve isAdmin
 - [ ] dashboard fare il js di tutto
 - [ ] Fare cartelle per organizzare meglio le view
-- [ ] L'admin puo aprire i commenti ed eliminarli ma non rispondere
+- [x] L'admin puo aprire i commenti ed eliminarli ma non rispondere
 - [ ] Fare solo un numero di font size nella base
 - [ ] Manca il link agli utenti
 - [ ] Nella visualizzazione di un singolo post il tasto indietro dovrebbe fare history back
@@ -27,6 +27,6 @@
 - [ ] Fare dei test per verificare il corretto caricamento dei post (con filtri) anche in infinite scroll
 - [ ] Infinite scroll edge case pagina dezoomata, funziona tutto? fare test
 - [ ] Infinite scroll fa un piccolo scatto
-- [ ] like/dislike disattivati x admin
-- [ ] pulsante x sospendere user nel suo profilo.
-- [ ] visualizzazione commenti x admin
+- [x] like/dislike disattivati x admin
+- [x] pulsante x sospendere user nel suo profilo.
+- [x] visualizzazione commenti x admin

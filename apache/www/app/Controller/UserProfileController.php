@@ -14,6 +14,7 @@ use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
+use Unibostu\Core\router\routes\Put;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\CourseService;
@@ -186,6 +187,32 @@ class UserProfileController extends BaseController {
         
         return Response::create()->json([
             "success" => true
+        ]);
+    }
+
+    #[Put('/api/users/:userid/suspension')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function toggleUserBan(Request $request): Response {
+        $userId = $request->getAttribute(RequestAttribute::PATH_VARIABLES)['userid'];
+        $action = $request->post('action');
+        
+        if (!$this->userService->exists($userId)) {
+            ValidationException::build()->addError(ValidationErrorCode::USER_NOT_FOUND)->throwIfAny();
+        }
+        
+        if ($action === 'ban') {
+            $this->userService->suspendUser($userId);
+            $message = 'User banned successfully';
+        } elseif ($action === 'unban') {
+            $this->userService->unsuspendUser($userId);
+            $message = 'User unbanned successfully';
+        } else {
+            ValidationException::build()->addError(ValidationErrorCode::INVALID_REQUEST)->throwIfAny();
+        }
+        
+        return Response::create()->json([
+            'success' => true,
+            'message' => $message
         ]);
     }
 }

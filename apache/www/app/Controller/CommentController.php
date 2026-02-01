@@ -82,7 +82,7 @@ class CommentController extends BaseController {
     }
 
     #[Get("/api/posts/:postid/comments")]
-    #[AuthMiddleware(Role::USER)]
+    #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function showComments(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
@@ -109,7 +109,7 @@ class CommentController extends BaseController {
     }
     
     #[Delete("/api/posts/:postid/comments/:commentid")]
-    #[AuthMiddleware(Role::USER)]
+    #[AuthMiddleware(Role::USER, Role::ADMIN)]
     #[ValidationMiddleware()]
     public function deleteComment(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
@@ -122,7 +122,9 @@ class CommentController extends BaseController {
             throw new ValidationException(errors: [ValidationErrorCode::COMMENT_ID_REQUIRED]);
         }
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-        $this->commentService->deleteComment((int)$commentId, (int)$postId, $userId);
+        $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        $isAdmin = $currentRole === Role::ADMIN;
+        $this->commentService->deleteComment((int)$commentId, (int)$postId, $userId, $isAdmin);
         return Response::create()->json([
             'success' => true,
             'message' => 'Comment deleted'

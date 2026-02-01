@@ -133,15 +133,17 @@ class PostController extends BaseController {
     }
 
     #[Delete("/api/posts/:postid")]
-    #[AuthMiddleware(Role::USER)]
+    #[AuthMiddleware(Role::USER, Role::ADMIN)]
     #[ValidationMiddleware()]
     public function deletePost(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        $isAdmin = $currentRole === Role::ADMIN;
 
         try {
-            $this->postService->deletePost((int)$postId, $userId);
+            $this->postService->deletePost((int)$postId, $userId, $isAdmin);
             if ($request->getReferer() === null || str_contains($request->getReferer(), '/posts/')) {
                 // If the request comes from the post detail page, redirect to home
                 return Response::create()->json([

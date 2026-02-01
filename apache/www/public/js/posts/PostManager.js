@@ -4,12 +4,16 @@ import Button from '../modules/button.js';
 export class PostManager {
     /** @type {string} */
     #currentUser;
+    /** @type {boolean} */
+    #isAdmin;
     
     /**
      * @param {string} currentUser - Current user ID
+     * @param {boolean} isAdmin - Whether the current user is an admin
      */
-    constructor(currentUser) {
+    constructor(currentUser, isAdmin = false) {
         this.#currentUser = currentUser;
+        this.#isAdmin = isAdmin;
         this.init();
     }
     
@@ -26,8 +30,8 @@ export class PostManager {
         const postId = parseInt(postElement.dataset.postId);
         const authorId = postElement.dataset.authorId;
         
-        // Create and setup delete button if user is the author
-        if (this.#currentUser && this.#currentUser === authorId) {
+        // Create and setup delete button if user is the author or admin
+        if (this.#currentUser && (this.#currentUser === authorId || this.#isAdmin)) {
             this.createAndSetupDeleteButton(postElement, postId);
         }
         
@@ -83,6 +87,21 @@ export class PostManager {
         
         if (!likeLi || !dislikeLi) {
             return;
+        }
+        
+        // If admin, disable the buttons visually and functionally
+        if (this.#isAdmin) {
+            const likeBtn = likeLi.querySelector('.btn-like');
+            const dislikeBtn = dislikeLi.querySelector('.btn-dislike');
+            
+            if (likeBtn) {
+                likeBtn.disabled = true;
+            }
+            if (dislikeBtn) {
+                dislikeBtn.disabled = true;
+            }
+            
+            return; // Don't attach click handlers for admin
         }
         
         // Use Button utility for like functionality on the entire li element

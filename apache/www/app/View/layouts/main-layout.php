@@ -71,6 +71,7 @@
     <?php ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true); ?>
     <script>
         window.currentUser = '<?= isset($userId) ? h($userId) : '' ?>';
+        window.isAdmin = false;
         window.csrfToken = '<?= h($csrfToken) ?>';
         window.csrfKey = '<?= h($csrfKey) ?>';
     </script>
