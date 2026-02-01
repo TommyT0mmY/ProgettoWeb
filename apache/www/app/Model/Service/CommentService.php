@@ -52,16 +52,17 @@ class CommentService {
 
     /**
      * Cancella un commento
-     * @throws \Exception se l'userId non esiste o non è proprietario del commento
+     * @throws \Exception se l'userId non esiste o non è proprietario del commento (e non è admin)
      * @throws \Exception se il commento non esiste
      */
-    public function deleteComment(int $commentId, int $postId, string $userId): void {
+    public function deleteComment(int $commentId, int $postId, string $userId, bool $isAdmin = false): void {
         $comment = $this->commentRepository->findById($commentId, $postId);
         if (!$comment) {
             throw new \Exception("Commento non trovato");
         }
 
-        if ($comment->author->userId !== $userId) {
+        // Admin can delete any comment, users can only delete their own
+        if (!$isAdmin && $comment->author->userId !== $userId) {
             throw new \Exception("Non sei il proprietario di questo commento");
         }
 
