@@ -122,12 +122,6 @@ class PostController extends BaseController {
         ]);
     }
 
-    #[Post("/api/posts/search")]
-    #[AuthMiddleware(Role::USER)]
-    public function searchPost(Request $request): Response {
-        return new Response();
-    }
-
     #[Delete("/api/posts/:postid")]
     #[AuthMiddleware(Role::USER)]
     #[ValidationMiddleware()]
