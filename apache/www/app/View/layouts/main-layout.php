@@ -67,7 +67,7 @@
     <template id="post-template">
         <?=$this->component("post", ["post" => null, "forAdmin" => false])?>
     </template>
-    ooooo
+    
     <?php ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true); ?>
     <script>
         window.currentUser = '<?= isset($userId) ? h($userId) : '' ?>';

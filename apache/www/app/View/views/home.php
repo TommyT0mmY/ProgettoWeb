@@ -9,17 +9,25 @@
  * @var string|null $categoryId
  * @var string|null $selectedCategoryId
  * @var string $selectedSortOrder
- * @var bool isAdmin
+ * @var bool $isAdmin
  */
 
-$this->extend('main-layout', [
+// Use different layouts based on user role
+$layout = $isAdmin ? 'admin-layout' : 'main-layout';
+$layoutParams = [
     'title' => 'Unibostu - Homepage',
     'additionalHeadCode' => [
         '<script type="module" src="/js/posts/multi-post.js"></script>',
     ],
     'userId' => $userId,
-    'courses' => $courses,
-]);
+];
+
+// Add courses only for non-admin users (main-layout requires it)
+if (!$isAdmin) {
+    $layoutParams['courses'] = $courses;
+}
+
+$this->extend($layout, $layoutParams);
 ?>
 
 <?= $this->component("posts-filter", [
@@ -30,6 +38,6 @@ $this->extend('main-layout', [
 ]) ?>
 <div class="post-container">
 <?php foreach ($posts ?? [] as $post): ?>
-    <?= $this->component('post', ['post' => $post]) ?>
+    <?= $this->component('post', ['post' => $post, 'forAdmin' => $isAdmin]) ?>
 <?php endforeach; ?>
 </div>

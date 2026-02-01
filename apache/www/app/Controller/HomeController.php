@@ -48,27 +48,25 @@ class HomeController extends BaseController {
         }
 
         $posts = $this->postService->getPosts($postQuery);
-        if ($currentRole === Role::ADMIN) {
-            return $this->render("admin-home", [
-                "posts" => $posts,
-                "categories" => $this->categoryService->getAllCategories(),
-                "userId" => $userId,
-                "sortOrder" => $postQuery->getSortOrder(),
-                "categoryId" => $postQuery->getCategory()
-            ]);
-        } else {
-            return $this->render("home", [
-                "posts" => $posts,
-                "courses" => $this->courseService->getCoursesByUser($userId),
-                "categories" => $this->categoryService->getAllCategories(),
-                "userId" => $userId,
-                "sortOrder" => $postQuery->getSortOrder(),
-                "categoryId" => $postQuery->getCategory(),
-                "selectedCategoryId" => $selectedCategoryId,
-                "selectedSortOrder" => $selectedSortOrder,
-                "isAdmin" => $isAdmin
-            ]);
+        
+        // Prepare common parameters for the view
+        $viewParams = [
+            "posts" => $posts,
+            "categories" => $this->categoryService->getAllCategories(),
+            "userId" => $userId,
+            "sortOrder" => $postQuery->getSortOrder(),
+            "categoryId" => $postQuery->getCategory(),
+            "selectedCategoryId" => $selectedCategoryId,
+            "selectedSortOrder" => $selectedSortOrder,
+            "isAdmin" => $isAdmin
+        ];
+        
+        // Add courses only for non-admin users
+        if (!$isAdmin) {
+            $viewParams["courses"] = $this->courseService->getCoursesByUser($userId);
         }
+        
+        return $this->render("home", $viewParams);
     }
 }
 
