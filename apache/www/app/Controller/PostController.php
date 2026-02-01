@@ -164,48 +164,27 @@ class PostController extends BaseController {
         }
     }
     
-    #[Post("/api/posts/:postid/like")]
+    #[Post("/api/posts/:postid/reaction")]
     #[AuthMiddleware(Role::USER)]
     #[ValidationMiddleware()]
-    public function likePost(Request $request): Response {
+    public function toggleReaction(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $action = $request->post('action');
 
-        try {
+        if ($action === 'like') {
             $result = $this->postService->toggleLike((int)$postId, $userId);
-            return Response::create()->json([
-                'success' => true,
-                'data' => $result
-            ]);
-        } catch (\Exception $e) {
-            return Response::create()->json([
-                'success' => false,
-                'errors' => [$e->getMessage()]
-            ], 400);
-        }
-    }
-
-    #[Post("/api/posts/:postid/dislike")]
-    #[AuthMiddleware(Role::USER)]
-    #[ValidationMiddleware()]
-    public function dislikePost(Request $request): Response {
-        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $postId = $pathVars['postid'] ?? null;
-        $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-
-        try {
+        } elseif ($action === 'dislike') {
             $result = $this->postService->toggleDislike((int)$postId, $userId);
-            return Response::create()->json([
-                'success' => true,
-                'data' => $result
-            ]);
-        } catch (\Exception $e) {
-            return Response::create()->json([
-                'success' => false,
-                'errors' => [$e->getMessage()]
-            ], 400);
+        } else {
+            ValidationException::build()->addError(ValidationErrorCode::INVALID_REQUEST)->throwIfAny();
         }
+        
+        return Response::create()->json([
+            'success' => true,
+            'data' => $result
+        ]);
     }
 
     #[Get('/api/posts')]
