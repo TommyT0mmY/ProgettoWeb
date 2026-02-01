@@ -1,5 +1,10 @@
 # TODO LIST
 
+- [ ] Una singola home, non home ed admin home
+- [ ] post template fare un component che riceve isAdmin
+- [ ] dashboard fare il js di tutto
+- [ ] Fare cartelle per organizzare meglio le view
+- [ ] L'admin puo aprire i commenti ed eliminarli ma non rispondere
 - [ ] Fare solo un numero di font size n    ella base
 - [ ] Manca il link agli utenti
 - [ ] Nella visualizzazione di un singolo post il tasto indietro dovrebbe fare history back
