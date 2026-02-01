@@ -89,6 +89,21 @@ export class PostManager {
             return;
         }
         
+        // If admin, disable the buttons visually and functionally
+        if (this.#isAdmin) {
+            const likeBtn = likeLi.querySelector('.btn-like');
+            const dislikeBtn = dislikeLi.querySelector('.btn-dislike');
+            
+            if (likeBtn) {
+                likeBtn.disabled = true;
+            }
+            if (dislikeBtn) {
+                dislikeBtn.disabled = true;
+            }
+            
+            return; // Don't attach click handlers for admin
+        }
+        
         // Use Button utility for like functionality on the entire li element
         new Button(likeLi, {
             stopPropagation: true,
