@@ -23,11 +23,11 @@ $this->extend('admin-layout', [
 <?php foreach ($users ?? [] as $user): ?>
     <section class="Post card" >
         <header>
-            <h3><?= htmlspecialchars($user->userId) ?></h3>
+            <h3><?= h($user->userId) ?></h3>
         </header>
-            <p>First Name: <?= htmlspecialchars($user->firstName) ?></p>
-            <p>Last Name: <?= htmlspecialchars($user->lastName) ?></p>
-            <p>Faculty: <?= htmlspecialchars($faculties[$user->userId]->facultyName ) ?></p>
+            <p>First Name: <?= h($user->firstName) ?></p>
+            <p>Last Name: <?= h($user->lastName) ?></p>
+            <p>Faculty: <?= h($faculties[$user->userId]->facultyName ) ?></p>
 
         <footer>
             <ul class="review">
@@ -37,7 +37,7 @@ $this->extend('admin-layout', [
                         </a>
                     </li>
                     <li>
-                        <a href="/users/<?= htmlspecialchars($user->userId) ?>">
+                        <a href="/users/<?= h($user->userId) ?>">
                             View Profile
                         </a>
                     </li>

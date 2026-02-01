@@ -25,7 +25,7 @@ $this->extend('loggedout-layout', [
             <select name="facultyid" id="facultyid" aria-describedby="facultyid-error" required>
                 <?php foreach ($faculties as $faculty): ?>
 
-                <option value="<?=htmlspecialchars($faculty->facultyId);?>" <?=($faculty->facultyId === $userFacultyId) ? 'selected ' : '';?>><?=htmlspecialchars($faculty->facultyName);?></options>
+                <option value="<?=h($faculty->facultyId);?>" <?=($faculty->facultyId === $userFacultyId) ? 'selected ' : '';?>><?=h($faculty->facultyName);?></options>
 
                 <?php endforeach; ?>
             </select>

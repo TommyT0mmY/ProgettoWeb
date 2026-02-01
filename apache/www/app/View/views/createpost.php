@@ -16,10 +16,10 @@ $this->extend('main-layout', [
     ]); 
 ?>
  
-<h2 class="createPost">Create post for: <?= htmlspecialchars($thisCourse->courseName) ?></h2>
+<h2 class="createPost">Create post for: <?= h($thisCourse->courseName) ?></h2>
 
 <form method="post" id="create-post-form" novalidate>
-    <input type="hidden" name="courseId" value="<?= htmlspecialchars($thisCourse->courseId) ?>" />
+    <input type="hidden" name="courseId" value="<?= h($thisCourse->courseId) ?>" />
     <fieldset>
         <legend>Post information</legend>
         <output class="form-error-message" role="alert"></output>
@@ -33,7 +33,7 @@ $this->extend('main-layout', [
             <select id="type" name="categoryId">
                 <option value="">All categories</option>
                 <?php foreach ($categories ?? [] as $category): ?>
-                    <option value="<?= htmlspecialchars($category->categoryId) ?>"><?= htmlspecialchars($category->categoryName) ?></option>
+                    <option value="<?= h($category->categoryId) ?>"><?= h($category->categoryName) ?></option>
                 <?php endforeach; ?>
             </select>
             <output id="type-error" class="field-error-message"></output>
@@ -45,8 +45,8 @@ $this->extend('main-layout', [
         <div>
             <?php foreach ($tags ?? [] as $tag): ?>
                 <p>
-                    <input type="checkbox" name="tags[]" id="tag_<?= htmlspecialchars($tag->tagId) ?>" value="<?= htmlspecialchars($tag->tagId) ?>" />
-                    <label for="tag_<?= htmlspecialchars($tag->tagId) ?>"><?= htmlspecialchars($tag->tag_name) ?></label>
+                    <input type="checkbox" name="tags[]" id="tag_<?= h($tag->tagId) ?>" value="<?= h($tag->tagId) ?>" />
+                    <label for="tag_<?= h($tag->tagId) ?>"><?= h($tag->tag_name) ?></label>
                 </p>
             <?php endforeach; ?>
         </div>

@@ -23,10 +23,10 @@ $this->extend('admin-layout', [
 <?php foreach ($faculties ?? [] as $faculty): ?>
     <section class="Post card" >
         <header>
-            <h3><?= htmlspecialchars($faculty->facultyName) ?></h3>
+            <h3><?= h($faculty->facultyName) ?></h3>
         </header>
-            <p>Faculty ID: <?= htmlspecialchars($faculty->facultyId) ?></p>
-            <p>Number of Courses: <?= htmlspecialchars(count($courses[$faculty->facultyId] ?? [])) ?></p>   
+            <p>Faculty ID: <?= h($faculty->facultyId) ?></p>
+            <p>Number of Courses: <?= h(count($courses[$faculty->facultyId] ?? [])) ?></p>   
         <footer>
             <ul class="review">
                     <li>
@@ -40,7 +40,7 @@ $this->extend('admin-layout', [
                         </a>
                     </li>
                     <li>
-                        <a href="/faculties/<?= htmlspecialchars($faculty->facultyId) ?>/courses">
+                        <a href="/faculties/<?= h($faculty->facultyId) ?>/courses">
                             View Courses
                         </a>
                     </li>

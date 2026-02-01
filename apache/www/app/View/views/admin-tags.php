@@ -13,7 +13,7 @@ $this->extend('admin-layout', [
 ?>
 
 <header>
-    <h2>Admin - Tags Management - Faculty: <?= htmlspecialchars($faculty->facultyName) ?>, Course: <?= htmlspecialchars($course->courseName) ?></h2>
+    <h2>Admin - Tags Management - Faculty: <?= h($faculty->facultyName) ?>, Course: <?= h($course->courseName) ?></h2>
 </header>
 <form action="#" method="GET">
     <input type="search" name="search" placeholder="Search tag" />
@@ -25,15 +25,15 @@ $this->extend('admin-layout', [
 <?php foreach ($tags ?? [] as $tag): ?>
     <section class="Post card" >
         <header>
-            <h3><?= htmlspecialchars($tag->tag_name ?? '') ?></h3>
+            <h3><?= h($tag->tag_name ?? '') ?></h3>
         </header>
-            <p>Tag ID: <?= htmlspecialchars($tag->tagId ?? '') ?></p>
-            <a href="/faculties/<?= htmlspecialchars($faculty->facultyId) ?>/courses/<?= htmlspecialchars($course->courseId) ?>/tags">Course: <?= htmlspecialchars($course->courseName) ?></a>
+            <p>Tag ID: <?= h($tag->tagId ?? '') ?></p>
+            <a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags">Course: <?= h($course->courseName) ?></a>
             <div class="post-metadata">
                 <div class="metadata-section" data-section="community">
                     <span class="metadata-label">Faculty:</span>
                     <ul class="metadata-list community-list">
-                        <li class="tag subject"><a href="/faculties/<?= htmlspecialchars($faculty->facultyId) ?>/courses"><?= htmlspecialchars($faculty->facultyName) ?></a></li>
+                        <li class="tag subject"><a href="/faculties/<?= h($faculty->facultyId) ?>/courses"><?= h($faculty->facultyName) ?></a></li>
                     </ul>
                 </div>
             </div>
@@ -55,4 +55,4 @@ $this->extend('admin-layout', [
     </section>
 <?php endforeach; ?>
 </div>
-<p><a href="/faculties/<?= htmlspecialchars($faculty->facultyId) ?>/courses">Go back to courses</a></p>
+<p><a href="/faculties/<?= h($faculty->facultyId) ?>/courses">Go back to courses</a></p>

@@ -21,18 +21,18 @@ $this->extend('loggedout-layout', [
         <output class="form-error-message" for="firstname lastname facultyid" role="alert"></output>
         
         <div class="field-holder">
-            <input type="text" name="username" id="username" value="<?= htmlspecialchars($user->userId); ?>" disabled>
+            <input type="text" name="username" id="username" value="<?= h($user->userId); ?>" disabled>
             <label for="username">Username</label>
         </div>
         
         <div class="field-holder">
-            <input type="text" name="firstname" id="firstname" aria-describedby="firstname-error" value="<?= htmlspecialchars($user->firstName ?? ''); ?>" required>
+            <input type="text" name="firstname" id="firstname" aria-describedby="firstname-error" value="<?= h($user->firstName ?? ''); ?>" required>
             <label for="firstname">First Name</label>
             <output class="field-error-message" id="firstname-error" for="firstname"></output>
         </div>
         
         <div class="field-holder">
-            <input type="text" name="lastname" id="lastname" aria-describedby="lastname-error" value="<?= htmlspecialchars($user->lastName ?? ''); ?>" required>
+            <input type="text" name="lastname" id="lastname" aria-describedby="lastname-error" value="<?= h($user->lastName ?? ''); ?>" required>
             <label for="lastname">Last Name</label>
             <output class="field-error-message" id="lastname-error" for="lastname"></output>
         </div>
@@ -40,7 +40,7 @@ $this->extend('loggedout-layout', [
         <div class="field-holder">
             <select name="facultyid" id="facultyid" aria-describedby="facultyid-error" required>
                 <?php foreach ($faculties as $faculty): ?>
-                <option value="<?= htmlspecialchars($faculty->facultyId); ?>" <?= ($faculty->facultyId === $user->facultyId) ? 'selected' : ''; ?>><?= htmlspecialchars($faculty->facultyName); ?></option>
+                <option value="<?= h($faculty->facultyId); ?>" <?= ($faculty->facultyId === $user->facultyId) ? 'selected' : ''; ?>><?= h($faculty->facultyName); ?></option>
                 <?php endforeach; ?>
             </select>
             <label for="facultyid">Faculty</label>

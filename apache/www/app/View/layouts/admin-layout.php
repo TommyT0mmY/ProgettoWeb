@@ -116,9 +116,9 @@ declare(strict_types=1);
 
     <?php ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true); ?>
     <script>
-        window.currentUser = '<?= isset($userId) ? htmlspecialchars($userId) : '' ?>';
-        window.csrfToken = '<?= htmlspecialchars($csrfToken) ?>';
-        window.csrfKey = '<?= htmlspecialchars($csrfKey) ?>';
+        window.currentUser = '<?= isset($userId) ? h($userId) : '' ?>';
+        window.csrfToken = '<?= h($csrfToken) ?>';
+        window.csrfKey = '<?= h($csrfKey) ?>';
     </script>
 </body>
 </html>

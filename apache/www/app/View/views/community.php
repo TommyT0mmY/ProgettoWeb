@@ -21,8 +21,8 @@ $this->extend('main-layout', [
 ]);
 ?>
 
-<h2><?= htmlspecialchars($thisCourse->courseName) ?></h2>
-<p><a href="/courses/<?= htmlspecialchars($thisCourse->courseId) ?>/createpost">Create new post</a></p>
+<h2><?= h($thisCourse->courseName) ?></h2>
+<p><a href="/courses/<?= h($thisCourse->courseId) ?>/createpost">Create new post</a></p>
 <?= $this->component("posts-filter", [
     'action' => "/courses/{$thisCourse->courseId}",
     'categories' => $categories,

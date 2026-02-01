@@ -18,7 +18,7 @@
       <ul class="nav-courses">
         <?php foreach($courses as $course): ?>
           <li>
-            <a href="/courses/<?= htmlspecialchars($course->courseId); ?>"><?= htmlspecialchars($course->courseName); ?></a>
+            <a href="/courses/<?= h($course->courseId); ?>"><?= h($course->courseName); ?></a>
           </li>
         <?php endforeach; ?>
           <li>

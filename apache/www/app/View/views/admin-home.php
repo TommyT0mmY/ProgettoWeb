@@ -26,9 +26,9 @@ $this->extend('admin-layout', [
                 <select id="filter-type" name="categoryId">
                     <option value="">All categories</option>
                     <?php foreach ($categories ?? [] as $category): ?>
-                        <option value="<?= htmlspecialchars($category->categoryId) ?>" 
+                        <option value="<?= h($category->categoryId) ?>" 
                             <?= (isset($categoryId) && $categoryId == $category->categoryId) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($category->categoryName) ?>
+                            <?= h($category->categoryName) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
