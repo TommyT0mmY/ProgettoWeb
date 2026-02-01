@@ -43,7 +43,7 @@ class App {
             Ctrl\PostController::class,
             Ctrl\HomeController::class,
             Ctrl\AuthController::class,
-            Ctrl\CommunityController::class,
+            Ctrl\CourseController::class,
             Ctrl\UserProfileController::class,
             Ctrl\DebugController::class,
             Ctrl\CommentController::class,

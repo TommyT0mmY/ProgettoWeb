@@ -12,7 +12,7 @@
  * @var array $selectedTags
  */
 $this->extend('main-layout', [
-    'title' => 'Unibostu - Community',
+    'title' => 'Unibostu - Course',
     'userId' => $userId,
     'courses' => $courses,
     'additionalHeadCode' => [

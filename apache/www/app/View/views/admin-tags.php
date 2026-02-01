@@ -30,9 +30,9 @@ $this->extend('admin-layout', [
             <p>Tag ID: <?= h($tag->tagId ?? '') ?></p>
             <a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags">Course: <?= h($course->courseName) ?></a>
             <div class="post-metadata">
-                <div class="metadata-section" data-section="community">
+                <div class="metadata-section" data-section="course">
                     <span class="metadata-label">Faculty:</span>
-                    <ul class="metadata-list community-list">
+                    <ul class="metadata-list course-list">
                         <li class="tag subject"><a href="/faculties/<?= h($faculty->facultyId) ?>/courses"><?= h($faculty->facultyName) ?></a></li>
                     </ul>
                 </div>

@@ -74,9 +74,9 @@
             </header>
             
             <div class="post-metadata">
-                <div class="metadata-section" data-section="community">
+                <div class="metadata-section" data-section="course">
                     <span class="metadata-label">Corso:</span>
-                    <ul class="metadata-list community-list">
+                    <ul class="metadata-list course-list">
                         <li class="tag subject"><a href="#" data-field="courseName"></a></li>
                     </ul>
                 </div>
