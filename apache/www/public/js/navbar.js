@@ -33,6 +33,28 @@ function closeSidebar() {
 toggleButton.addEventListener('click', toggleSidebar);
 overlayPage.addEventListener('click', closeSidebar);
 
+// Prevent scroll propagation from navbar to body
+navbar.addEventListener('wheel', (event) => {
+  const isScrollable = navbar.scrollHeight > navbar.clientHeight;
+  
+  if (!isScrollable) {
+    // Se la navbar non ha contenuto scrollabile, lascia passare l'evento al body
+    return;
+  }
+  
+  const isAtTop = navbar.scrollTop === 0;
+  const isAtBottom = navbar.scrollTop + navbar.clientHeight >= navbar.scrollHeight;
+  
+  // Previeni lo scroll del body solo se la navbar può ancora scrollare
+  if ((event.deltaY < 0 && isAtTop) || (event.deltaY > 0 && isAtBottom)) {
+    // Se siamo al limite della navbar, lascia passare l'evento al body
+    return;
+  }
+  
+  // Altrimenti, previeni la propagazione
+  event.stopPropagation();
+}, { passive: true });
+
 const logoutLink = document.getElementById('logout-link');
 
 if (logoutLink) {
