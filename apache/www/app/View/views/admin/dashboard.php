@@ -1,12 +1,12 @@
 <?php 
 /**
  * @var \Unibostu\Dto\FacultyDto[] $faculties
- * @var string $userId
+ * @var string $adminId
 */
 
 $this->extend('admin-layout', [
     'title' => 'Unibostu - Dashboard',
-    'userId' => $userId
+    'adminId' => $adminId
 ]);
 ?>
 
@@ -15,13 +15,14 @@ $this->extend('admin-layout', [
 </header>
 
 <div class="post-container cards">
-    <section class="Post card" >
+    <section class="post card" >
         <header>
             <h3>Faculties</h3>
         </header>
-            <p>Manage Faculties, here you can add, edit, or delete faculties.</p>
-            <p>For each faculty, you can view the associated courses.</p>
-            <p>And for each course, you can view the associated tags.</p>
+        <p>Number of Faculties: <?= h(count($faculties ?? [])) ?></p>
+        <p>Manage Faculties, here you can add, edit, or delete faculties.
+            For each faculty, you can view the associated courses.
+            And for each course, you can view the associated tags.</p>
         <footer>
             <ul class="review">
                     <li>
@@ -32,11 +33,12 @@ $this->extend('admin-layout', [
             </ul>            
         </footer>
     </section>
-    <section class="Post card" >
+    <section class="post card" >
         <header>
             <h3>Categories</h3>
         </header>
-            <p>Manage Categories, here you can add, edit, or delete categories.</p>
+        <p>Number of Categories: <?= h(count($categories ?? [])) ?></p>
+        <p>Manage Categories, here you can add, edit, or delete categories.</p>
         <footer>
             <ul class="review">
                     <li>
@@ -47,11 +49,12 @@ $this->extend('admin-layout', [
             </ul>            
         </footer>
     </section>
-    <section class="Post card" >
+    <section class="post card" >
         <header>
             <h3>Users</h3>
         </header>
-            <p>Manage Users, here you can add, edit, or delete users, that mainly are the students that use the platform.</p>
+        <p>Number of Users: <?= h(count($users ?? [])) ?></p>
+        <p>Manage Users, here you can add, edit, or delete users, that mainly are the students that use the platform.</p>
         <footer>
             <ul class="review">
                     <li>

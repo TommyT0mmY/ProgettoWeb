@@ -1,12 +1,12 @@
 <?php 
 /**
  * @var \Unibostu\Dto\FacultyDto[] $faculties
- * @var string $userId
+ * @var string $adminId
 */
 
 $this->extend('admin-layout', [
     'title' => 'Unibostu - Faculties',
-    'userId' => $userId
+    'adminId' => $adminId
 ]);
 ?>
 
@@ -17,16 +17,16 @@ $this->extend('admin-layout', [
     <input type="search" name="search" placeholder="Search faculty" />
     <button type="submit">Search</button>
 </form>
-<button type="button">Add Faculty</button>
+<button type="button"><a href="/faculties/add">Add Faculty</a></button>
 
 <div class="post-container cards">
 <?php foreach ($faculties ?? [] as $faculty): ?>
-    <section class="Post card" >
+    <section class="post card" >
         <header>
             <h3><?= h($faculty->facultyName) ?></h3>
         </header>
-            <p>Faculty ID: <?= h($faculty->facultyId) ?></p>
-            <p>Number of Courses: <?= h(count($courses[$faculty->facultyId] ?? [])) ?></p>   
+        <p>Faculty ID: <?= h($faculty->facultyId) ?></p>
+        <p>Number of Courses: <?= h(count($courses[$faculty->facultyId] ?? [])) ?></p>   
         <footer>
             <ul class="review">
                     <li>
@@ -49,4 +49,3 @@ $this->extend('admin-layout', [
     </section>
 <?php endforeach; ?>
 </div>
-<p><a href="/">Go back to homepage</a></p>

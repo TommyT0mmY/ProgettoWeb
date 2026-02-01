@@ -17,18 +17,17 @@ $this->extend('admin-layout', [
     <input type="search" name="search" placeholder="Search user" />
     <button type="submit">Search</button>
 </form>
-<button type="button">Add User</button>
 
 <div class="post-container cards">
 <?php foreach ($users ?? [] as $user): ?>
-    <section class="Post card" >
+    <section class="post card" >
         <header>
             <h3><?= h($user->userId) ?></h3>
         </header>
-            <p>First Name: <?= h($user->firstName) ?></p>
-            <p>Last Name: <?= h($user->lastName) ?></p>
-            <p>Faculty: <?= h($faculties[$user->userId]->facultyName ) ?></p>
-
+        <p>First Name: <?= h($user->firstName) ?></p>
+        <p>Last Name: <?= h($user->lastName) ?></p>
+        <p>Faculty: <?= h($faculties[$user->userId]->facultyName ) ?></p>
+        <p>Suspended: <?= h($user->suspended) ?></p>
         <footer>
             <ul class="review">
                     <li>
@@ -41,9 +40,13 @@ $this->extend('admin-layout', [
                             View Profile
                         </a>
                     </li>
+                    <li>
+                        <a href="#">
+                            Suspend
+                        </a>
+                    </li>
             </ul>            
-    </footer>
+        </footer>
     </section>
 <?php endforeach; ?>
 </div>
-<p><a href="/">Go back to homepage</a></p>

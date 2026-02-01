@@ -1,12 +1,12 @@
 <?php 
 /**
  * @var \Unibostu\Dto\CategoryDto[] $categories
- * @var string $userId
+ * @var string $adminId
 */
 
 $this->extend('admin-layout', [
     'title' => 'Unibostu - Categories',
-    'userId' => $userId
+    'adminId' => $adminId
 ]);
 ?>
 
@@ -21,11 +21,11 @@ $this->extend('admin-layout', [
 
 <div class="post-container cards">
 <?php foreach ($categories ?? [] as $category): ?>
-    <section class="Post card" >
+    <section class="post card" >
         <header>
             <h3><?= h($category->categoryName) ?></h3>
         </header>
-            <p>Category ID: <?= h($category->categoryId) ?></p>   
+        <p>Category ID: <?= h($category->categoryId) ?></p>   
         <footer>
             <ul class="review">
                     <li>
@@ -39,7 +39,7 @@ $this->extend('admin-layout', [
                         </a>
                     </li>
             </ul>            
-    </footer>
+        </footer>
     </section>
 <?php endforeach; ?>
 </div>
