@@ -122,7 +122,7 @@ body > header > a.title-with-logo:hover {
 }
 
 
-/* Stile dei Metadata (Community, Categorie, Tag) */
+/* Stile dei Metadata (Corsi, Categorie, Tag) */
 .post-metadata {
     display: flex;
     flex-direction: column;

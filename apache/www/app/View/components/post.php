@@ -27,7 +27,7 @@ $commentsLink = $postId ? "/posts/{$postId}" : '#';
     </header>
     
     <div class="post-metadata">
-        <div class="metadata-section" data-section="community">
+        <div class="metadata-section" data-section="course">
             <span class="metadata-label">Course:</span>
             <ul class="metadata-list community-list">
                 <li class="tag subject"><a href="#" data-field="courseName"><?= h($courseName) ?></a></li>

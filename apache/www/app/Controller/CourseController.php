@@ -17,7 +17,7 @@ use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\UserService;
 use Unibostu\Model\Service\TagService;
 
-class CommunityController extends BaseController {
+class CourseController extends BaseController {
     
     private $postService;
     private $courseService;
@@ -36,7 +36,7 @@ class CommunityController extends BaseController {
 
     #[Get("/courses/:courseId")]
     #[AuthMiddleware(Role::USER, Role::ADMIN)]
-    public function getCommunityPosts(Request $request): Response {
+    public function getCoursePosts(Request $request): Response {
         $params = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $courseId = $params['courseId'];
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
@@ -61,7 +61,7 @@ class CommunityController extends BaseController {
             ->withTags($tags)
             ->sortedBy($request->get('sortOrder'));
 
-        return $this->render("community", [
+        return $this->render("course", [
             "posts" => $this->postService->getPosts($postQuery),
             "courses" => $this->courseService->getCoursesByUser($userId),
             "thisCourse" => $this->courseService->getCourseDetails((int)$courseId),
