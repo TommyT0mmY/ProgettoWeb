@@ -27,21 +27,20 @@ export class InfiniteScroll {
         const courseMatch = window.location.pathname.match(/\/courses\/(\d+)/);
         if (courseMatch) {
             filters.courseId = courseMatch[1];
+            // Add tags if present in URL (multiple values)
+            const tags = urlParams.getAll('tags[]');
+            if (tags.length > 0) {
+                // We need to add each tag individually for proper URLSearchParams encoding
+                tags.forEach((tag, index) => {
+                    filters[`tags[${index}]`] = tag;
+                });
+            }
         }
         
         // Extract authorId from URL path (e.g., /users/456)
         const userMatch = window.location.pathname.match(/\/users\/([^\/]+)/);
         if (userMatch) {
             filters.authorId = userMatch[1];
-        }
-        
-        // Add tags if present in URL (multiple values)
-        const tags = urlParams.getAll('tags[]');
-        if (tags.length > 0) {
-            // We need to add each tag individually for proper URLSearchParams encoding
-            tags.forEach((tag, index) => {
-                filters[`tags[${index}]`] = tag;
-            });
         }
         
         return filters;
