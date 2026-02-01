@@ -1,24 +1,34 @@
 <?php
 /**
- * @var \Unibostu\core\RenderingEngine $this
- * @var \Unibostu\Dto\CourseDto[] $courses
- * @var \Unibostu\Dto\FacultyDto $faculty
- * @var \Unibostu\Dto\PostDto[] $posts
- * @var \Unibostu\Dto\CategoryDto[] $categories
- * @var \Unibostu\Dto\UserDto $user
- * @var \Unibostu\Dto\UserDto $viewedUser
- * @var int|null $selectedCategoryId
- * @var string|null $selectedSortOrder
+ * @var \Unibostu\Core\RenderingEngine $this
+ * @var \Unibostu\Model\DTO\CourseDTO[] $courses User's subscribed courses (only for non-admin users)
+ * @var \Unibostu\Model\DTO\FacultyDTO $faculty Faculty details of the viewed user
+ * @var \Unibostu\Model\DTO\PostDTO[] $posts Posts by the viewed user
+ * @var \Unibostu\Model\DTO\CategoryDTO[] $categories All available categories
+ * @var \Unibostu\Model\DTO\UserDTO $user Current logged-in user
+ * @var \Unibostu\Model\DTO\UserDTO $viewedUser The user whose profile is being viewed
+ * @var int|null $selectedCategoryId Selected category ID from filters
+ * @var string|null $selectedSortOrder Selected sort order (asc/desc)
+ * @var bool $isAdmin Whether the current user is an admin
  */
-$this->extend('main-layout', [
+
+// Use different layouts based on user role
+$layout = $isAdmin ? 'admin-layout' : 'main-layout';
+$layoutParams = [
     'title' => 'Unibostu - User Profile',
     'userId' => $user->userId,
-    'courses' => $courses,
     'additionalHeadCode' => [
         '<script type="module" src="/js/posts/multi-post.js"></script>',
     ],
-]);
-$isOwnProfile = $user->userId === $viewedUser->userId;
+];
+
+// Add courses only for non-admin users (main-layout requires it)
+if (!$isAdmin) {
+    $layoutParams['courses'] = $courses;
+}
+
+$this->extend($layout, $layoutParams);
+$isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
 ?>
 
 <article class="user-profile-details">
@@ -35,6 +45,7 @@ $isOwnProfile = $user->userId === $viewedUser->userId;
     <section>
     <h2>University details</h2>         
         <p>Faculty: <strong><?= h($faculty->facultyName ?? ''); ?></strong></p> 
+        <?php if (!$isAdmin): ?>
         <p>Chosen courses:</p>
             <?php if (!empty($courses)): ?>
                 <ul class="tags">
@@ -46,6 +57,7 @@ $isOwnProfile = $user->userId === $viewedUser->userId;
             <?php if ($isOwnProfile): ?>
             <button type="button" onclick="window.location.href='/select-courses'">Change chosen courses</button>
             <?php endif; ?>
+        <?php endif; ?>
     </section>
 </article>
 <article class="user-posts">
@@ -61,7 +73,7 @@ $isOwnProfile = $user->userId === $viewedUser->userId;
     ]) ?>
     <div class="post-container">
     <?php foreach ($posts ?? [] as $post): ?>
-        <?= $this->component('post', ['post' => $post]) ?>
+        <?= $this->component('post', ['post' => $post, 'forAdmin' => $isAdmin, 'currentPageUrl' => "/users/{$viewedUser->userId}"]) ?>
     <?php endforeach; ?>
     </div>
     <?php endif; ?>

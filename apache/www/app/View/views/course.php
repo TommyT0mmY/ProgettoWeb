@@ -1,28 +1,40 @@
 <?php 
 /** 
- * @var \Unibostu\core\RenderingEngine $this
- * @var \Unibostu\Dto\CourseDto[] $courses
- * @var \Unibostu\Dto\CategoryDto[] $categories
- * @var \Unibostu\Dto\TagDto[] $tags
- * @var \Unibostu\Dto\PostDto[] $posts
- * @var \Unibostu\Dto\CourseDto $thisCourse
- * @var string $userId
- * @var string|null $selectedCategoryId
- * @var string $selectedSortOrder
- * @var array $selectedTags
+ * @var \Unibostu\Core\RenderingEngine $this
+ * @var \Unibostu\Model\DTO\CourseDTO[] $courses User's subscribed courses (only for non-admin users)
+ * @var \Unibostu\Model\DTO\CategoryDTO[] $categories All available categories
+ * @var \Unibostu\Model\DTO\TagDTO[] $tags Tags available for this course
+ * @var \Unibostu\Model\DTO\PostDTO[] $posts Posts in this course
+ * @var \Unibostu\Model\DTO\CourseDTO $thisCourse The current course details
+ * @var string $userId Current user ID
+ * @var string|null $selectedCategoryId Selected category ID from filters
+ * @var string $selectedSortOrder Selected sort order (asc/desc)
+ * @var array $selectedTags Selected tag IDs
+ * @var bool $isAdmin Whether the current user is an admin
  */
-$this->extend('main-layout', [
+
+// Use different layouts based on user role
+$layout = $isAdmin ? 'admin-layout' : 'main-layout';
+$layoutParams = [
     'title' => 'Unibostu - Course',
     'userId' => $userId,
-    'courses' => $courses,
     'additionalHeadCode' => [
         '<script type="module" src="/js/posts/multi-post.js"></script>',
     ],
-]);
+];
+
+// Add courses only for non-admin users (main-layout requires it)
+if (!$isAdmin) {
+    $layoutParams['courses'] = $courses;
+}
+
+$this->extend($layout, $layoutParams);
 ?>
 
 <h2><?= h($thisCourse->courseName) ?></h2>
+<?php if (!$isAdmin): ?>
 <p><a href="/courses/<?= h($thisCourse->courseId) ?>/createpost">Create new post</a></p>
+<?php endif; ?>
 <?= $this->component("posts-filter", [
     'action' => "/courses/{$thisCourse->courseId}",
     'categories' => $categories,
@@ -33,6 +45,6 @@ $this->extend('main-layout', [
 ]) ?>
 <div class="post-container">
 <?php foreach ($posts ?? [] as $post): ?>
-    <?= $this->component('post', ['post' => $post]) ?>
+    <?= $this->component('post', ['post' => $post, 'forAdmin' => $isAdmin, 'currentPageUrl' => "/courses/{$thisCourse->courseId}"]) ?>
 <?php endforeach; ?>
 </div>

@@ -61,9 +61,8 @@ class CourseController extends BaseController {
             ->withTags($tags)
             ->sortedBy($request->get('sortOrder'));
 
-        return $this->render("course", [
+        $viewParams = [
             "posts" => $this->postService->getPosts($postQuery),
-            "courses" => $this->courseService->getCoursesByUser($userId),
             "thisCourse" => $this->courseService->getCourseDetails((int)$courseId),
             "categories" => $this->categoryService->getAllCategories(),
             "tags" => $this->tagService->getTagsByCourse((int)$courseId),
@@ -71,8 +70,16 @@ class CourseController extends BaseController {
             "userId" => $userId,
             "selectedCategoryId" => $request->get('categoryId'),
             "selectedSortOrder" => $request->get('sortOrder') ?? 'desc',
-            "selectedTags" => $request->get('tags') ?? []
-        ]);
+            "selectedTags" => $request->get('tags') ?? [],
+            "isAdmin" => $isAdmin
+        ];
+
+        // Add courses only for non-admin users
+        if (!$isAdmin) {
+            $viewParams["courses"] = $this->courseService->getCoursesByUser($userId);
+        }
+
+        return $this->render("course", $viewParams);
     }
 
 }

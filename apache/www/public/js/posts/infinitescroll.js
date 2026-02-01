@@ -111,6 +111,7 @@ export class InfiniteScroll {
         // Set data attributes
         article.dataset.postId = post.postId;
         article.dataset.authorId = post.author.userId;
+        article.dataset.courseId = post.course.courseId;
         
         // Set basic fields
         article.querySelector('[data-field="title"]').textContent = post.title;
@@ -125,15 +126,30 @@ export class InfiniteScroll {
         article.querySelector('[data-field="description"]').innerHTML = post.description.replace(/\n/g, '<br>');
         
         // Set course
-        article.querySelector('[data-field="courseName"]').textContent = post.course.courseName;
+        const courseLink = article.querySelector('[data-field="courseName"]');
+        courseLink.textContent = post.course.courseName;
+        courseLink.href = `/courses/${post.course.courseId}`;
+        courseLink.setAttribute('data-course-id', post.course.courseId);
         
         // Add category if exists
         if (post.category) {
             const categorySection = article.querySelector('[data-section="category"]');
             const categoryContainer = article.querySelector('[data-field="category"]');
             categorySection.style.display = '';
+            
+            // Build category link based on current page
+            const currentPath = window.location.pathname;
+            let categoryUrl;
+            if (currentPath.startsWith('/courses/')) {
+                categoryUrl = `${currentPath}?categoryId=${this.escapeHtml(post.category.categoryId)}`;
+            } else if (currentPath.startsWith('/users/')) {
+                categoryUrl = `${currentPath}?categoryId=${this.escapeHtml(post.category.categoryId)}`;
+            } else {
+                categoryUrl = `/?categoryId=${this.escapeHtml(post.category.categoryId)}`;
+            }
+            
             categoryContainer.insertAdjacentHTML('beforeend', 
-                `<li class="tag type"><a href="#">${this.escapeHtml(post.category.categoryName)}</a></li>`
+                `<li class="tag type"><a href="${categoryUrl}" data-category-id="${this.escapeHtml(post.category.categoryId)}">${this.escapeHtml(post.category.categoryName)}</a></li>`
             );
         }
         
@@ -143,8 +159,9 @@ export class InfiniteScroll {
             const tagsContainer = article.querySelector('[data-field="tags"]');
             tagsSection.style.display = '';
             post.tags.forEach(tag => {
+                const tagId = tag.tag_id || tag.tagId; // Support both formats
                 tagsContainer.insertAdjacentHTML('beforeend',
-                    `<li class="tag topic"><a href="#">${this.escapeHtml(tag.tag_name)}</a></li>`
+                    `<li class="tag topic"><a href="/courses/${post.course.courseId}?tags%5B%5D=${this.escapeHtml(tagId)}" data-tag-id="${this.escapeHtml(tagId)}">${this.escapeHtml(tag.tag_name)}</a></li>`
                 );
             });
         }

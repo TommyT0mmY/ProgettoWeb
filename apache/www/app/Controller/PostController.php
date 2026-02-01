@@ -62,7 +62,7 @@ class PostController extends BaseController {
     }   
 
     #[Get("/posts/:postid")]
-    #[AuthMiddleware(Role::USER)]
+    #[AuthMiddleware(Role::USER, Role::ADMIN)]
     public function getPost(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
@@ -70,12 +70,22 @@ class PostController extends BaseController {
             throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
         }
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
-        return $this->render("postcomments", [
-            "courses" => $this->courseService->getCoursesByUser($userId),
+        $currentRole = $request->getAttribute(RequestAttribute::ROLE);
+        $isAdmin = $currentRole === Role::ADMIN;
+
+        $viewParams = [
             "post" => $this->postService->getPostDetails((int)$postId),
             "comments" => $this->commentService->getCommentsByPostId((int)$postId),
             "userId" => $userId,
-        ]);
+            "isAdmin" => $isAdmin
+        ];
+
+        // Add courses only for non-admin users
+        if (!$isAdmin) {
+            $viewParams["courses"] = $this->courseService->getCoursesByUser($userId);
+        }
+
+        return $this->render("postcomments", $viewParams);
     }
 
     #[Post("/api/posts/create")]

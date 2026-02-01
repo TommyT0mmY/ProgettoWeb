@@ -2,6 +2,7 @@
 /** 
  * @var ?\Unibostu\Model\DTO\PostDTO $post If null, a default post without data is provided
  * @var bool $forAdmin Indicates if the post is being rendered in an admin context
+ * @var string $currentPageUrl The current page URL to use for category/tag links (e.g., '/', '/courses/123', '/users/abc')
 */ 
 
 $postId = $post->postId ?? '';
@@ -19,9 +20,9 @@ $likes = $post->likes ?? 0;
 $dislikes = $post->dislikes ?? 0;
 $likedByUser = $post->likedByUser ?? null;
 $courseLink = $courseId ? "/courses/{$courseId}" : '#';
-$categoryLink = $categoryId ? "/?categoryId={$categoryId}" : '#';
+$categoryLink = $categoryId ? ($currentPageUrl ?? '/') . "?categoryId={$categoryId}" : '#';
 ?>
-<article class="post" data-post-id="<?=h($postId)?>" data-author-id="<?=h($authorId)?>">
+<article class="post" data-post-id="<?=h($postId)?>" data-author-id="<?=h($authorId)?>" data-course-id="<?=h($courseId)?>">
     <header>
         <h3 data-field="title"><?= h($title) ?></h3>
         <p>
@@ -33,24 +34,24 @@ $categoryLink = $categoryId ? "/?categoryId={$categoryId}" : '#';
         <div class="metadata-section" data-section="course">
             <span class="metadata-label">Course:</span>
             <ul class="metadata-list community-list">
-                <li class="tag subject"><a href="<?= h($courseLink) ?>" data-field="courseName"><?= h($courseName) ?></a></li>
+                <li class="tag subject"><a href="<?= h($courseLink) ?>" data-field="courseName" data-course-id="<?= h($courseId) ?>"><?= h($courseName) ?></a></li>
             </ul>
         </div>
         
-        <div class="metadata-section" data-section="category" style="display: none;">
+        <div class="metadata-section" data-section="category" style="display: <?= $categoryName ? '' : 'none' ?>;">
             <span class="metadata-label">Category:</span>
             <ul class="metadata-list category-list" data-field="category">
                 <?php if ($categoryName): ?>
-                <li class="tag type"><a href="<?= h($categoryLink) ?>"><?= h($categoryName) ?></a></li>
+                <li class="tag type"><a href="<?= h($categoryLink) ?>" data-category-id="<?= h($categoryId) ?>"><?= h($categoryName) ?></a></li>
                 <?php endif; ?>
             </ul>
         </div>
         
-        <div class="metadata-section" data-section="tags" style="display: none;">
+        <div class="metadata-section" data-section="tags" style="display: <?= !empty($tags) ? '' : 'none' ?>;">
             <span class="metadata-label">Tag:</span>
             <ul class="metadata-list tags-list" data-field="tags">
                 <?php foreach ($tags as $tag): ?>
-                <li class="tag topic"><a href="<?= $courseId ? '/courses/' . h($courseId) . '?tags[]=' . h($tag['tagId']) : '#' ?>"><?= h($tag['tag_name']) ?></a></li>
+                <li class="tag topic"><a href="<?= $courseId ? '/courses/' . h($courseId) . '?tags[]=' . h($tag['tag_id']) : '#' ?>" data-tag-id="<?= h($tag['tag_id']) ?>"><?= h($tag['tag_name']) ?></a></li>
                 <?php endforeach; ?>
             </ul>
         </div>

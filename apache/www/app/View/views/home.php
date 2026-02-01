@@ -38,6 +38,6 @@ $this->extend($layout, $layoutParams);
 ]) ?>
 <div class="post-container">
 <?php foreach ($posts ?? [] as $post): ?>
-    <?= $this->component('post', ['post' => $post, 'forAdmin' => $isAdmin]) ?>
+    <?= $this->component('post', ['post' => $post, 'forAdmin' => $isAdmin, 'currentPageUrl' => '/']) ?>
 <?php endforeach; ?>
 </div>

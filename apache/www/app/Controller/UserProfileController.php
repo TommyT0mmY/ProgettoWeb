@@ -54,20 +54,27 @@ class UserProfileController extends BaseController {
         $user = $this->userService->getUserProfile($userId);
         $viewedUser = $this->userService->getUserProfile($viewedUserId);
 
-        return $this->render("user-profile", [
+        $viewParams = [
             'user' => $user,
             'viewedUser' => $viewedUser,
             'posts' => $this->postService->getPosts($postQuery),
-            'courses' => $this->courseService->getCoursesByUser($userId),
-            'faculty' => $this->facultyService->getFacultyDetails($user->facultyId),
+            'faculty' => $this->facultyService->getFacultyDetails($viewedUser->facultyId),
             'categories' => $this->categoryService->getAllCategories(),
             'userId' => $userId,
             'sortOrder' => $postQuery->getSortOrder(),
             'categoryId' => $postQuery->getCategory(),
             'tags' => $postQuery->getTags(),
             "selectedCategoryId" => $request->get('categoryId'),
-            "selectedSortOrder" => $request->get('sortOrder') ?? 'desc'
-        ]);
+            "selectedSortOrder" => $request->get('sortOrder') ?? 'desc',
+            'isAdmin' => $isAdmin
+        ];
+
+        // Add courses only for non-admin users
+        if (!$isAdmin) {
+            $viewParams['courses'] = $this->courseService->getCoursesByUser($userId);
+        }
+
+        return $this->render("user-profile", $viewParams);
     }
 
     #[Get('/select-courses')]
