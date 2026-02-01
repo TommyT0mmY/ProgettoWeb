@@ -5,14 +5,14 @@
 - [ ] dashboard fare il js di tutto
 - [ ] Fare cartelle per organizzare meglio le view
 - [ ] L'admin puo aprire i commenti ed eliminarli ma non rispondere
-- [ ] Fare solo un numero di font size n    ella base
+- [ ] Fare solo un numero di font size nella base
 - [ ] Manca il link agli utenti
 - [ ] Nella visualizzazione di un singolo post il tasto indietro dovrebbe fare history back
 - [ ] Se scrolli la navbar scrolla giu
 - [ ] Filter form deve essere un component
 - [ ] Cambiare post-container
 - [ ] Nella navbar separare i corsi per 
-- [ ] CommunityController dovrebbe chiamarsi CourseController e sostituire ogni altro utilizzo del termine Community con Course
+- [x] CommunityController dovrebbe chiamarsi CourseController e sostituire ogni altro utilizzo del termine Community con Course
 - [ ] Fix for attribute in outputs in select-courses
 - [ ] Admin dashboard
 - [ ] User preferences: cambio password, username, ecc...
