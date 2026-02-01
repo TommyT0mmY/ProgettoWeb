@@ -23,9 +23,9 @@ $this->extend('admin-layout', [
 <?php foreach ($categories ?? [] as $category): ?>
     <section class="Post card" >
         <header>
-            <h3><?= htmlspecialchars($category->categoryName) ?></h3>
+            <h3><?= h($category->categoryName) ?></h3>
         </header>
-            <p>Category ID: <?= htmlspecialchars($category->categoryId) ?></p>   
+            <p>Category ID: <?= h($category->categoryId) ?></p>   
         <footer>
             <ul class="review">
                     <li>

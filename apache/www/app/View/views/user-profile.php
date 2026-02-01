@@ -24,22 +24,22 @@ $isOwnProfile = $user->userId === $viewedUser->userId;
 <article class="user-profile-details">
     <section>
     <h2>Personal details</h2>    
-        <div class="profile"><?= htmlspecialchars(substr($viewedUser->firstName ?? '', 0, 1) . '.' . substr($viewedUser->lastName ?? '', 0, 1)); ?></div>
-        <p>Username: <strong><?= htmlspecialchars($viewedUser->userId); ?></strong></p>
-        <p>Name: <strong><?= htmlspecialchars($viewedUser->firstName ?? ''); ?></strong></p>
-        <p>Last name: <strong><?= htmlspecialchars($viewedUser->lastName ?? ''); ?></strong></p>
+        <div class="profile"><?= h(substr($viewedUser->firstName ?? '', 0, 1) . '.' . substr($viewedUser->lastName ?? '', 0, 1)); ?></div>
+        <p>Username: <strong><?= h($viewedUser->userId); ?></strong></p>
+        <p>Name: <strong><?= h($viewedUser->firstName ?? ''); ?></strong></p>
+        <p>Last name: <strong><?= h($viewedUser->lastName ?? ''); ?></strong></p>
         <?php if ($isOwnProfile): ?>
         <button type="button" onclick="window.location.href='/edit-profile'">Change info</button>   
         <?php endif; ?>
     </section>
     <section>
     <h2>University details</h2>         
-        <p>Faculty: <strong><?= htmlspecialchars($faculty->facultyName ?? ''); ?></strong></p> 
+        <p>Faculty: <strong><?= h($faculty->facultyName ?? ''); ?></strong></p> 
         <p>Chosen courses:</p>
             <?php if (!empty($courses)): ?>
                 <ul class="tags">
                     <?php foreach ($courses as $course): ?>
-                    <li class="tag subject"><a href="/courses/<?= htmlspecialchars($course->courseId) ?>"><?= htmlspecialchars($course->courseName) ?></a></li>
+                    <li class="tag subject"><a href="/courses/<?= h($course->courseId) ?>"><?= h($course->courseName) ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
@@ -49,7 +49,7 @@ $isOwnProfile = $user->userId === $viewedUser->userId;
     </section>
 </article>
 <article class="user-posts">
-    <h2><?= $isOwnProfile ? "My Posts" : htmlspecialchars($viewedUser->firstName . "'s Posts") ?></h2>
+    <h2><?= $isOwnProfile ? "My Posts" : h($viewedUser->firstName . "'s Posts") ?></h2>
     <?php if (empty($posts)): ?>
         <p>No posts to show.</p>
     <?php else: ?>

@@ -1,6 +1,15 @@
 <?php 
 declare(strict_types=1);
 
+/////////////
+// HELPERS //
+/////////////
+
+function h(string $string): string {
+    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+}
+
+
 // Basic PSR-4 autoloader
 spl_autoload_register(function($classname) {
     $prefix = 'Unibostu\\';

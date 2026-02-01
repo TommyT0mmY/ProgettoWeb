@@ -17,7 +17,7 @@
                 <select id="filter-type" name="categoryId">
                     <option value="">All categories</option>
                     <?php foreach ($categories ?? [] as $category): ?>
-                        <option value="<?= htmlspecialchars($category->categoryId) ?>" <?= $selectedCategoryId == $category->categoryId ? 'selected' : '' ?>><?= htmlspecialchars($category->categoryName) ?></option>
+                        <option value="<?= h($category->categoryId) ?>" <?= $selectedCategoryId == $category->categoryId ? 'selected' : '' ?>><?= h($category->categoryName) ?></option>
                     <?php endforeach; ?>
                 </select>
                 <label for="filter-type">Category:</label>
@@ -34,8 +34,8 @@
                 <legend class="sub-legend">Filter by tags</legend>
                 <?php foreach ($tags ?? [] as $tag): ?>
                     <p>
-                        <input type="checkbox" name="tags[]" id="tag_<?= htmlspecialchars($tag->tagId) ?>" value="<?= htmlspecialchars($tag->tagId) ?>" <?= in_array($tag->tagId, $selectedTags) ? 'checked' : '' ?> />
-                        <label for="tag_<?= htmlspecialchars($tag->tagId) ?>"><?= htmlspecialchars($tag->tag_name) ?></label>
+                        <input type="checkbox" name="tags[]" id="tag_<?= h($tag->tagId) ?>" value="<?= h($tag->tagId) ?>" <?= in_array($tag->tagId, $selectedTags) ? 'checked' : '' ?> />
+                        <label for="tag_<?= h($tag->tagId) ?>"><?= h($tag->tag_name) ?></label>
                     </p>
                 <?php endforeach; ?>
             </fieldset>

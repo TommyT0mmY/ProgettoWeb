@@ -84,6 +84,6 @@ class App {
             exit();
         }
         http_response_code(intval($code));
-        echo "An error occurred: " . htmlspecialchars($e->getMessage()); 
+        echo "An error occurred: " . h($e->getMessage()); 
     }
 }
