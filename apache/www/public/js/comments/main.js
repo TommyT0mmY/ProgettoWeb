@@ -15,12 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     const currentUser = window.currentUser || null;
+    const isAdmin = window.isAdmin || false;
 
     try {
         const commentManager = new CommentManager(
             postId, 
             commentsSection, 
-            currentUser
+            currentUser,
+            isAdmin
         );
                 window.commentManager = commentManager;
     } catch (error) {

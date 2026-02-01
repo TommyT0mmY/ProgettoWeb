@@ -8,6 +8,8 @@ export class CommentManager {
     #container;
     /** @type {int} */
     #currentUser;
+    /** @type {boolean} */
+    #isAdmin;
     /** @type {Array} */
     #comments;
 
@@ -15,11 +17,13 @@ export class CommentManager {
      * @param {int} postId 
      * @param {HTMLElement} container 
      * @param {int} currentUser
+     * @param {boolean} isAdmin
      */
-    constructor(postId, container, currentUser) {
+    constructor(postId, container, currentUser, isAdmin = false) {
         this.#postId = postId;
         this.#container = container;
-        this.#currentUser = currentUser; 
+        this.#currentUser = currentUser;
+        this.#isAdmin = isAdmin; 
         this.#comments = [];
         
         this.commentTemplate = document.getElementById('comment-template');
@@ -106,7 +110,10 @@ export class CommentManager {
         title.textContent = `Comments`;
         this.#container.appendChild(title);
 
-        this.#container.appendChild(this.createCommentForm());
+        // Only show comment form for non-admin users
+        if (!this.#isAdmin) {
+            this.#container.appendChild(this.createCommentForm());
+        }
 
         if (this.#comments.length === 0) {
             this.showEmptyState();
@@ -150,7 +157,8 @@ export class CommentManager {
         
         const commentActions = commentEl.querySelector('.comment-actions');
         
-        if (isAuthor && !comment.deleted) {
+        // Admin can delete any comment, users can only delete their own
+        if ((this.#isAdmin || isAuthor) && !comment.deleted) {
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
             deleteBtn.className = 'btn-delete';
@@ -191,14 +199,18 @@ export class CommentManager {
             textElement.textContent = comment.text;
         }
         
-        // Add event listener if not deleted
-        if (!comment.deleted) {
+        // Add event listener if not deleted and user is not admin
+        if (!comment.deleted && !this.#isAdmin) {
             const replyBtn = commentEl.querySelector('.btn-reply');
             replyBtn.addEventListener('click', () => this.showReplyForm(comment.commentId));
         } else {
-            // Disable buttons for deleted comments
+            // Disable/hide buttons for deleted comments or admin
             const replyBtn = commentEl.querySelector('.btn-reply');
-            replyBtn.disabled = true;
+            if (this.#isAdmin || comment.deleted) {
+                replyBtn.style.display = 'none';
+            } else {
+                replyBtn.disabled = true;
+            }
         }
         
         if (comment.children && comment.children.length > 0) {

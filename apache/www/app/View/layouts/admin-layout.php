@@ -63,60 +63,13 @@ declare(strict_types=1);
 
     <!-- Post Template -->
     <template id="post-template">
-        <article class="post" data-post-id="" data-author-id="">
-            <header>
-                <h3 data-field="title"></h3>
-                <p>
-                    <em>Posted by <span data-field="author"></span> on <time data-field="createdAt" datetime=""></time></em>
-                </p>
-            </header>
-            
-            <div class="post-metadata">
-                <div class="metadata-section" data-section="course">
-                    <span class="metadata-label">Corso:</span>
-                    <ul class="metadata-list course-list">
-                        <li class="tag subject"><a href="#" data-field="courseName"></a></li>
-                    </ul>
-                </div>
-                
-                <div class="metadata-section" data-section="category" style="display: none;">
-                    <span class="metadata-label">Categoria:</span>
-                    <ul class="metadata-list category-list" data-field="category"></ul>
-                </div>
-                
-                <div class="metadata-section" data-section="tags" style="display: none;">
-                    <span class="metadata-label">Tag:</span>
-                    <ul class="metadata-list tags-list" data-field="tags"></ul>
-                </div>
-            </div>
-            
-            <p data-field="description"></p>
-            
-            <footer>
-                <ul class="review" data-field="reviewList">
-                    <li class="reaction reaction-like">
-                        <button type="button" class="btn-like" aria-label="Like">
-                            <img src="/images/icons/like.svg" alt="" />
-                        </button>
-                        <data value="0" data-field="likes">0</data>
-                    </li>
-                    <li class="reaction reaction-dislike">
-                        <button type="button" class="btn-dislike" aria-label="Dislike">
-                            <img src="/images/icons/dislike.svg" alt="" />
-                        </button>
-                        <data value="0" data-field="dislikes">0</data>
-                    </li>
-                    <li>
-                        <a href="" data-field="commentsLink" aria-label="Go to post comments">Comments</a>
-                    </li>
-                </ul>            
-            </footer>
-        </article>
+        <?=$this->component("post", ["post" => null, "forAdmin" => true])?>
     </template>
 
     <?php ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true); ?>
     <script>
         window.currentUser = '<?= isset($userId) ? h($userId) : '' ?>';
+        window.isAdmin = true;
         window.csrfToken = '<?= h($csrfToken) ?>';
         window.csrfKey = '<?= h($csrfKey) ?>';
     </script>
