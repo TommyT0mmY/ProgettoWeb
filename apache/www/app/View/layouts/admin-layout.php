@@ -9,8 +9,8 @@ declare(strict_types=1);
  * @var string|null $title
  * @var string $content
  * @var array<string> $additionalHeadCode
- * @var string $userId
- * @var array<Unibostu\Model\DTO\CourseDTO> $courses
+ * @var string $adminId
+ * 
  */
 
 /**
@@ -20,8 +20,8 @@ declare(strict_types=1);
  * Views using this layout must provide:
  * - $title: The page title;
  * - $additionalHeadCode: An array of strings containing additional HTML code to be included in the head section;
- * - $userId: The ID of the current user;
- * - $courses: An array of CourseDTO objects representing the user's courses;
+ * - $adminId: The ID of the current admin;
+ * 
  *
  * Note that $content is automatically provided by the rendering engine.
  */
@@ -68,7 +68,7 @@ declare(strict_types=1);
 
     <?php ['csrfKey' => $csrfKey, 'csrfToken' => $csrfToken] = $this->generateCsrfPair(true); ?>
     <script>
-        window.currentUser = '<?= isset($userId) ? h($userId) : '' ?>';
+        window.currentUser = '<?= isset($adminId) ? h($adminId) : '' ?>';
         window.isAdmin = true;
         window.csrfToken = '<?= h($csrfToken) ?>';
         window.csrfKey = '<?= h($csrfKey) ?>';

@@ -1,14 +1,14 @@
 <?php 
 /**
  * @var \Unibostu\Dto\FacultyDto $faculty
- * @var \Unibostu\Dto\CourseDto[] $courses
+ * @var \Unibostu\Dto\CourseDto $course
  * @var \Unibostu\Dto\TagDto[] $tags
- * @var string $userId
+ * @var string $adminId
 */
 
 $this->extend('admin-layout', [
     'title' => 'Unibostu - Tags',
-    'userId' => $userId
+    'adminId' => $adminId
 ]);
 ?>
 
@@ -19,25 +19,30 @@ $this->extend('admin-layout', [
     <input type="search" name="search" placeholder="Search tag" />
     <button type="submit">Search</button>
 </form>
-<button type="button">Add Tag</button>
+<button type="button"><a href="#">Add Tag</a></button>
 
 <div class="post-container cards">
 <?php foreach ($tags ?? [] as $tag): ?>
-    <section class="Post card" >
+    <section class="post card" >
         <header>
             <h3><?= h($tag->tag_name ?? '') ?></h3>
         </header>
-            <p>Tag ID: <?= h($tag->tagId ?? '') ?></p>
-            <a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags">Course: <?= h($course->courseName) ?></a>
-            <div class="post-metadata">
-                <div class="metadata-section" data-section="course">
-                    <span class="metadata-label">Faculty:</span>
-                    <ul class="metadata-list course-list">
-                        <li class="tag subject"><a href="/faculties/<?= h($faculty->facultyId) ?>/courses"><?= h($faculty->facultyName) ?></a></li>
-                    </ul>
-                </div>
+        <p>Tag ID: <?= h($tag->tagId ?? '') ?></p>
+        <div class="post-metadata">
+            <div class="metadata-section" data-section="course">
+                <span class="metadata-label">Course:</span>
+                <ul class="metadata-list course-list">
+                    <li class="tag subject"><a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags"><?= h($course->courseName) ?></a></li>
+                </ul>
             </div>
-             <footer>
+            <div class="metadata-section" data-section="course">
+                <span class="metadata-label">Faculty:</span>
+                <ul class="metadata-list course-list">
+                    <li class="tag subject"><a href="/faculties/<?= h($faculty->facultyId) ?>/courses"><?= h($faculty->facultyName) ?></a></li>
+                </ul>
+            </div>
+        </div>
+        <footer>
             <ul class="review">
                     <li>
                         <a href="#" >
@@ -51,8 +56,7 @@ $this->extend('admin-layout', [
                     </li>
                     
             </ul>            
-    </footer>
+        </footer>
     </section>
 <?php endforeach; ?>
 </div>
-<p><a href="/faculties/<?= h($faculty->facultyId) ?>/courses">Go back to courses</a></p>
