@@ -24,12 +24,16 @@ class DashboardController extends BaseController {
     private UserService $userService;
     private CategoryService $categoryService;
     private FacultyService $facultyService;
+    private CourseService $courseService;
+    private TagService $tagService;
 
     public function __construct(Container $container) {
         parent::__construct($container);       
         $this->userService = new UserService();
         $this->categoryService = new CategoryService();
         $this->facultyService = new FacultyService();
+        $this->courseService = new CourseService();
+        $this->tagService = new TagService();
     }
 
     
