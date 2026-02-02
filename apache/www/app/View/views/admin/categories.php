@@ -6,7 +6,8 @@
 
 $this->extend('admin-layout', [
     'title' => 'Unibostu - Categories',
-    'adminId' => $adminId
+    'adminId' => $adminId,
+    'additionalHeadCode' => ['<script src="/js/admin/admin-actions.js" defer></script>']
 ]);
 ?>
 
@@ -17,7 +18,7 @@ $this->extend('admin-layout', [
     <input type="search" name="search" placeholder="Search category" />
     <button type="submit">Search</button>
 </form>
-<button type="button">Add Category</button>
+<button type="button" data-action="add" data-entity="category" data-url="/categories/add">Add Category</button>
 
 <div class="post-container cards">
 <?php foreach ($categories ?? [] as $category): ?>
@@ -29,14 +30,22 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="/categories/<?= h($category->categoryId) ?>/edit" >
+                        <button type="button" 
+                                data-action="edit" 
+                                data-entity="category" 
+                                data-id="<?= h($category->categoryId) ?>"
+                                data-url="/categories/<?= h($category->categoryId) ?>/edit">
                             Edit
-                        </a>
+                        </button>
                     </li>
                     <li>
-                        <a href="#" >
+                        <button type="button" 
+                                data-action="delete" 
+                                data-entity="category" 
+                                data-id="<?= h($category->categoryId) ?>"
+                                data-url="/api/delete-category/<?= h($category->categoryId) ?>">
                             Delete
-                        </a>
+                        </button>
                     </li>
             </ul>            
         </footer>

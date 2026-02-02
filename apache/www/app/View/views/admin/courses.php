@@ -8,7 +8,8 @@
 
 $this->extend('admin-layout', [
     'title' => 'Unibostu - Courses',
-    'adminId' => $adminId
+    'adminId' => $adminId,
+    'additionalHeadCode' => ['<script src="/js/admin/admin-actions.js" defer></script>']
 ]);
 ?>
 
@@ -21,7 +22,12 @@ $this->extend('admin-layout', [
     <button type="submit">Search</button>
 </form>
 <p><a href="/faculties">Go back to faculties</a></p>
-<button type="button">Add Course</button>
+<button type="button" 
+        data-action="add" 
+        data-entity="course" 
+        data-url="/faculties/<?= h($faculty->facultyId) ?>/courses/add">
+    Add Course
+</button>
 
 <div class="post-container cards">
 <?php foreach ($courses ?? [] as $course): ?>
@@ -34,19 +40,31 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/edit" >
+                        <button type="button" 
+                                data-action="edit" 
+                                data-entity="course" 
+                                data-id="<?= h($course->courseId) ?>"
+                                data-url="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/edit">
                             Edit
-                        </a>
+                        </button>
                     </li>
                     <li>
-                        <a href="#" >
+                        <button type="button" 
+                                data-action="delete" 
+                                data-entity="course" 
+                                data-id="<?= h($course->courseId) ?>"
+                                data-url="/api/delete-course/<?= h($faculty->facultyId) ?>/<?= h($course->courseId) ?>">
                             Delete
-                        </a>
+                        </button>
                     </li>
                     <li>
-                        <a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags">
+                        <button type="button" 
+                                data-action="view" 
+                                data-entity="tag" 
+                                data-id="<?= h($course->courseId) ?>"
+                                data-url="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags">
                             View Tags
-                        </a>
+                        </button>
                     </li>
             </ul>            
         </footer>

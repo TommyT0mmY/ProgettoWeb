@@ -242,5 +242,26 @@ class CourseController extends BaseController {
             "success" => true
         ]);
     }
+
+    #[Post('/api/delete-course/:facultyId/:courseId')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function deleteCourse(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $courseId = (int)$pathVars['courseId'];
+        
+        try {
+            $this->courseService->deleteCourse($courseId);
+            
+            return Response::create()->json([
+                "success" => true,
+                "message" => "Course deleted successfully"
+            ]);
+        } catch (\Exception $e) {
+            return Response::create()->json([
+                "success" => false,
+                "message" => $e->getMessage()
+            ], 500);
+        }
+    }
 }
 

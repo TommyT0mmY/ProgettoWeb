@@ -163,4 +163,25 @@ class FacultyController extends BaseController {
             "success" => true
         ]);
     }
+
+    #[Post('/api/delete-faculty/:facultyId')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function deleteFaculty(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $facultyId = (int)$pathVars['facultyId'];
+        
+        try {
+            $this->facultyService->deleteFaculty($facultyId);
+            
+            return Response::create()->json([
+                "success" => true,
+                "message" => "Faculty deleted successfully"
+            ]);
+        } catch (\Exception $e) {
+            return Response::create()->json([
+                "success" => false,
+                "message" => $e->getMessage()
+            ], 500);
+        }
+    }
 }

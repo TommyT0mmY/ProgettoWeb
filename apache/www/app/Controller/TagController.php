@@ -191,4 +191,26 @@ class TagController extends BaseController {
             "success" => true
         ]);
     }
+
+    #[Post('/api/delete-tag/:facultyId/:courseId/:tagId')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function deleteTag(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $tagId = (int)$pathVars['tagId'];
+        $courseId = (int)$pathVars['courseId'];
+        
+        try {
+            $this->tagService->deleteTag($tagId, $courseId);
+            
+            return Response::create()->json([
+                "success" => true,
+                "message" => "Tag deleted successfully"
+            ]);
+        } catch (\Exception $e) {
+            return Response::create()->json([
+                "success" => false,
+                "message" => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -125,4 +125,25 @@ class CategoryController extends BaseController {
             "success" => true
         ]);
     }
+
+    #[Post('/api/delete-category/:categoryId')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function deleteCategory(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $categoryId = (int)$pathVars['categoryId'];
+        
+        try {
+            $this->categoryService->deleteCategory($categoryId);
+            
+            return Response::create()->json([
+                "success" => true,
+                "message" => "Category deleted successfully"
+            ]);
+        } catch (\Exception $e) {
+            return Response::create()->json([
+                "success" => false,
+                "message" => $e->getMessage()
+            ], 500);
+        }
+    }
 }
