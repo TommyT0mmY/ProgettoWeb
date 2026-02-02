@@ -31,17 +31,17 @@
     display: flex;
     align-items: center;
     width: 100%;
-    height: 2.5rem;
+    height: var(--input-height);
     padding: 0 var(--space-md);
     background-color: var(--color-bg-light);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     cursor: pointer;
     user-select: none;
     transition: 
-        background-color 0.2s ease-in-out,
-        box-shadow 0.2s ease-in-out,
-        color 0.2s ease-in-out;
+        background-color var(--transition-fast) ease-in-out,
+        box-shadow var(--transition-fast) ease-in-out,
+        color var(--transition-fast) ease-in-out;
     transform: none;
     pointer-events: auto;
 }
@@ -54,7 +54,7 @@
 /* Focus state */
 .course-item input[type="checkbox"]:focus-visible + label {
     box-shadow: var(--shadow-md);
-    border: 1px solid var(--color-gray-300);
+    border: var(--border-width-hairline) solid var(--color-gray-300);
 }
 
 /* Selected/Checked state - blue background */

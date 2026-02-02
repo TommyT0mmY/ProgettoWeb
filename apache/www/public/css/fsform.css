@@ -12,7 +12,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 25px;  
+    border-radius: var(--radius-xl);  
     background-color: var(--color-bg);
     box-shadow: var(--shadow-lg);
 }
@@ -27,8 +27,8 @@ main {
 }
 
 .fullscreen-form legend {
-    font-size: 2rem;
-    font-weight: 600;
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-semibold);
     text-align: center;
     width: 100%;
     padding-top: var(--space-xxl);
@@ -46,14 +46,13 @@ main {
 .field-holder label {
     box-sizing: border-box;
     width: 100%;
-    height: 2.5rem;
+    height: var(--input-height);
     border: 0;
     outline: none;
     padding: 0;
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
+    padding-inline: var(--space-md);
     background-color: var(--color-bg-light);
-    border-radius: 10px; 
+    border-radius: var(--radius-md); 
     box-shadow: var(--shadow-sm);
 }
 
@@ -61,7 +60,7 @@ main {
 .field-holder input:focus-visible,
 .field-holder select:focus-visible {
     box-shadow: var(--shadow-md);
-    border: 1px solid var(--color-gray-300);
+    border: var(--border-width-hairline) solid var(--color-gray-300);
     border-top: 0;
 }
 
@@ -77,9 +76,9 @@ main {
     box-shadow: none;
     background-color: transparent;
     transition: 
-        transform 0.2s cubic-bezier(0.65, 0, 0.35, 1),
-        font-size 0.2s ease-in-out,
-        color 0.2s ease-in-out;
+        transform var(--transition-fast) var(--easing-smooth),
+        font-size var(--transition-fast) ease-in-out,
+        color var(--transition-fast) ease-in-out;
 }
 
 /* Move label up when input is focused or has value */
@@ -88,7 +87,7 @@ main {
 .field-holder:not(.course-item) input.has-value + label,
 .field-holder:not(.course-item) select + label {
     transform: translateY(-50%);
-    font-size: 1em;
+    font-size: var(--fs-base);
 }
 
 .field-error-message {
@@ -120,19 +119,19 @@ main {
 
 .fullscreen-form button {
     width: 100%;
-    height: 2.5rem;
+    height: var(--input-height);
     border: 0;
     outline: none;
     background-color: var(--color-blue-400);
     color: var(--color-white);
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 10px; 
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    border-radius: var(--radius-md); 
     box-shadow: var(--shadow-sm);
     cursor: pointer;
     transition: 
-        background-color 0.2s ease-in-out,
-        box-shadow 0.2s ease-in-out;
+        background-color var(--transition-fast) ease-in-out,
+        box-shadow var(--transition-fast) ease-in-out;
 }
 
 /* Button hover and focus styles */
@@ -156,7 +155,7 @@ main {
     text-align: center;
     margin: 0;
     margin-top: var(--space-lg);
-    font-size: 0.9em;
+    font-size: var(--fs-sm);
     color: var(--color-text-muted);
 }
 
@@ -164,20 +163,19 @@ main {
     margin-top: var(--space-sm);
 }
 
-p a {
+.fullscreen-form p a {
     color: var(--color-blue-400);
-    font-weight: 600;
-    transition: color 0.2s ease-in-out;
-    text-decoration-line: underline;
-    text-decoration-thickness: 2px;
+    font-weight: var(--fw-semibold);
+    transition: color var(--transition-fast) ease-in-out;
+    text-decoration: underline currentColor 2px;
     text-underline-offset: 0.2em;
-    text-decoration-color: currentColor; 
 }
-a#adminlogin-redirect {
+
+.fullscreen-form a#adminlogin-redirect {
     color: var(--color-gray-300);
 }
 
-
+/* Breakpoint: mobile (--breakpoint-mobile: 768px) */
 @media (max-width: 768px) {
     main {
         align-items: stretch;

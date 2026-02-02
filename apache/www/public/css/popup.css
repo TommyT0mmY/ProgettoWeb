@@ -7,33 +7,33 @@
     position: fixed;
     width: fit-content;
     left: 50%;
-    z-index: 100;
-    border-radius: 20px;
-    box-shadow: 0px 0.3vw 1.5vw rgba(0, 0, 0, 0.5);
+    z-index: var(--z-popup);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-elevated);
     opacity: 0;
     bottom: 100vh;
     transform: translateX(-50%);
-    transition: transform 0.4s cubic-bezier(0.39, 0.575, 0.565, 1),
-        opacity 0.3s cubic-bezier(0.39, 0.575, 0.565, 1);
+    transition: transform var(--transition-slow) var(--easing-standard),
+        opacity var(--transition-base) var(--easing-standard);
 }
 
 .popup.open {
     transform: translateX(-50%) translateY(calc(100% + 2vh));
     opacity: 1;
-    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1),
-        opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1),
-        box-shadow 0.2s ease-in-out;
+    transition: transform var(--transition-slow) var(--easing-spring),
+        opacity var(--transition-slow) var(--easing-spring),
+        box-shadow var(--transition-fast) ease-in-out;
 }
 
 .popup.open:hover {
-    box-shadow: 0px 0.3vw 1.5vw rgba(0, 0, 0, 0.7);
+    box-shadow: var(--shadow-elevated-hover);
 }
 
 .popup__content {
     display: flex;
     width: min(90vw, 40rem); 
     max-width: 40vw;
-    gap: 2rem;
+    gap: var(--space-xxl);
     border-radius: inherit;
     background: var(--popup-bg-color);
 
@@ -41,16 +41,16 @@
     align-items: center;
     justify-content: center;
     
-    padding: 0.5rem 1rem; 
-    font-size: 1.2rem;  
-    font-weight: 500;
+    padding: var(--space-xs) var(--space-md); 
+    font-size: var(--fs-md);  
+    font-weight: var(--fw-medium);
 }
 
 .popup__icon {
    -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat; user-select: none;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
     background: var(--popup-text-color);
     flex-shrink: 0; 
 }
@@ -67,7 +67,7 @@
     -webkit-mask-image: url("../images/icons/close_icon.svg");
     mask-image: url("../images/icons/close_icon.svg");
     cursor: pointer;
-    transition: transform 0.2s ease-in-out;
+    transition: transform var(--transition-fast) ease-in-out;
 }
 
 .popup__close:hover {
@@ -91,8 +91,8 @@
     .popup__content {
         max-width: 80vw;
         justify-content: space-around;
-        font-size: 0.95rem;
-        font-weight: 600;
+        font-size: var(--fs-sm);
+        font-weight: var(--fw-semibold);
     }
 }
 

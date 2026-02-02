@@ -15,10 +15,6 @@ body{
     background-color: var(--color-bg-dark); 
 }
 
-img {
-  width: 40px;
-}
-
 /*HEADER*/
 body > header {
     display: flex;
@@ -31,15 +27,15 @@ body > header {
     right: 0;
     left: 0;
     padding: var(--space-xs) var(--space-md);
-    border-bottom: 1px solid var(--color-gray-300);
-    z-index: 4;
+    border-bottom: var(--border-width-hairline) solid var(--color-gray-300);
+    z-index: var(--z-header);
     color: var(--color-blue-700);
     box-sizing: border-box;
 }
 
-body > header > button{
-    height: 38px;
-    width: 38px;
+body > header > button {
+    height: var(--icon-size-lg);
+    width: var(--icon-size-lg);
     background-color: transparent;
     border: none;
     display: flex;
@@ -54,9 +50,16 @@ body > header > a {
     align-items: center;
 }
 
-body > header > .profile-container{
-    width: 32px;
-    height: 32px;
+body > header img.profile-container {
+    width: var(--icon-size-lg);
+    height: var(--icon-size-lg);
+    object-fit: cover;
+}
+
+body > header img.menu-container {
+    width: var(--icon-size-lg);
+    height: var(--icon-size-lg);
+    object-fit: contain;
 }
 
 body > header > .title-with-logo,
@@ -71,13 +74,13 @@ body > header > a.title-with-logo {
 }
 
 body > header > a.title-with-logo img {
-    width: 38px;
-    height: 38px;
+    width: var(--icon-size-lg);
+    height: var(--icon-size-lg);
 }
 
 body > header > a.title-with-logo h1 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: var(--fs-md);
 }
 
 body > header > a.title-with-logo:hover {
@@ -97,30 +100,23 @@ body > header > a.title-with-logo:hover {
 }
 /* La Card del Post */
 .post {
+    box-sizing: border-box;
     width: 100%;
     background: var(--color-bg-light);
-    border-radius: 16px;
-    padding: 8px;
+    border-radius: var(--radius-xl);
+    padding: var(--space-xs);
     box-shadow: var(--shadow-md);
     display: flex;
     flex-direction: column;
-    gap: 3px;
-}
-
-
-.post footer {
-    margin-top: 33px;
-    padding-top: 8px;
-    border-top: 1px solid var(--color-blue-700);
+    gap: var(--space-2xs);
 }
 
 /* Header e Titolo */
 .post header h3 {
     color: var(--color-blue-700); 
-    margin: 0 0 4px 0;
-    font-size: 1.1rem;
+    margin: 0 0 var(--space-xxs) 0;
+    font-size: var(--fs-md);
 }
-
 
 /* Stile dei Metadata (Corsi, Categorie, Tag) */
 .post-metadata {
@@ -129,20 +125,20 @@ body > header > a.title-with-logo:hover {
     gap: var(--space-xs);
     margin: var(--space-xs) 0;
     padding: var(--space-xs);
-    background-color: #f8f9fa;
-    border-radius: 8px;
+    background-color: var(--color-bg-metadata);
+    border-radius: var(--radius-md);
 }
 
 .metadata-section {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
+    gap: var(--space-xs);
     flex-wrap: wrap;
 }
 
 .metadata-label {
     font-weight: var(--fw-bold);
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     color: var(--color-blue-700);
     min-width: 85px;
     flex-shrink: 0;
@@ -152,23 +148,24 @@ body > header > a.title-with-logo:hover {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: var(--space-xxs);
     padding: 0;
     margin: 0;
     flex: 1;
 }
 
 .metadata-list li a {
-    padding: 3px 8px;
+    padding: var(--space-2xs) var(--space-xs);
     text-decoration: none;
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
     font-weight: var(--fw-semibold);
-    border-radius: 8px;
-    transition: 0.3s;
+    border-radius: var(--radius-md);
+    transition: var(--transition-base);
     display: inline-block;
 }
 
 /* Media query per desktop - layout orizzontale */
+/* Breakpoint: mobile (--breakpoint-mobile: 768px) */
 @media screen and (min-width: 768px) {
     .metadata-section {
         align-items: center;
@@ -184,45 +181,44 @@ ul.tags {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 3px;   
+    gap: var(--space-2xs);   
 }
 
 .tags li a {
-    padding: 2px 6px;
+    padding: var(--space-2xs) var(--space-xs);
     text-decoration: none;
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
     font-weight: var(--fw-semibold);
-    border-radius: 8px;
-    transition: 0.3s;
+    border-radius: var(--radius-md);
+    transition: var(--transition-base);
 }
 
 /* Colori differenziati per tipo di tag */
 .tag.subject a { 
-  background: #d1e3f8; 
+  background: var(--color-tag-subject-bg); 
   color: var(--color-blue-700); 
-  border: 1px solid var(--color-blue-700);
+  border: var(--border-width-hairline) solid var(--color-blue-700);
  }
 .tag.type a { 
-  background: #fdf2d2; 
-  color: #9a6e12; 
-  border: 1px solid #9a6e12; 
+  background: var(--color-tag-type-bg); 
+  color: var(--color-tag-type-text); 
+  border: var(--border-width-hairline) solid var(--color-tag-type-text); 
 }
 .tag.topic a { 
-  background: #e0f2f1; 
-  color: #00695c; 
-  border: 1px solid #00695c; 
+  background: var(--color-tag-topic-bg); 
+  color: var(--color-tag-topic-text); 
+  border: var(--border-width-hairline) solid var(--color-tag-topic-text); 
 }
 
 .tags li a:hover {
     filter: brightness(0.9);
 }
 
-
 /* Footer e Review (Bordi sui li) */
 .post footer {
-    margin-top: 0px;
-    padding-top: 5px;
-    border-top: 1px solid #d1dee7;
+    margin-top: 0;
+    padding-top: var(--space-xs);
+    border-top: var(--border-width-hairline) solid var(--color-border-muted);
 }
 
 .review {
@@ -234,13 +230,13 @@ ul.tags {
 }
 
 .review li {
-    border: 1px solid var(--color-blue-700);
+    border: var(--border-width-hairline) solid var(--color-blue-700);
     border-radius: var(--space-xs);
-    padding: var(--space-xs) var(--space-xs);
+    padding: var(--space-xs);
     background: var(--color-bg-light);
     display: flex;
     align-items: center;
-    transition: 0.2s;
+    transition: var(--transition-fast);
 }
 
 .review li:hover {
@@ -250,7 +246,7 @@ ul.tags {
 .review li a, .review li data, .review li button {
     color: var(--color-blue-700);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
     font-weight: var(--fw-semibold);
 }
 
@@ -275,13 +271,8 @@ ul.tags {
     pointer-events: auto;
 }
 
-/* Remove old pointer-events: none */
-.review li.reaction button {
-    /* Button is now fully clickable */
-}
-
 .review img {
-    width: 16px;
+    width: var(--icon-size-sm);
     /* Filtro per rendere l'icona blu come il titolo */
     filter: invert(24%) sepia(87%) saturate(2253%) hue-rotate(195deg) brightness(91%) contrast(101%);
 }
@@ -310,9 +301,8 @@ ul.tags {
 main {
     flex: 1;
     min-width: 0;
-    transition: margin-left 300ms cubic-bezier(.77,0,.18,1);
+    transition: margin-left var(--transition-base) var(--easing-expo);
 }
-
 
 nav {
     background-color: var(--color-bg);
@@ -322,12 +312,12 @@ nav {
     bottom: 0;
     width: var(--sidebar-width);
     max-width: 100%;
-    z-index: 3;
+    z-index: var(--z-nav);
     overflow-y: auto;
     overflow-x: hidden;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-    border-right: 1px solid var(--color-gray-200);
-    transition: left 300ms cubic-bezier(.77,0,.18,1);
+    box-shadow: var(--shadow-sidebar);
+    border-right: var(--border-width-hairline) solid var(--color-gray-200);
+    transition: left var(--transition-base) var(--easing-expo);
     overscroll-behavior: contain;
 }
 
@@ -335,13 +325,13 @@ nav {
     left: 0;
 }
 
-/* 2. MEDIA QUERY (DESKTOP) - navbar */
+/* Breakpoint: mobile (--breakpoint-mobile: 768px) */
 @media screen and (min-width: 768px) {
     nav {
         width: var(--sidebar-width);
         height: calc(100vh - var(--header-height));
         box-shadow: var(--shadow-md);
-        border-right: 1px solid var(--color-gray-200);
+        border-right: var(--border-width-hairline) solid var(--color-gray-200);
     }
 
     .nav-is-open main {
@@ -382,9 +372,9 @@ nav a {
     padding: var(--space-xs);
     border-radius: var(--space-xs);
     font-weight: var(--fw-semibold);
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
-    border: 1px solid var(--color-blue-700);
+    font-size: var(--fs-sm);
+    transition: all var(--transition-fast) ease;
+    border: var(--border-width-hairline) solid var(--color-blue-700);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -403,7 +393,7 @@ nav section {
 
 nav h2 {
     color: var(--color-blue-700);
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
     font-weight: var(--fw-bold);
     margin-bottom: var(--space-sm);
     padding-left: var(--space-xs);
@@ -415,7 +405,7 @@ nav h2 {
     background: transparent;
     border: none;
     padding: 0;
-    transition: opacity 0.2s;
+    transition: opacity var(--transition-fast);
 }
 
 #open-sidebar-button:hover {
@@ -423,13 +413,13 @@ nav h2 {
 }
 
 #overlay {
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--color-overlay);
     backdrop-filter: blur(2px);
     position: fixed;
     display: none;
     inset: 0;
-    z-index: 2;
-    transition: opacity 200ms;
+    z-index: var(--z-overlay);
+    transition: opacity var(--transition-fast);
 }
 
 /* FILTER FORMS */
@@ -447,12 +437,12 @@ nav h2 {
 }
 
 #filter-form legend {
-    font-size: 1.2rem;
+    font-size: var(--fs-md);
     font-weight: var(--fw-bold);
 }
 
 #filter-form legend.sub-legend {
-    font-size: 1rem;
+    font-size: var(--fs-base);
     color: var(--color-gray-600);
 }
 
@@ -467,21 +457,20 @@ nav h2 {
 #filter-form .field-holder label {
     box-sizing: border-box;
     width: 100%;
-    height: 2.5rem;
+    height: var(--input-height);
     border: 0;
     outline: none;
     padding: 0;
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
+    padding-inline: var(--space-md);
     background-color: var(--color-bg-light);
-    border-radius: 10px; 
+    border-radius: var(--radius-md); 
     box-shadow: var(--shadow-sm);
 }
 
 /* Input and select focus styles */
 #filter-form .field-holder select:focus-visible {
     box-shadow: var(--shadow-md);
-    border: 1px solid var(--color-gray-300);
+    border: var(--border-width-hairline) solid var(--color-gray-300);
     border-top: 0;
 }
 
@@ -497,28 +486,28 @@ nav h2 {
     box-shadow: none;
     background-color: transparent;
     transition: 
-        transform 0.2s cubic-bezier(0.65, 0, 0.35, 1),
-        font-size 0.2s ease-in-out,
-        color 0.2s ease-in-out;
+        transform var(--transition-fast) var(--easing-smooth),
+        font-size var(--transition-fast) ease-in-out,
+        color var(--transition-fast) ease-in-out;
 }
 
 /* Move label up when input is focused or has value */
 #filter-form .field-holder select + label {
     transform: translateY(-50%);
-    font-size: 1em;
+    font-size: var(--fs-base);
 }
 
 #filter-form button {
     background-color: var(--color-bg-light);
     color: var(--color-blue-700);
-    border: 1px solid var(--color-blue-700);
+    border: var(--border-width-hairline) solid var(--color-blue-700);
     padding: var(--space-xs) var(--space-md);
     border-radius: var(--space-xs);
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
     font-weight: var(--fw-semibold);
     cursor: pointer;
     box-shadow: var(--shadow-sm);
-    transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
     margin-top: var(--space-lg);
 }
 
@@ -529,9 +518,7 @@ nav h2 {
 }
 
 #filter-form button:focus-visible {
-    outline: 2px solid var(--color-blue-400);
-    outline-offset: 2px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-md), var(--focus-ring);
 }
 
 /* User Profile - Ban/Unban */
@@ -546,11 +533,11 @@ nav h2 {
     padding: var(--space-xs) var(--space-md);
     border: none;
     border-radius: var(--space-xs);
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
     font-weight: var(--fw-semibold);
     cursor: pointer;
     box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.2s, opacity 0.2s;
+    transition: box-shadow var(--transition-fast), opacity var(--transition-fast);
     color: var(--color-white);
     margin-top: var(--space-sm);
 }
@@ -565,7 +552,7 @@ nav h2 {
 }
 
 .btn-unban-user {
-    background-color: #28a745;
+    background-color: var(--color-success);
 }
 
 .btn-unban-user:hover {
@@ -575,9 +562,7 @@ nav h2 {
 
 .btn-ban-user:focus-visible,
 .btn-unban-user:focus-visible {
-    outline: 2px solid var(--color-blue-400);
-    outline-offset: 2px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-md), var(--focus-ring);
 }
 
 
