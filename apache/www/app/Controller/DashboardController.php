@@ -12,6 +12,7 @@ use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\router\middleware\AuthMiddleware;
 use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\router\routes\Get;
+use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\UserService;
 use Unibostu\Model\Service\CategoryService;
@@ -80,6 +81,36 @@ class DashboardController extends BaseController {
         ]);
     }
 
+    #[Get('/categories/:categoryId/edit')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function editCategory(Request $request): Response {
+        $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $categoryId = (int)$pathVars['categoryId'];
+        
+        return $this->render("admin/edit-category", [
+            'category' => $this->categoryService->getCategory($categoryId),
+            "adminId" => $adminId
+        ]);
+    }
+
+    #[Post('/api/edit-category')]
+    #[AuthMiddleware(Role::ADMIN)]
+    #[ValidationMiddleware([
+        "categoryname" => ValidationErrorCode::CATEGORY_REQUIRED,
+        "categoryid" => ValidationErrorCode::CATEGORY_REQUIRED
+    ])]
+    public function updateCategory(Request $request): Response {
+        $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $categoryName = $request->post("categoryname");
+        $categoryId = (int)$request->post("categoryid");
+        
+        $this->categoryService->updateCategory($categoryId, $categoryName);
+        
+        return Response::create()->json([
+            "success" => true
+        ]);
+    }
     
     #[Get('/faculties')]
     #[AuthMiddleware(Role::ADMIN)]
@@ -121,6 +152,106 @@ class DashboardController extends BaseController {
         ]);
     }
 
+    #[Get('/faculties/:facultyId/edit')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function editFaculty(Request $request): Response {
+        $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $facultyId = (int)$pathVars['facultyId'];
+        
+        return $this->render("admin/edit-faculty", [
+            'faculty' => $this->facultyService->getFacultyDetails($facultyId),
+            "adminId" => $adminId
+        ]);
+    }
+
+    #[Get('/faculties/:facultyId/edit-courses')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function editFacultyCourses(Request $request): Response {
+        $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $facultyId = (int)$pathVars['facultyId'];
+        
+        return $this->render("admin/change-courses", [
+            'faculty' => $this->facultyService->getFacultyDetails($facultyId),
+            'courses' => $this->courseService->getCoursesByFaculty($facultyId),
+            "adminId" => $adminId
+        ]);
+    }
+
+    
+    #[Get('/api/faculties/:facultyId/courses')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function getCoursesApi(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $facultyId = (int)$pathVars['facultyId'];
+        
+        $courses = $this->courseService->getCoursesByFaculty($facultyId);
+        
+        return Response::create()->json([
+            'success' => true,
+            'courses' => $courses
+        ]);
+    }
+
+    #[Post('/api/edit-faculty')]
+    #[AuthMiddleware(Role::ADMIN)]
+    #[ValidationMiddleware([
+        "facultyname" => ValidationErrorCode::FACULTY_REQUIRED,
+        "facultyid" => ValidationErrorCode::FACULTY_REQUIRED
+    ])]
+    public function updateFaculty(Request $request): Response {
+        $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $facultyName = $request->post("facultyname");
+        $facultyId = (int)$request->post("facultyid");
+        
+        $this->facultyService->updateFaculty($facultyId, $facultyName);
+        
+        return Response::create()->json([
+            "success" => true
+        ]);
+    }
+    
+    #[Get('/faculties/:facultyId/courses/:courseId/edit')]
+    #[AuthMiddleware(Role::ADMIN)]
+    public function editCourse(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $facultyId = (int)$pathVars['facultyId'];
+        $courseId = (int)$pathVars['courseId'];
+        
+        $course = $this->courseService->getCourseDetails($courseId);
+        $faculty = $this->facultyService->getFacultyDetails($facultyId);
+        
+        if (!$course || !$faculty) {
+            return Response::create()->redirect('/faculties');
+        }
+        
+        return $this->render('admin/edit-course', [
+            'course' => $course,
+            'faculty' => $faculty,
+            'adminId' => $request->getAttribute(RequestAttribute::ROLE_ID)
+        ]);
+    }
+    
+    #[Post('/api/edit-course')]
+    #[AuthMiddleware(Role::ADMIN)]
+    #[ValidationMiddleware([
+        "coursename" => ValidationErrorCode::COURSE_REQUIRED,
+        "courseid" => ValidationErrorCode::COURSE_REQUIRED,
+        "facultyid" => ValidationErrorCode::FACULTY_REQUIRED
+    ])]
+    public function updateCourse(Request $request): Response {
+        $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $courseName = $request->post("coursename");
+        $courseId = (int)$request->post("courseid");
+        $facultyId = (int)$request->post("facultyid");
+        
+        $this->courseService->updateCourse($courseId, $courseName,$facultyId);
+        
+        return Response::create()->json([
+            "success" => true
+        ]);
+    }
     
     #[Get('/faculties/:facultyId/courses/:courseId/tags')]
     #[AuthMiddleware(Role::ADMIN)]
@@ -138,5 +269,6 @@ class DashboardController extends BaseController {
             'course' => $this->courseService->getCourseDetails($courseId)
         ]);
     }
+    
     
 }

@@ -1,12 +1,12 @@
 <?php 
 /**
  * @var \Unibostu\Dto\FacultyDto[] $faculties
- * @var string $userId
+ * @var string $adminId
 */
 
 $this->extend('admin-layout', [
     'title' => 'Unibostu - Users',
-    'userId' => $userId
+    'adminId' => $adminId
 ]);
 ?>
 
@@ -27,7 +27,7 @@ $this->extend('admin-layout', [
         <p>First Name: <?= h($user->firstName) ?></p>
         <p>Last Name: <?= h($user->lastName) ?></p>
         <p>Faculty: <?= h($faculties[$user->userId]->facultyName ) ?></p>
-        <p>Suspended: <?= h($user->suspended) ?></p>
+        <p><?= h($user->suspended) ? 'Suspended' : 'Active' ?></p>
         <footer>
             <ul class="review">
                     <li>
@@ -42,7 +42,7 @@ $this->extend('admin-layout', [
                     </li>
                     <li>
                         <a href="#">
-                            Suspend
+                            Suspend 
                         </a>
                     </li>
             </ul>            

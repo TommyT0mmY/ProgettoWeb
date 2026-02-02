@@ -10,6 +10,7 @@ enum ValidationErrorCode {
     case LASTNAME_REQUIRED;
     case FACULTY_INVALID;
     case FACULTY_REQUIRED;
+    case CATEGORY_REQUIRED;
     case PASSWORD_REQUIRED;
     case PASSWORD_INVALID;
     case POST_ID_REQUIRED;
