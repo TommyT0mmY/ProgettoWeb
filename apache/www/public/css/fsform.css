@@ -221,12 +221,12 @@ main {
 .create-post-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: var(--space-xl);
+    padding: var(--space-xs);
 }
 
 .create-post-container .back-link {
     display: inline-block;
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-xs);
     color: var(--color-blue-500);
     text-decoration: none;
     font-weight: var(--fw-medium);
@@ -238,7 +238,7 @@ main {
 }
 
 .create-post-container h2 {
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-xs);
     color: var(--color-blue-700);
     font-size: var(--fs-xl);
 }
@@ -247,32 +247,32 @@ main {
     width: 100%;
     background: var(--color-bg-light);
     border-radius: var(--radius-xl);
-    padding: var(--space-lg);
+    padding: var(--space-xs);
     box-shadow: var(--shadow-md);
 }
 
 .create-post-form fieldset {
     border: 0;
-    padding: var(--space-lg);
+    padding: var(--space-xs);
     padding-top: 0;
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-xxs);
     background-color: var(--color-bg-metadata);
     border-radius: var(--radius-md);
 }
 
 .create-post-form fieldset:first-of-type {
-    margin-top: var(--space-md);
+    margin-top: var(--space-xxs);
 }
 
 .create-post-form legend {
-    padding: var(--space-md) 0;
+    padding: var(--space-xxs) 0;
     font-weight: var(--fw-bold);
     color: var(--color-blue-700);
     font-size: var(--fs-base);
 }
 
 .create-post-form p {
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-xxs);
 }
 
 .create-post-form p:last-child {
@@ -325,7 +325,7 @@ main {
     cursor: pointer;
     transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
     box-shadow: var(--shadow-sm);
-    margin-top: var(--space-lg);
+    margin-top: var(--space-xs);
 }
 
 .create-post-form button[type="submit"]:hover {
