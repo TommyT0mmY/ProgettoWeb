@@ -14,7 +14,7 @@ $this->extend('admin-layout', [
 <header>
     <h2>Admin - Faculties Management</h2>
 </header>
-<form action="#" method="GET">
+<form action="/faculties" method="GET">
     <input type="search" name="search" placeholder="Search faculty" />
     <button type="submit">Search</button>
 </form>
