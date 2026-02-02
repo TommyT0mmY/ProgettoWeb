@@ -3,21 +3,17 @@
 - [x] Una singola home, non home ed admin home
 - [x] post template fare un component che riceve isAdmin
 - [ ] dashboard fare il js di tutto
-- [ ] Fare cartelle per organizzare meglio le view
+- [ ] Fare cartelle per organizzare meglio le view //cartella admin fatta
 - [x] L'admin puo aprire i commenti ed eliminarli ma non rispondere
 - [ ] Fare solo un numero di font size nella base
-- [?] Manca il link agli utenti
-- [?] Nella visualizzazione di un singolo post il tasto indietro dovrebbe fare history back
+- [ ] Nella visualizzazione di un singolo post il tasto indietro dovrebbe fare history back
 - [x] Se scrolli la navbar scrolla giu
-- [ ] Filter form deve essere un component
 - [ ] Cambiare post-container
-- [?] Nella navbar separare i corsi per 
+- [ ] Nella navbar separare i corsi per facolta
 - [x] CommunityController dovrebbe chiamarsi CourseController e sostituire ogni altro utilizzo del termine Community con Course
-- [?] Fix for attribute in outputs in select-courses
-- [ ] Admin dashboard
-- [ ] User preferences: cambio password, username, ecc...
+- [ ] Admin dashboard 
+- [ ] User preferences: cambio password, username, ecc... //mi sa che li abbiate fatti
 - [ ] Allegati ai post
-- [?] Sistemare l'utilizzo di Response in PostController
 - [x] La visualizzazione di un post in homepage deve mostrare il nome della community (attualmente mostrata come un tag)
 - [x] Il tipo del post andrebbe mostrato in maniera diversa da un tag
 - [x] La sidebar ha bisogno di molti fix

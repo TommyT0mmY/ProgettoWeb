@@ -49,7 +49,7 @@ $categoryLink = $categoryId ? ($currentPageUrl ?? '/') . "?categoryId={$category
         
         <div class="metadata-section" data-section="tags" style="display: <?= !empty($tags) ? '' : 'none' ?>;">
             <span class="metadata-label">Tag:</span>
-            <ul class="metadata-list tags-list" data-field="tags">
+            <ul class="metadata-list" data-field="tags">
                 <?php foreach ($tags as $tag): ?>
                 <li class="tag topic"><a href="<?= $courseId ? '/courses/' . h($courseId) . '?tags[]=' . h($tag['tag_id']) : '#' ?>" data-tag-id="<?= h($tag['tag_id']) ?>"><?= h($tag['tag_name']) ?></a></li>
                 <?php endforeach; ?>

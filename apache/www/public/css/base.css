@@ -36,14 +36,69 @@
     --color-bg: oklch(0.96 0 264);
     --color-bg-light: oklch(0.99 0 264);
 
+    /* Semantic colors */
+    --color-success: #28a745;
+    --color-bg-metadata: #f8f9fa;
+    --color-tag-subject-bg: #d1e3f8;
+    --color-tag-type-bg: #fdf2d2;
+    --color-tag-topic-bg: #e0f2f1;
+    --color-tag-type-text: #9a6e12;
+    --color-tag-topic-text: #00695c;
+    --color-border-muted: #d1dee7;
+    --color-overlay: rgba(0, 0, 0, 0.4);
+
     /* Spacing */
-    --space-xxs: 0.25rem;
-    --space-xs: 0.5rem;
-    --space-sm: 0.75rem;
-    --space-md: 1rem;
-    --space-lg: 1.25rem;
-    --space-xl: 1.5rem;
-    --space-xxl: 2rem;
+    --space-2xs: 0.125rem;  /* 2px */
+    --space-xxs: 0.25rem;   /* 4px */
+    --space-xs: 0.5rem;     /* 8px */
+    --space-sm: 0.75rem;    /* 12px */
+    --space-md: 1rem;       /* 16px */
+    --space-lg: 1.25rem;    /* 20px */
+    --space-xl: 1.5rem;     /* 24px */
+    --space-xxl: 2rem;      /* 32px */
+
+    /* Borders */
+    --border-width-hairline: 1px;
+    --border-width-thin: 2px;
+    --border-width-thick: 4px;
+
+    /* Border radius */
+    --radius-xs: 0.125rem;  /* 2px */
+    --radius-sm: 0.25rem;   /* 4px */
+    --radius-md: 0.5rem;    /* 8px */
+    --radius-lg: 0.75rem;   /* 12px */
+    --radius-xl: 1rem;      /* 16px */
+    --radius-full: 9999px;  /* pill / circle */
+
+    /* Icon sizes */
+    --icon-size-sm: 1rem;      /* 16px */
+    --icon-size-md: 2rem;      /* 32px */
+    --icon-size-lg: 2.375rem;  /* 38px */
+    --avatar-size: 3.125rem;   /* 50px */
+
+    /* Form elements */
+    --input-height: 2.5rem;     /* 40px */
+
+    /* Z-index scale */
+    --z-base: 1;
+    --z-overlay: 2;
+    --z-nav: 3;
+    --z-header: 4;
+    --z-popup: 100;
+
+    /* Transitions */
+    --transition-fast: 0.2s;
+    --transition-base: 0.3s;
+    --transition-slow: 0.5s;
+    --easing-smooth: cubic-bezier(0.65, 0, 0.35, 1);
+    --easing-spring: cubic-bezier(0.19, 1, 0.22, 1);
+    --easing-expo: cubic-bezier(0.77, 0, 0.18, 1);
+    --easing-standard: cubic-bezier(0.39, 0.575, 0.565, 1);
+
+    /* Breakpoints */
+    --breakpoint-mobile: 768px;
+    --breakpoint-tablet: 1024px;
+    --breakpoint-desktop: 1440px;
 
     /* Shadows */
     --shadow-sm:
@@ -58,7 +113,36 @@
     inset 0 1px 2px #ffffff70, /* top highlight */
     0 4px 6px #00000030, /* dark shadow */
     0 6px 10px #00000015; /* soft shadow */
+    --shadow-elevated: 0 0.3vw 1.5vw rgba(0, 0, 0, 0.5); /* Popup, modal, floating elements */
+    --shadow-elevated-hover: 0 0.3vw 1.5vw rgba(0, 0, 0, 0.7); /* Popup hover state */
+    --shadow-sidebar: 2px 0 8px rgba(0, 0, 0, 0.1); /* Navbar, drawer, vertical panels */
     --focus-ring: 0 0 0 3px var(--color-blue-600);
+
+    /* Font sizes (modular scale ~1.25) */
+    --fs-xs: 0.64rem;   /* ~12.8px */
+    --fs-sm: 0.8rem;    /* 16px */
+    --fs-base: 1rem;    /* 20px */
+    --fs-md: 1.25rem;  /* 25px */
+    --fs-lg: 1.563rem; /* ~31px */
+    --fs-xl: 1.953rem; /* ~39px */
+    --fs-2xl: 2.441rem;/* ~49px */
+    --fs-3xl: 3.052rem;/* ~61px */
+
+    /* Semantic font sizes */
+    --fs-body: var(--fs-base);
+    --fs-caption: var(--fs-sm);
+    --fs-small: var(--fs-xs);
+    --fs-h6: var(--fs-md);
+    --fs-h5: var(--fs-lg);
+    --fs-h4: var(--fs-xl);
+    --fs-h3: var(--fs-2xl);
+    --fs-h2: var(--fs-3xl);
+
+}
+
+/* Global box model */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 html {
