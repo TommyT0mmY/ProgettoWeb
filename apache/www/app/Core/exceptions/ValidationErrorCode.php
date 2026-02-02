@@ -20,6 +20,7 @@ enum ValidationErrorCode {
     case DESCRIPTION_REQUIRED;
     case COURSE_INVALID;
     case COURSE_REQUIRED;
+    case TAG_REQUIRED;
     case USER_NOT_FOUND;
     case INVALID_REQUEST;
 }

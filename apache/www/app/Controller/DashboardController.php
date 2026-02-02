@@ -21,11 +21,11 @@ use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\TagService;
 
 class DashboardController extends BaseController {   
-    private $userService;
-    private $categoryService;
-    private $facultyService;
-    private $courseService;
-    private $tagService; 
+    private UserService $userService;
+    private CategoryService $categoryService;
+    private FacultyService $facultyService;
+    private CourseService $courseService;
+    private TagService $tagService;
 
     public function __construct(Container $container) {
         parent::__construct($container);       
@@ -117,7 +117,8 @@ class DashboardController extends BaseController {
     public function getFaculties(Request $request): Response {
         $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
 
-        $faculties = $this->facultyService->getAllFaculties();
+        $searchTerm = $request->get('search');
+        $faculties = $searchTerm ? $this->facultyService->searchFaculties($searchTerm) : $this->facultyService->getAllFaculties();
         $courses = [];
         foreach ($faculties as $faculty) {
             $courses[$faculty->facultyId] = $this->courseService->getCoursesByFaculty($faculty->facultyId);
@@ -126,7 +127,8 @@ class DashboardController extends BaseController {
         return $this->render("admin/faculties", [
             'faculties' => $faculties,
             'courses' => $courses,
-            'adminId' => $adminId
+            'adminId' => $adminId,
+            'searchTerm' => $searchTerm
         ]);
     }
 

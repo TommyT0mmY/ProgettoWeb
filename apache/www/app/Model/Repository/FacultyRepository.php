@@ -63,6 +63,25 @@ class FacultyRepository {
     }
 
     /**
+     * Searches faculties by name.
+     *
+     * @param string $searchTerm The search term
+     * @return FacultyDTO[] Array of matching FacultyDTOs
+     */
+    public function searchByName(string $searchTerm): array {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM faculties 
+            WHERE faculty_name LIKE :searchTerm 
+            ORDER BY faculty_name"
+        );
+        $stmt->bindValue(':searchTerm', $searchTerm . '%', PDO::PARAM_STR);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([$this, 'rowToDTO'], $rows);
+    }
+
+    /**
      * Saves a new faculty
      *
      * @throws RuntimeException in case of error
