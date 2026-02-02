@@ -25,6 +25,20 @@ class TagService {
     }
 
     /**
+     * Searches tags by name within a specific course.
+     *
+     * @param string $searchTerm The search term
+     * @param int $courseId The course ID to filter by
+     * @return TagDTO[] Array of matching tags
+     */
+    public function searchTags(string $searchTerm, int $courseId): array {
+        if (empty(trim($searchTerm))) {
+            return $this->getTagsByCourse($courseId);
+        }
+        return $this->tagRepository->searchByName($searchTerm);
+    }
+
+    /**
      * Recupera i tag di un post
      * @return array Array di array con chiavi TagDTO
      */

@@ -14,6 +14,8 @@ class TagRepository {
         $this->pdo = Database::getConnection();
     }
 
+
+
     /**
      * Recupera un tag tramite tipo e corso
      */
@@ -52,6 +54,25 @@ class TagRepository {
             "SELECT * FROM tags WHERE course_id = :courseId ORDER BY tag_name"
         );
         $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([$this, 'rowToDTO'], $rows);
+    }
+
+    /**
+     * Searches tags by name.
+     *
+     * @param string $searchTerm The search term
+     * @return TagDTO[] Array of matching TagDTOs
+     */
+    public function searchByName(string $searchTerm): array {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM tags 
+            WHERE tag_name LIKE :searchTerm 
+            ORDER BY tag_name"
+        );
+        $stmt->bindValue(':searchTerm', $searchTerm . '%', PDO::PARAM_STR);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
