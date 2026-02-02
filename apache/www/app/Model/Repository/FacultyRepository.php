@@ -74,7 +74,7 @@ class FacultyRepository {
             WHERE faculty_name LIKE :searchTerm 
             ORDER BY faculty_name"
         );
-        $stmt->bindValue(':searchTerm', $searchTerm . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':searchTerm', '%'.$searchTerm.'%', PDO::PARAM_STR);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

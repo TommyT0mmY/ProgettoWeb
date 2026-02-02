@@ -30,8 +30,10 @@ class FacultyController extends BaseController {
     #[AuthMiddleware(Role::ADMIN)]
     public function getFaculties(Request $request): Response {
         $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $searchTerm = $request->get('search');
 
-        $faculties = $this->facultyService->getAllFaculties();
+        $faculties = $searchTerm ? $this->facultyService->searchFaculties($searchTerm) : $this->facultyService->getAllFaculties();
+    
         $courses = [];
         foreach ($faculties as $faculty) {
             $courses[$faculty->facultyId] = $this->courseService->getCoursesByFaculty($faculty->facultyId);
