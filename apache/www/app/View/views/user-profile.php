@@ -70,6 +70,7 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
         <?php endif; ?>
     </section>
 </article>
+<hr class="divider">
 <article class="user-posts">
     <h2><?= $isOwnProfile ? "My Posts" : h($viewedUser->firstName . "'s Posts") ?></h2>
     <?php if (empty($posts)): ?>

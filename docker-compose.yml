@@ -26,7 +26,7 @@ services:
   www: #Container del server web Apache con PHP
     build: ./apache # Si basa sul Dockerfile in apache
     restart: always
-    command: ["/bin/sh", "-c", "chown -R www-data:www-data /var/lib/php/sessions && apache2-foreground"]
+    command: ["/bin/sh", "-c", "chown -R www-data:www-data /var/lib/php/sessions && chown -R www-data:www-data /var/uploads && apache2-foreground"]
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -38,6 +38,7 @@ services:
     volumes:
       - "./apache/www:/var/www/html:ro" # Sola lettura
       - "php_sessions:/var/lib/php/sessions"
+      - "uploads_data:/var/uploads" # Volume persistente per i file caricati (fuori da /var/www/html)
     ports:
       - 80:80
     networks:
@@ -92,6 +93,7 @@ services:
 volumes:
   db_data:
   php_sessions:
+  uploads_data:
 
 networks:
   lamp_docker:
