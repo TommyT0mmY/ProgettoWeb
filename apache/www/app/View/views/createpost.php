@@ -11,6 +11,7 @@ $this->extend('main-layout', [
     'courses' => $courses,
     'userId' => $userId,
     'additionalHeadCode' => [
+        '<link rel="stylesheet" href="/css/fsform.css" />',
         '<script type="module" src="/js/posts/create-post.js"></script>',
         ] 
     ]); 

@@ -43,6 +43,7 @@ main {
 /* Input field and select styles */
 .field-holder input,
 .field-holder select,
+.field-holder textarea,
 .field-holder label {
     box-sizing: border-box;
     width: 100%;
@@ -56,9 +57,18 @@ main {
     box-shadow: var(--shadow-sm);
 }
 
+.field-holder textarea {
+    height: auto;
+    min-height: 120px;
+    padding-block: var(--space-sm);
+    resize: vertical;
+    font-family: inherit;
+}
+
 /* Input and select focus styles */
 .field-holder input:focus-visible,
-.field-holder select:focus-visible {
+.field-holder select:focus-visible,
+.field-holder textarea:focus-visible {
     box-shadow: var(--shadow-md);
     border: var(--border-width-hairline) solid var(--color-gray-300);
     border-top: 0;
@@ -207,3 +217,143 @@ main {
     margin-bottom: var(--space-lg);
 }
 
+/* Create post page styles */
+.create-post-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+}
+
+.create-post-container .back-link {
+    display: inline-block;
+    margin-bottom: var(--space-lg);
+    color: var(--color-blue-500);
+    text-decoration: none;
+    font-weight: var(--fw-medium);
+    transition: color var(--transition-fast);
+}
+
+.create-post-container .back-link:hover {
+    color: var(--color-blue-700);
+}
+
+.create-post-container h2 {
+    margin-bottom: var(--space-xl);
+    color: var(--color-blue-700);
+    font-size: var(--fs-xl);
+}
+
+.create-post-form {
+    width: 100%;
+    background: var(--color-bg-light);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.create-post-form fieldset {
+    border: 0;
+    padding: var(--space-lg);
+    padding-top: 0;
+    margin-bottom: var(--space-md);
+    background-color: var(--color-bg-metadata);
+    border-radius: var(--radius-md);
+}
+
+.create-post-form fieldset:first-of-type {
+    margin-top: var(--space-md);
+}
+
+.create-post-form legend {
+    padding: var(--space-md) 0;
+    font-weight: var(--fw-bold);
+    color: var(--color-blue-700);
+    font-size: var(--fs-base);
+}
+
+.create-post-form p {
+    margin-bottom: var(--space-md);
+}
+
+.create-post-form p:last-child {
+    margin-bottom: 0;
+}
+
+.create-post-form label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+}
+
+.create-post-form input[type="text"],
+.create-post-form select,
+.create-post-form textarea,
+.create-post-form input[type="file"] {
+    width: 100%;
+    padding: var(--space-sm);
+    border: var(--border-width-hairline) solid var(--color-gray-300);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-light);
+    box-sizing: border-box;
+    font-size: var(--fs-base);
+}
+
+.create-post-form textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.create-post-form input:focus,
+.create-post-form select:focus,
+.create-post-form textarea:focus {
+    outline: none;
+    border-color: var(--color-blue-500);
+    box-shadow: var(--shadow-sm);
+}
+
+.create-post-form button[type="submit"] {
+    width: 100%;
+    padding: var(--space-md);
+    background-color: var(--color-blue-500);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+    margin-top: var(--space-lg);
+}
+
+.create-post-form button[type="submit"]:hover {
+    background-color: var(--color-blue-600);
+    box-shadow: var(--shadow-md);
+}
+
+.create-post-form button[type="submit"]:focus-visible {
+    box-shadow: var(--shadow-md), var(--focus-ring);
+}
+
+@media (max-width: 768px) {
+    .create-post-container {
+        padding: var(--space-md);
+    }
+    
+    .create-post-form {
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+    }
+    
+    .create-post-form fieldset {
+        padding: var(--space-md);
+    }
+    
+    .create-post-form input[type="text"],
+    .create-post-form select,
+    .create-post-form textarea {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+}
