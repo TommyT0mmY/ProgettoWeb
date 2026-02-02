@@ -11,7 +11,6 @@
 - [ ] Cambiare post-container
 - [ ] Nella navbar separare i corsi per facolta
 - [x] CommunityController dovrebbe chiamarsi CourseController e sostituire ogni altro utilizzo del termine Community con Course
-- [?] Fix for attribute in outputs in select-courses
 - [ ] Admin dashboard 
 - [ ] User preferences: cambio password, username, ecc... //mi sa che li abbiate fatti
 - [ ] Allegati ai post
