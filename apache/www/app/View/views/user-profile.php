@@ -58,7 +58,7 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
         <?php if (!$isAdmin): ?>
         <p>Chosen courses:</p>
             <?php if (!empty($courses)): ?>
-                <ul class="tags">
+                <ul class="metadata-list">
                     <?php foreach ($courses as $course): ?>
                     <li class="tag subject"><a href="/courses/<?= h($course->courseId) ?>"><?= h($course->courseName) ?></a></li>
                     <?php endforeach; ?>

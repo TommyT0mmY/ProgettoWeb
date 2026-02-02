@@ -176,23 +176,6 @@ body > header > a.title-with-logo:hover {
     }
 }
 
-/* Legacy support per vecchi tag */
-ul.tags {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs);   
-}
-
-.tags li a {
-    padding: var(--space-2xs) var(--space-xs);
-    text-decoration: none;
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-semibold);
-    border-radius: var(--radius-md);
-    transition: var(--transition-base);
-}
-
 /* Colori differenziati per tipo di tag */
 .tag.subject a { 
   background: var(--color-tag-subject-bg); 
