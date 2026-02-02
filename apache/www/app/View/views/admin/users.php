@@ -6,7 +6,11 @@
 
 $this->extend('admin-layout', [
     'title' => 'Unibostu - Users',
-    'adminId' => $adminId
+    'adminId' => $adminId,
+    'additionalHeadCode' => [
+        '<script type="module" src="/js/ban-user.js"></script>',
+        '<script src="/js/admin/admin-actions.js" defer></script>'
+    ]
 ]);
 ?>
 
@@ -31,19 +35,39 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="#" >
+                        <button type="button" 
+                                data-action="delete" 
+                                data-entity="user" 
+                                data-id="<?= h($user->userId) ?>"
+                                data-url="/api/delete-user/<?= h($user->userId) ?>">
                             Delete
-                        </a>
+                        </button>
                     </li>
                     <li>
-                        <a href="/users/<?= h($user->userId) ?>">
+                        <button type="button" 
+                                data-action="view" 
+                                data-entity="user" 
+                                data-id="<?= h($user->userId) ?>"
+                                data-url="/users/<?= h($user->userId) ?>">
                             View Profile
-                        </a>
+                        </button>
                     </li>
                     <li>
-                        <a href="#">
-                            Suspend 
-                        </a>
+                        <?php if ($user->suspended): ?>
+                            <button type="button" 
+                                    id="unban-user-btn-<?= h($user->userId) ?>" 
+                                    class="unban-user-btn"
+                                    data-user-id="<?= h($user->userId) ?>">
+                                Unban
+                            </button>
+                        <?php else: ?>
+                            <button type="button" 
+                                    id="ban-user-btn-<?= h($user->userId) ?>" 
+                                    class="ban-user-btn"
+                                    data-user-id="<?= h($user->userId) ?>">
+                                Ban
+                            </button>
+                        <?php endif; ?>
                     </li>
             </ul>            
         </footer>
