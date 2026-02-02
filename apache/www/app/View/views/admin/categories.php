@@ -29,7 +29,7 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="#" >
+                        <a href="/categories/<?= h($category->categoryId) ?>/edit" >
                             Edit
                         </a>
                     </li>
