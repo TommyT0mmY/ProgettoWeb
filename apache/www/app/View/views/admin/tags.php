@@ -19,7 +19,7 @@ $this->extend('admin-layout', [
     <input type="search" name="search" placeholder="Search tag" />
     <button type="submit">Search</button>
 </form>
-<button type="button"><a href="#">Add Tag</a></button>
+<button type="button"><a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags/add">Add Tag</a></button>
 
 <div class="post-container cards">
 <?php foreach ($tags ?? [] as $tag): ?>
@@ -45,7 +45,7 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="#" >
+                        <a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags/<?= h($tag->tagId) ?>/edit" >
                             Edit
                         </a>
                     </li>
