@@ -28,6 +28,16 @@ class CategoryService {
     }
 
     /**
+     * Search categories by name
+     */
+    public function searchCategoriesByName(string $searchTerm): array {
+        if (empty(trim($searchTerm))) {
+            return $this->getAllCategories();
+        }
+        return $this->categoryRepository->searchByName($searchTerm);
+    }
+
+    /**
      * Crea una nuova categoria
      * @throws \Exception se i dati non sono validi
      */

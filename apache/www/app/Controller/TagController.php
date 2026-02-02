@@ -37,8 +37,11 @@ class TagController extends BaseController {
         $facultyId = (int)$pathVars['facultyId'];
         $courseId = (int)$pathVars['courseId'];
 
+        $searchTerm = $request->get('search');
+        $tags = $searchTerm ? $this->tagService->searchTags($searchTerm, $courseId) : $this->tagService->getTagsByCourse($courseId);
+
         return $this->render("admin/tags", [
-            'tags' => $this->tagService->getTagsByCourse($courseId),
+            'tags' => $tags,
             'faculty' => $this->facultyService->getFacultyDetails($facultyId),
             'adminId' => $adminId,
             'course' => $this->courseService->getCourseDetails($courseId)

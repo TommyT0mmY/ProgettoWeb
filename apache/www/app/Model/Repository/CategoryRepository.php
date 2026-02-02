@@ -55,6 +55,21 @@ class CategoryRepository {
     }
 
     /**
+     * Search categories by name
+     */
+    public function searchByName(string $searchTerm): array {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM categories WHERE category_name LIKE :searchTerm ORDER BY category_id"
+        );
+        $likeTerm = '%' . $searchTerm . '%';
+        $stmt->bindValue(':searchTerm', $likeTerm, PDO::PARAM_STR);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([$this, 'rowToDTO'], $rows);
+    }
+
+    /**
      * Salva una nuova categoria
      * @throws \Exception in caso di errore
      */
