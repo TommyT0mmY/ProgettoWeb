@@ -280,7 +280,7 @@ export class CommentManager {
     }
         
     showReplyForm(commentId) {
-        // If a form is already open for this comment remove it 
+        // If a form is already open for this comment, remove it
         const commentEl = document.querySelector(`[data-comment-id="${commentId}"]`);
         const existingForm = commentEl.querySelector('.comment-form');
         

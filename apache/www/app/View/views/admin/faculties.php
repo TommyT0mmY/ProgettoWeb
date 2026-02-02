@@ -30,7 +30,7 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="#" >
+                        <a href="/faculties/<?= h($faculty->facultyId) ?>/edit" >
                             Edit
                         </a>
                     </li>
@@ -45,7 +45,7 @@ $this->extend('admin-layout', [
                         </a>
                     </li>
             </ul>            
-    </footer>
+        </footer>
     </section>
 <?php endforeach; ?>
 </div>
