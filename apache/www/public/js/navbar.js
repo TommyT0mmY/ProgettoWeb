@@ -2,7 +2,7 @@ const toggleButton = document.getElementById('open-sidebar-button');
 const navbar = document.getElementById('navbar');
 const overlayPage = document.getElementById('overlay');
 
-// mobile first, navbar inizialmente nascosta
+// mobile first, navbar initially hidden
 navbar.inert = true;
 
 // toggle sidebar
@@ -38,20 +38,20 @@ navbar.addEventListener('wheel', (event) => {
   const isScrollable = navbar.scrollHeight > navbar.clientHeight;
   
   if (!isScrollable) {
-    // Se la navbar non ha contenuto scrollabile, lascia passare l'evento al body
+    // If the navbar has no scrollable content, pass the event to the body
     return;
   }
   
   const isAtTop = navbar.scrollTop === 0;
   const isAtBottom = navbar.scrollTop + navbar.clientHeight >= navbar.scrollHeight;
   
-  // Previeni lo scroll del body solo se la navbar può ancora scrollare
+  // Prevent body scroll only if the navbar can still scroll
   if ((event.deltaY < 0 && isAtTop) || (event.deltaY > 0 && isAtBottom)) {
-    // Se siamo al limite della navbar, lascia passare l'evento al body
+    // If we're at the navbar limit, pass the event to the body
     return;
   }
   
-  // Altrimenti, previeni la propagazione
+  // Otherwise, prevent propagation
   event.stopPropagation();
 }, { passive: true });
 

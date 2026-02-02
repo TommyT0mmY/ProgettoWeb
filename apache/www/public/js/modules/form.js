@@ -29,7 +29,7 @@ class Form {
         this.#form.addEventListener('submit', async (event) => {
             event.preventDefault();
             this.#inputFields = [...this.#form.querySelectorAll('input, textarea, select')];
-            // if configs.before is a function, call it 
+            // If configs.before is a function, call it 
             if (typeof this.#configs?.before === 'function') {
                 const shouldContinue = await this.#configs.before();
                 if (shouldContinue === false) {
@@ -45,7 +45,7 @@ class Form {
                 if (!isValid) {
                     return;
                 }
-                // Submitting form data 
+                // Submitting form data
                 let formData = this.serializeForm();
                 if (typeof this.#configs?.getPayload === 'function') { // If a custom payload function is provided
                     const customPayload = await this.#configs.getPayload();
