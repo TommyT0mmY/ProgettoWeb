@@ -15,10 +15,13 @@ $this->extend('main-layout', [
         ] 
     ]); 
 ?>
- 
-<h2 class="createPost">Create post for: <?= h($thisCourse->courseName) ?></h2>
 
-<form method="post" id="create-post-form" novalidate>
+<div class="create-post-container">
+    <a href="/courses/<?= h($thisCourse->courseId) ?>" class="back-link">← Go back</a>
+    
+    <h2 class="createPost">Create post for: <?= h($thisCourse->courseName) ?></h2>
+
+<form method="post" id="create-post-form" class="create-post-form" novalidate>
     <input type="hidden" name="courseId" value="<?= h($thisCourse->courseId) ?>" />
     <fieldset>
         <legend>Post information</legend>
@@ -70,3 +73,4 @@ $this->extend('main-layout', [
         <button type="submit">CREATE POST</button>
     </p>
 </form>
+</div>

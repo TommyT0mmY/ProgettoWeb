@@ -31,10 +31,12 @@ if (!$isAdmin) {
 $this->extend($layout, $layoutParams);
 ?>
 
-<h2><?= h($thisCourse->courseName) ?></h2>
-<?php if (!$isAdmin): ?>
-<p><a href="/courses/<?= h($thisCourse->courseId) ?>/createpost">Create new post</a></p>
-<?php endif; ?>
+<div class="course-header">
+    <h2><?= h($thisCourse->courseName) ?></h2>
+    <?php if (!$isAdmin): ?>
+    <a href="/courses/<?= h($thisCourse->courseId) ?>/createpost" class="btn-create-post">+ Create new post</a>
+    <?php endif; ?>
+</div>
 <?= $this->component("posts-filter", [
     'action' => "/courses/{$thisCourse->courseId}",
     'categories' => $categories,
