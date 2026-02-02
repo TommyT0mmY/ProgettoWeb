@@ -44,6 +44,13 @@ class CourseService {
         $courses = $this->courseRepository->findByFacultyAndUser($facultyId, $userId);
         return $courses;
     }
+
+    public function searchCoursesByNameAndFaculty(string $searchTerm, int $facultyId): array {
+        if (empty(trim($searchTerm))) {
+            return $this->getCoursesByFaculty($facultyId);
+        }
+        return $this->courseRepository->searchByNameAndFaculty($searchTerm, $facultyId);
+    }
     
     /**
      * Recupera i corsi di un utente

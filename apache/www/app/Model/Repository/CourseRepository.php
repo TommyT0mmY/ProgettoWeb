@@ -68,6 +68,20 @@ class CourseRepository {
     }
 
     /**
+     * Searches courses by name within a specific faculty.
+     */
+    public function searchByNameAndFaculty(string $searchTerm, int $facultyId): array {
+        $stmt = $this->pdo->prepare("SELECT * FROM courses WHERE faculty_id = :facultyId AND course_name LIKE :searchTerm ORDER BY course_name");
+        
+        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+        $stmt->bindValue(':searchTerm', '%' . $searchTerm . '%', PDO::PARAM_STR);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([$this, 'rowToDTO'], $rows);
+    }
+
+    /**
      * Gets the courses of a faculty and an user
      */
     public function findByFacultyAndUser(int $facultyId, string $userId): array {

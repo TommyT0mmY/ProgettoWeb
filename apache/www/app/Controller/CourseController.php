@@ -91,8 +91,9 @@ class CourseController extends BaseController {
         $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $facultyId = (int)$pathVars['facultyId'];
+        $searchTerm = $request->get('search');
 
-        $courses = $this->courseService->getCoursesByFaculty($facultyId);
+        $courses = $searchTerm ? $this->courseService->searchCoursesByNameAndFaculty($searchTerm, $facultyId) : $this->courseService->getCoursesByFaculty($facultyId);
         $tags = [];
         foreach ($courses as $course) {
             $tags[$course->courseId] = $this->tagService->getTagsByCourse($course->courseId);
@@ -105,6 +106,8 @@ class CourseController extends BaseController {
             'adminId' => $adminId
         ]);
     }
+
+
 
     #[Get('/faculties/:facultyId/courses/:courseId/edit')]
     #[AuthMiddleware(Role::ADMIN)]
