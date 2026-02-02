@@ -54,7 +54,7 @@ $this->extend('loggedout-layout', [
         
         <div class="controls-container">
             <button type="button" onclick="history.back();">Back</button>
-            <button type="submit" id="edit-profile-submit" disabled>Save Changes</button>
+            <button type="submit" id="edit-profile-submit">Save Changes</button>
         </div>
         
         <p>Want to change your password? <a href="/change-password">Click here</a>.</p>
