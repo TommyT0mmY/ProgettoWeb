@@ -12,6 +12,11 @@ RUN mkdir -p /var/lib/php/sessions \
     && chown -R www-data:www-data /var/lib/php/sessions \
     && chmod 1733 /var/lib/php/sessions
 
+# Uploads directory with safe permissions
+RUN mkdir -p /var/uploads \
+    && chown -R www-data:www-data /var/uploads \
+    && chmod 755 /var/uploads
+
 # Abilita il modulo rewrite e headers di Apache
 RUN a2enmod rewrite headers
 
