@@ -62,14 +62,14 @@ $categoryLink = $categoryId ? ($currentPageUrl ?? '/') . "?categoryId={$category
             <?php if ($attachmentPath): ?>
             <li><a href="<?=h($attachmentPath)?>" download>Download Notes</a></li>
             <?php endif; ?>
-            <li class="reaction reaction-like">
-                <button type="button" class="btn-like <?= $likedByUser === true ? 'active' : '' ?>" aria-label="Like this post">
+            <li class="reaction reaction-like <?= $forAdmin ? 'disabled' : '' ?>">
+                <button type="button" class="btn-like <?= $likedByUser === true ? 'active' : '' ?>" <?= $forAdmin ? 'disabled' : '' ?> aria-label="Like this post">
                     <img src="/images/icons/like.svg" alt="">
                     <data data-field="likes" value="<?= $likes ?>"><?= $likes ?></data>
                 </button>
             </li>
-            <li class="reaction reaction-dislike">
-                <button type="button" class="btn-dislike <?= $likedByUser === false ? 'active' : '' ?>" aria-label="Dislike this post">
+            <li class="reaction reaction-dislike <?= $forAdmin ? 'disabled' : '' ?>">
+                <button type="button" class="btn-dislike <?= $likedByUser === false ? 'active' : '' ?>" <?= $forAdmin ? 'disabled' : '' ?> aria-label="Dislike this post">
                     <img src="/images/icons/dislike.svg" alt="">
                     <data data-field="dislikes" value="<?= $dislikes ?>"><?= $dislikes ?></data>
                 </button>

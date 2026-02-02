@@ -276,6 +276,28 @@ body > header > a.title-with-logo:hover {
     pointer-events: none;
 }
 
+/* Stile per reaction disabilitate (admin) */
+.review li.reaction.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.review li.reaction.disabled:hover {
+    background-color: var(--color-bg-light);
+}
+
+.review li.reaction.disabled:hover a,
+.review li.reaction.disabled:hover data,
+.review li.reaction.disabled:hover button {
+    color: var(--color-blue-700);
+}
+
+.review li.reaction.disabled:hover img {
+    filter: invert(24%) sepia(87%) saturate(2253%) hue-rotate(195deg) brightness(91%) contrast(101%);
+}
+
+
 /*SIDEBAR/NAVBAR*/
 
 .nav-main-container {

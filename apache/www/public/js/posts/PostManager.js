@@ -91,13 +91,19 @@ export class PostManager {
         
         // If admin, disable the buttons visually and functionally
         if (this.#isAdmin) {
-            likeBtn.disabled = true;
-            likeBtn.style.opacity = '0.5';
-            likeBtn.style.cursor = 'not-allowed';
+            // Aggiungi la classe 'disabled' agli elementi <li> padre dei bottoni
+            const likeLi = likeBtn.closest('li.reaction');
+            const dislikeLi = dislikeBtn.closest('li.reaction');
             
+            if (likeLi) {
+                likeLi.classList.add('disabled');
+            }
+            if (dislikeLi) {
+                dislikeLi.classList.add('disabled');
+            }
+            
+            likeBtn.disabled = true;
             dislikeBtn.disabled = true;
-            dislikeBtn.style.opacity = '0.5';
-            dislikeBtn.style.cursor = 'not-allowed';
             
             return; // Don't attach click handlers for admin
         }
