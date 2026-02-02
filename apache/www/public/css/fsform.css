@@ -88,7 +88,12 @@ main {
 .field-holder:not(.course-item) input.has-value + label,
 .field-holder:not(.course-item) select + label {
     transform: translateY(-50%);
-    font-size: 1em;
+    font-size: var(--space-md);
+}
+
+.field-holder:not(.course-item) :disabled + label {
+    transform: translateY(-50%);
+    font-size: var(--space-md);
 }
 
 .field-error-message {
