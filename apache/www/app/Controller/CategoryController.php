@@ -27,12 +27,14 @@ class CategoryController extends BaseController {
     #[AuthMiddleware(Role::ADMIN)]
     public function getCategories(Request $request): Response {
         $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $searchTerm = $request->get('search');
        
         return $this->render("admin/categories", [
-            'categories' => $this->categoryService->getAllCategories(),
+            'categories' => $searchTerm ? $this->categoryService->searchCategoriesByName($searchTerm) : $this->categoryService->getAllCategories(),
             'adminId' => $adminId 
         ]);
     }
+
 
     #[Get('/categories/:categoryId/edit')]
     #[AuthMiddleware(Role::ADMIN)]
