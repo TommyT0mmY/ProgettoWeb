@@ -649,4 +649,28 @@ nav h2 {
     box-shadow: var(--shadow-md), var(--focus-ring);
 }
 
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.btn-create-post {
+    padding: var(--space-sm) var(--space-lg);
+    background-color: var(--color-blue-500);
+    color: var(--color-white);
+    text-decoration: none;
+    font-weight: var(--fw-semibold);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+}
+
+.btn-create-post:hover {
+    background-color: var(--color-blue-600);
+    box-shadow: var(--shadow-md);
+}
 
