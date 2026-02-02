@@ -138,7 +138,7 @@
     --fs-h3: var(--fs-2xl);
     --fs-h2: var(--fs-3xl);
 
-    --feed-max-width: clamp(45rem, 65vw, 65rem);
+    --feed-max-width: clamp(45rem, 80vw, 65rem);
 }
 
 /* Global box model */

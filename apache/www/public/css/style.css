@@ -62,8 +62,7 @@ body > header img.menu-container {
     object-fit: contain;
 }
 
-body > header > .title-with-logo,
-body > header > a.title-with-logo {
+.title-with-logo {
     display: flex; 
     flex-direction: row;
     align-items: center;
@@ -73,19 +72,25 @@ body > header > a.title-with-logo {
     cursor: pointer;
 }
 
-body > header > a.title-with-logo img {
+.title-with-logo img {
     width: var(--icon-size-lg);
     height: var(--icon-size-lg);
 }
 
-body > header > a.title-with-logo h1 {
+.title-with-logo h1 {
     margin: 0;
     font-size: var(--fs-md);
 }
 
-body > header > a.title-with-logo:hover {
+.title-with-logo:hover {
     text-decoration: none;
     opacity: 0.8;
+}
+
+@media screen and (max-width: 768px) {
+    .title-with-logo h1 {
+        display: none;
+    }
 }
 
 /**********POST-list e POST*************/
@@ -126,7 +131,6 @@ body > header > a.title-with-logo:hover {
     flex-direction: column;
     gap: var(--space-xs);
     margin: var(--space-xs) 0;
-    padding: var(--space-xs);
     background-color: var(--color-bg-metadata);
     border-radius: var(--radius-md);
 }
@@ -217,11 +221,19 @@ body > header > a.title-with-logo:hover {
 .review li {
     border: var(--border-width-hairline) solid var(--color-blue-700);
     border-radius: var(--space-xs);
-    padding: var(--space-xs);
     background: var(--color-bg-light);
     display: flex;
     align-items: center;
     transition: var(--transition-fast);
+}
+
+.review li > * {
+    padding: var(--space-xxs);
+}
+
+.review li > *:focus-visible {
+    box-shadow: var(--shadow-md), var(--focus-ring);
+    border-radius: inherit;
 }
 
 .review li:hover {
@@ -244,7 +256,6 @@ body > header > a.title-with-logo:hover {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0;
     display: flex;
     align-items: center;
     gap: var(--space-xs);
@@ -419,6 +430,12 @@ nav h2 {
     opacity: 0.7;
 }
 
+#open-sidebar-button:focus-visible {
+    outline: none;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md), var(--focus-ring);
+}
+
 #overlay {
     background: var(--color-overlay);
     backdrop-filter: blur(2px);
@@ -443,7 +460,7 @@ nav h2 {
 
 #filter-form {
     background-color: var(--color-bg);
-    padding: var(--space-lg);
+    padding: var(--space-md);
     box-shadow: var(--shadow-sm);
 }
 
