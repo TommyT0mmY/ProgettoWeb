@@ -14,6 +14,19 @@ class FacultyService {
     }
 
     /**
+     * Searches faculties by name.
+     *
+     * @param string $searchTerm The search term
+     * @return FacultyDTO[] Array of matching faculties
+     */
+    public function searchFaculties(string $searchTerm): array {
+        if (empty(trim($searchTerm))) {
+            return $this->getAllFaculties();
+        }
+        return $this->facultyRepository->searchByName($searchTerm);
+    }
+
+    /**
      * Gets faculty details by ID.
      *
      * @param int $facultyId The ID of the faculty
