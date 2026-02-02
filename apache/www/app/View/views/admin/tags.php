@@ -14,7 +14,8 @@ $this->extend('admin-layout', [
 ?>
 
 <header>
-    <h2>Admin - Tags Management - Faculty: <?= h($faculty->facultyName) ?>, Course: <?= h($course->courseName) ?></h2>
+    <h2>Admin - Tags Management</h2>
+    <p>Faculty: <strong><?= h($faculty->facultyName) ?></strong> &bull; Course: <strong><?= h($course->courseName) ?></strong></p>
 </header>
 <form action="#" method="GET">
     <input type="search" name="search" placeholder="Search tag" />
@@ -34,19 +35,10 @@ $this->extend('admin-layout', [
             <h3><?= h($tag->tag_name ?? '') ?></h3>
         </header>
         <p>Tag ID: <?= h($tag->tagId ?? '') ?></p>
-        <div class="post-metadata">
-            <div class="metadata-section" data-section="course">
-                <span class="metadata-label">Course:</span>
-                <ul class="metadata-list course-list">
-                    <li class="tag subject"><a href="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags"><?= h($course->courseName) ?></a></li>
-                </ul>
-            </div>
-            <div class="metadata-section" data-section="course">
-                <span class="metadata-label">Faculty:</span>
-                <ul class="metadata-list course-list">
-                    <li class="tag subject"><a href="/faculties/<?= h($faculty->facultyId) ?>/courses"><?= h($faculty->facultyName) ?></a></li>
-                </ul>
-            </div>button type="button" 
+        <footer>
+            <ul class="review">
+                    <li>
+                        <button type="button" 
                                 data-action="edit" 
                                 data-entity="tag" 
                                 data-id="<?= h($tag->tagId) ?>"
@@ -62,12 +54,7 @@ $this->extend('admin-layout', [
                                 data-url="/api/delete-tag/<?= h($faculty->facultyId) ?>/<?= h($course->courseId) ?>/<?= h($tag->tagId) ?>">
                             Delete
                         </button>
-                    </li><li>
-                        <a href="#" >
-                            Delete
-                        </a>
                     </li>
-                    
             </ul>            
         </footer>
     </section>

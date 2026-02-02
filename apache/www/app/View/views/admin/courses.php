@@ -14,7 +14,8 @@ $this->extend('admin-layout', [
 ?>
 
 <header>
-    <h2>Admin - Courses Management - Faculty: <?= h($faculty->facultyName) ?></h2>
+    <h2>Admin - Courses Management</h2>
+    <p>Faculty: <strong><?= h($faculty->facultyName) ?></strong></p>
 </header>
 
 <form action="#" method="GET">
