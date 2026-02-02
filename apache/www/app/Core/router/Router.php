@@ -139,7 +139,7 @@ class Router {
         }
         if ($node->isEnding) {
             LogHelper::logError("Duplicate routes");
-            throw new \RuntimeException("Duplicate routes");
+            throw new \RuntimeException("Duplicate routes: $method $path");
         }
         $node->isEnding = true;
         $node->callback = new Callback($controllerClassname, $action);
