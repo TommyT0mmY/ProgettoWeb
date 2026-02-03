@@ -202,18 +202,11 @@ class TagController extends BaseController {
         $tagId = (int)$pathVars['tagId'];
         $courseId = (int)$pathVars['courseId'];
         
-        try {
-            $this->tagService->deleteTag($tagId, $courseId);
-            
-            return Response::create()->json([
-                "success" => true,
-                "message" => "Tag deleted successfully"
-            ]);
-        } catch (\Exception $e) {
-            return Response::create()->json([
-                "success" => false,
-                "message" => $e->getMessage()
-            ], 500);
-        }
+        $this->tagService->deleteTag($tagId, $courseId);
+        
+        return Response::create()->json([
+            "success" => true,
+            "message" => "Tag deleted successfully"
+        ]);
     }
 }

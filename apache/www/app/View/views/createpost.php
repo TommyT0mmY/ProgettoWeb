@@ -13,6 +13,7 @@ $this->extend('main-layout', [
     'additionalHeadCode' => [
         '<link rel="stylesheet" href="/css/fsform.css" />',
         '<script type="module" src="/js/posts/create-post.js"></script>',
+        '<link rel="stylesheet" href="/css/createpost.css" />',
         ] 
     ]); 
 ?>
@@ -22,7 +23,7 @@ $this->extend('main-layout', [
     
     <h2 class="createPost">Create post for: <?= h($thisCourse->courseName) ?></h2>
 
-<form method="post" id="create-post-form" class="create-post-form" novalidate>
+<form method="post" id="create-post-form" enctype="multipart/form-data" novalidate>
     <input type="hidden" name="courseId" value="<?= h($thisCourse->courseId) ?>" />
     <fieldset>
         <legend>Post information</legend>
@@ -63,11 +64,19 @@ $this->extend('main-layout', [
             <textarea id="description" name="description" rows="4" placeholder="Write your post here..." required></textarea>
             <output id="description-error" class="field-error-message"></output>
         </p>
-        <p>
-            <label for="notesFile">Upload your notes:</label>
-            <input type="file" name="file" id="notesFile" />
+        <div class="file-upload-section">
+            <label for="notesFile">Attachments (optional):</label>
+            <p class="file-upload-info">
+                Max 5 files, 10 MB each. Allowed: PDF, DOC, DOCX, TXT, JPG, PNG, GIF, ZIP, RAR.
+            </p>
+            <input type="file" 
+                   name="files[]" 
+                   id="notesFile" 
+                   multiple 
+                   accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar" />
             <output id="notesFile-error" class="field-error-message"></output>
-        </p>
+            <div id="file-list" class="selected-files-container"></div>
+        </div>
     </fieldset>
     
     <p>

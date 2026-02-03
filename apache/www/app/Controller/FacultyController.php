@@ -172,18 +172,11 @@ class FacultyController extends BaseController {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $facultyId = (int)$pathVars['facultyId'];
         
-        try {
-            $this->facultyService->deleteFaculty($facultyId);
-            
-            return Response::create()->json([
-                "success" => true,
-                "message" => "Faculty deleted successfully"
-            ]);
-        } catch (\Exception $e) {
-            return Response::create()->json([
-                "success" => false,
-                "message" => $e->getMessage()
-            ], 500);
-        }
+        $this->facultyService->deleteFaculty($facultyId);
+        
+        return Response::create()->json([
+            "success" => true,
+            "message" => "Faculty deleted successfully"
+        ]);
     }
 }

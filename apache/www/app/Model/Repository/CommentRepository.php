@@ -9,6 +9,8 @@ use Unibostu\Model\DTO\CreateCommentDTO;
 use Unibostu\Core\Database;
 use PDO;
 use Unibostu\Model\DTO\UserDTO;
+use Unibostu\Core\exceptions\ValidationErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
 
 class CommentRepository {
     private PDO $pdo;
@@ -20,7 +22,7 @@ class CommentRepository {
     }
 
     /**
-     * Recupera tutti i commenti di un post (inclusi cancellati soft-deleted)
+     * Retrieves all comments of a post (including soft-deleted)
      */
     public function findByPostId(int $postId): array {
         $stmt = $this->pdo->prepare(
@@ -40,7 +42,7 @@ class CommentRepository {
     }
 
     /**
-     * Recupera un commento tramite ID
+     * Retrieves a comment by ID
      */
     public function findById(int $commentId, int $postId): ?CommentDTO {
         $stmt = $this->pdo->prepare("SELECT * FROM comments WHERE comment_id = :commentId AND post_id = :postId");

@@ -23,6 +23,7 @@ use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\TagService;
 use Unibostu\Model\Service\UserService;
+use Unibostu\Model\Service\AttachmentService;
 
 
 class PostController extends BaseController {
@@ -32,6 +33,7 @@ class PostController extends BaseController {
     private $categoryService;
     private $tagService;
     private $userService;
+    private $attachmentService;
 
     public function __construct(Container $container) {
         parent::__construct($container);
@@ -41,6 +43,7 @@ class PostController extends BaseController {
         $this->categoryService = new CategoryService();
         $this->tagService = new TagService();
         $this->userService = new UserService();
+        $this->attachmentService = new AttachmentService();
     }
 
     #[Get('/courses/:courseId/createpost')]
@@ -94,42 +97,83 @@ class PostController extends BaseController {
         "title" => ValidationErrorCode::TITLE_REQUIRED,
         "description" => ValidationErrorCode::DESCRIPTION_REQUIRED,
         "courseId" => ValidationErrorCode::COURSE_REQUIRED
-    ], ["categoryId", "tags", "file"])]
+    ], ["categoryId", "tags"])]
     public function createPost(Request $request): Response {
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $fields = $request->getAttribute(RequestAttribute::FIELDS);
-        
+        $title = $fields['title'];
+        $description = $fields['description'];
+        $courseId = $fields['courseId'];
+        $categoryId = $fields['categoryId'];
+        $tagIds = $fields['tags'];
         // Parse tags
         $tags = [];
-        if (isset($fields['tags']) && is_array($fields['tags'])) {
-            $tags = array_map(function($tagId) use ($fields) {
+        if (!empty($tagIds) && is_array($tagIds)) {
+            $tags = array_map(function($tagId) use ($courseId) {
                 return [
                     'tagId' => (int)$tagId,
-                    'courseId' => (int)$fields['courseId']
+                    'courseId' => (int)$courseId
                 ];
-            }, $fields['tags']);
+            }, $tagIds);
         }
-        
-        // Handle file upload
-        $attachmentPath = null;
-        // TODO: Implement file upload handling
-        
+        // Validate files BEFORE creating the post
+        $hasFiles = isset($_FILES['files']) && !empty($_FILES['files']['name'][0]);
+        if ($hasFiles) {
+            $this->attachmentService->validateFiles($_FILES['files']);
+        }
+        // Create the post
         $createPostDTO = new CreatePostDTO(
             userId: $userId,
-            courseId: (int)$fields['courseId'],
-            title: $fields['title'],
-            description: $fields['description'],
+            courseId: (int)$courseId,
+            title: $title,
+            description: $description,
             tags: $tags,
-            category: isset($fields['categoryId']) && $fields['categoryId'] !== '' ? (int)$fields['categoryId'] : null,
-            attachmentPath: $attachmentPath
+            category: !empty($categoryId) ? (int)$categoryId : null
         );
+        $postId = $this->postService->createPost($createPostDTO);
         
-        $this->postService->createPost($createPostDTO);
+        // Process file uploads (already validated)
+        $attachments = [];
+        if ($hasFiles) {
+            $attachments = $this->attachmentService->processUploadedFiles($postId, $_FILES['files']);
+        }
         
         return Response::create()->json([
             'success' => true,
-            'redirect' => '/courses/' . $fields['courseId']
+            'redirect' => '/courses/' . $courseId,
+            'attachments' => array_map(fn($a) => $a->toArray(), $attachments)
         ]);
+    }
+
+    /**
+     * Serve attachment files
+     */
+    #[Get("/api/attachments/:filename")]
+    #[AuthMiddleware(Role::USER, Role::ADMIN)]
+    public function serveAttachment(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $filename = $pathVars['filename'];
+        // Validate filename for security
+        if (empty($filename) || preg_match('/[^a-zA-Z0-9_\-\.]/', $filename) || str_contains($filename, '..')) {
+            return Response::create()->withContent("Invalid filename")->withStatusCode(400);
+        }
+        // Get attachment info from database
+        $attachment = $this->attachmentService->getAttachmentByFileName($filename);
+        if (!$attachment) {
+            return Response::create()->withContent("Attachment not found")->withStatusCode(404);
+        }
+        // Check file exists on disk
+        if (!$this->attachmentService->fileExists($filename)) {
+            return Response::create()->withContent("File not found")->withStatusCode(404);
+        }
+        $filePath = $this->attachmentService->getFilePath($filename);
+        $content = file_get_contents($filePath);
+        // Return file with proper headers
+        return Response::create()
+            ->withContent($content)
+            ->withHeader('Content-Type', $attachment->mimeType)
+            ->withHeader('Content-Length', (string)$attachment->fileSize)
+            ->withHeader('Content-Disposition', 'inline; filename="' . $attachment->originalName . '"');
     }
 
     #[Delete("/api/posts/:postid")]
@@ -235,7 +279,6 @@ class PostController extends BaseController {
                 'title' => $post->title,
                 'description' => $post->description,
                 'createdAt' => $post->createdAt,
-                'attachmentPath' => $post->attachmentPath,
                 'likes' => $post->likes,
                 'dislikes' => $post->dislikes,
                 'likedByUser' => $post->likedByUser,
@@ -252,7 +295,10 @@ class PostController extends BaseController {
                     'categoryId' => $post->category->categoryId,
                     'categoryName' => $post->category->categoryName
                 ] : null,
-                'tags' => $post->tags
+                'tags' => $post->tags,
+                'attachments' => array_map(function($att) {
+                    return $att->toArray();
+                }, $post->attachments)
             ];
         }, $posts);
 

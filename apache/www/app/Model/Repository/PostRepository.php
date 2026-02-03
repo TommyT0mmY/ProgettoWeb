@@ -16,6 +16,7 @@ class PostRepository {
     private UserRepository $userRepository;
     private CourseRepository $courseRepository;
     private CategoryRepository $categoryRepository;
+    private AttachmentRepository $attachmentRepository;
     
     public function __construct() {
         $this->pdo = Database::getConnection();
@@ -23,6 +24,7 @@ class PostRepository {
         $this->userRepository = new UserRepository();
         $this->courseRepository = new CourseRepository();
         $this->categoryRepository = new CategoryRepository();
+        $this->attachmentRepository = new AttachmentRepository();
     }
 
     /**
@@ -170,35 +172,32 @@ class PostRepository {
     }
 
     /**
-     * Salva un nuovo post
+     * Saves a new post
+     * @return int The created post ID
      */
-    public function save(CreatePostDTO $dto): void {
+    public function save(CreatePostDTO $dto): int {
         try {
             $this->pdo->beginTransaction();
-
             $stmt = $this->pdo->prepare(
                 "INSERT INTO posts 
-                (title, description, attachment_path, created_at, user_id, course_id, category_id)
-                VALUES (:title, :description, :attachmentPath, :createdAt, :userId, :courseId, :category)"
+                (title, description, created_at, user_id, course_id, category_id)
+                VALUES (:title, :description, :createdAt, :userId, :courseId, :category)"
             );
             $stmt->bindValue(':title', $dto->title, PDO::PARAM_STR);
             $stmt->bindValue(':description', $dto->description, PDO::PARAM_STR);
-            $stmt->bindValue(':attachmentPath', $dto->attachmentPath ?? null, PDO::PARAM_STR);
             $stmt->bindValue(':createdAt', date('Y-m-d H:i:s'), PDO::PARAM_STR);
             $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
             $stmt->bindValue(':courseId', $dto->courseId ?? null, PDO::PARAM_INT);
             $stmt->bindValue(':category', $dto->category ?? null, PDO::PARAM_INT);
             $stmt->execute();
             $postId = (int)$this->pdo->lastInsertId();
-
-            // Salva i tag
-            if (!empty($dto->tags)) {
+            if (!empty($dto->tags)) { // Save tags
                 foreach ($dto->tags as $tag) {
                     $this->postTagRepository->addTagToPost($postId, $tag['tagId'], $tag['courseId']);
                 }
             }
-
             $this->pdo->commit();
+            return $postId;
         } catch (\Exception $e) {
             $this->pdo->rollBack();
             throw $e;
@@ -347,13 +346,12 @@ class PostRepository {
         $category = $this->categoryRepository->findById((int)$row['category_id']);
         $likes = $this->countLikes($postId);
         $dislikes = $this->countDislikes($postId);
-        
+        $attachments = $this->attachmentRepository->findByPostId($postId);
         // Ottieni la reazione dell'utente corrente (null, true=like, false=dislike)
         $likedByCurrentUser = null;
         if ($currentUserId !== null) {
             $likedByCurrentUser = $this->hasUserVoted($postId, $currentUserId);
         }
-
         $dto = new PostDTO(
             postId: $postId,
             author: $row['author'],
@@ -366,7 +364,7 @@ class PostRepository {
             likes: $likes,
             dislikes: $dislikes,
             likedByUser: $likedByCurrentUser,
-            attachmentPath: $row['attachment_path'] ?? null
+            attachments: $attachments
         );
         return $dto;
     }

@@ -8,7 +8,8 @@ readonly class PostDTO {
     public int $postId;
     public string $title;
     public string $description;
-    public ?string $attachmentPath;
+    /** @var AttachmentDTO[] Array of attachment DTOs */
+    public array $attachments;
     public string $createdAt;
     public string $userId;
     public CourseDTO $course;
@@ -33,13 +34,13 @@ readonly class PostDTO {
         int $likes = 0,
         int $dislikes = 0,
         ?bool $likedByUser = null,
-        ?string $attachmentPath = null
+        array $attachments = []
     ) {
         $this->postId = $postId;
         $this->author = $author;
         $this->title = $title;
         $this->description = $description;
-        $this->attachmentPath = $attachmentPath;
+        $this->attachments = $attachments;
         $this->createdAt = $createdAt;
         $this->course = $course;
         $this->tags = $tags;

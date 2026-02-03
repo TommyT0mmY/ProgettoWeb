@@ -48,8 +48,9 @@ class PostService {
      * Le categorie sono facoltative
      *
      * @throws \Exception se l'userId non è valido o il corso non appartiene all'utente
+     * @return int The created post ID
      */
-    public function createPost(CreatePostDTO $dto): void {
+    public function createPost(CreatePostDTO $dto): int {
         // Risolvi userId a utente
         $user = $this->userRepository->findByUserId($dto->userId);
         if (!$user) {
@@ -75,7 +76,7 @@ class PostService {
             throw new \Exception("Titolo e descrizione non possono essere vuoti");
         }
 
-        $this->postRepository->save($dto);
+        return $this->postRepository->save($dto);
     }
 
     /**

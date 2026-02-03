@@ -166,12 +166,19 @@ export class InfiniteScroll {
             });
         }
         
-        // Add attachment if exists at the beginning of review list
-        if (post.attachmentPath) {
-            const reviewList = article.querySelector('[data-field="reviewList"]');
-            reviewList.insertAdjacentHTML('afterbegin',
-                `<li><a href="${this.escapeHtml(post.attachmentPath)}" download>Download Notes</a></li>`
-            );
+        // Add attachments if exist
+        if (post.attachments?.length > 0) {
+            const attachmentsContainer = article.querySelector('[data-field="attachments"]');
+            if (attachmentsContainer) {
+                attachmentsContainer.style.display = '';
+                const attachmentsList = attachmentsContainer.querySelector('.attachments-list');
+                if (attachmentsList) {
+                    attachmentsList.innerHTML = '';
+                    post.attachments.forEach(att => {
+                        attachmentsList.appendChild(this.createAttachmentElement(att));
+                    });
+                }
+            }
         }
         
         // Set like/dislike counts and states
@@ -193,6 +200,35 @@ export class InfiniteScroll {
         article.querySelector('[data-field="commentsLink"]').href = `/posts/${post.postId}`;
         
         return article;
+    }
+
+    getFileTypeClass(extension) {
+        const ext = (extension || '').toLowerCase();
+        const types = {
+            'pdf': 'file-pdf',
+            'doc': 'file-word', 'docx': 'file-word',
+            'xls': 'file-excel', 'xlsx': 'file-excel',
+            'ppt': 'file-powerpoint', 'pptx': 'file-powerpoint',
+            'jpg': 'file-image', 'jpeg': 'file-image', 'png': 'file-image', 'gif': 'file-image', 'webp': 'file-image',
+            'zip': 'file-archive', 'rar': 'file-archive', '7z': 'file-archive',
+            'txt': 'file-text', 'md': 'file-text',
+        };
+        return types[ext] || 'file-generic';
+    }
+
+    createAttachmentElement(attachment) {
+        const link = document.createElement('a');
+        link.href = attachment.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.className = `attachment-btn ${this.getFileTypeClass(attachment.extension)}`;
+        link.title = `${attachment.originalName} (${attachment.formattedSize})`;
+        link.innerHTML = `
+            <span class="attachment-icon"></span>
+            <span class="attachment-name">${this.escapeHtml(attachment.originalName)}</span>
+            <span class="attachment-size">${this.escapeHtml(attachment.formattedSize)}</span>
+        `;
+        return link;
     }
 
     escapeHtml(text) {

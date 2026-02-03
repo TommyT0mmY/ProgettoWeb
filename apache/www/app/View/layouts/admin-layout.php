@@ -1,9 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
-// TODO
-
 /** 
  * @var \Unibostu\Core\RenderingEngine $this 
  * @var string|null $title

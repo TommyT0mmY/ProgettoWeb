@@ -7,6 +7,8 @@ use Unibostu\Model\Repository\TagRepository;
 use Unibostu\Model\DTO\TagDTO;
 use Unibostu\Core\PostRepository;
 use Unibostu\Model\Repository\PostTagRepository;
+use Unibostu\Core\exceptions\ValidationErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
 
 class TagService {
     private TagRepository $tagRepository;
@@ -47,56 +49,62 @@ class TagService {
     }
 
     /**
-     * Crea un nuovo tag
-     * @throws \Exception se i dati non sono validi
+     * Creates a new tag
+     * @throws ValidationException if validation fails
      */
     public function createTag(string $tag_name, int $courseId): void {
+        $exceptionBuilder = ValidationException::build();
         if (empty($tag_name)) {
-            throw new \Exception("Tipo tag non può essere vuoto");
+            $exceptionBuilder->addError(ValidationErrorCode::TAG_REQUIRED);
         }
 
         if ($courseId <= 0) {
-            throw new \Exception("Corso non valido");
+            $exceptionBuilder->addError(ValidationErrorCode::COURSE_REQUIRED);
         }
 
         $existing = $this->tagRepository->findByTypeAndCourse($tag_name, $courseId);
         if ($existing) {
-            throw new \Exception("Tag '$tag_name' per questo corso esiste già");
+            $exceptionBuilder->addError(ValidationErrorCode::TAG_ALREADY_EXISTS);
         }
+        $exceptionBuilder->throwIfAny();
 
         $this->tagRepository->save($tag_name, $courseId);
     }
 
     /**
-     * Aggiorna un tag
-     * @throws \Exception se il tag non esiste o i dati non sono validi
+     * Updates a tag
+     * @throws ValidationException if validation fails
      */
     public function updateTag(int $tagId, string $tag_name, int $courseId): void {
+        $exceptionBuilder = ValidationException::build();
         if (empty($tag_name)) {
-            throw new \Exception("Tipo tag non può essere vuoto");
+            $exceptionBuilder->addError(ValidationErrorCode::TAG_REQUIRED);
         }
 
         if ($courseId <= 0) {
-            throw new \Exception("Corso non valido");
+            $exceptionBuilder->addError(ValidationErrorCode::COURSE_REQUIRED);
         }
 
         $tag = $this->tagRepository->findByIdAndCourse($tagId, $courseId);
         if (!$tag) {
-            throw new \Exception("Tag non trovato");
+            $exceptionBuilder->addError(ValidationErrorCode::TAG_REQUIRED);
         }
+        $exceptionBuilder->throwIfAny();
 
         $this->tagRepository->update($tagId, $tag_name);
     }
 
     /**
-     * Elimina un tag
-     * @throws \Exception se il tag non esiste
+     * Deletes a tag
+     * @throws ValidationException if validation fails
      */
     public function deleteTag(int $tagId, int $courseId): void {
+        $exceptionBuilder = ValidationException::build();
         $tag = $this->tagRepository->findByIdAndCourse($tagId, $courseId);
         if (!$tag) {
-            throw new \Exception("Tag non trovato");
+            $exceptionBuilder->addError(ValidationErrorCode::TAG_REQUIRED);
         }
+        $exceptionBuilder->throwIfAny();
 
         $this->tagRepository->delete($tagId, $courseId);
     }

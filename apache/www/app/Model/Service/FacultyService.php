@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Service;
 
+use Unibostu\Core\exceptions\ValidationErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Model\Repository\FacultyRepository;
 use Unibostu\Model\DTO\FacultyDTO;
 
@@ -55,43 +57,49 @@ class FacultyService {
     }
 
     /**
-     * Crea una nuova facolta
-     * @throws \Exception se i dati non sono validi
+     * Creates a new faculty
+     * @throws ValidationException if validation fails
      */
     public function createFaculty(string $facultyName): void {
+        $exceptionBuilder = ValidationException::build();
         if (empty($facultyName)) {
-            throw new \Exception("Nome facoltà non può essere vuoto");
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_REQUIRED);
         }
+        $exceptionBuilder->throwIfAny();
 
         $this->facultyRepository->save($facultyName);
     }
 
     /**
-     * Aggiorna i dati di una facolta
-     * @throws \Exception se la facoltà non esiste o i dati non sono validi
+     * Updates faculty data
+     * @throws ValidationException if validation fails
      */
     public function updateFaculty(int $facultyId, string $facultyName): void {
+        $exceptionBuilder = ValidationException::build();
         $faculty = $this->facultyRepository->findById($facultyId);
         if (!$faculty) {
-            throw new \Exception("Facoltà non trovata");
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_REQUIRED);
         }
 
         if (empty($facultyName)) {
-            throw new \Exception("Nome facoltà non può essere vuoto");
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_REQUIRED);
         }
+        $exceptionBuilder->throwIfAny();
 
         $this->facultyRepository->update($facultyId, $facultyName);
     }
 
     /**
-     * Elimina una facolta
-     * @throws \Exception se la facoltà non esiste
+     * Deletes a faculty
+     * @throws ValidationException if validation fails
      */
     public function deleteFaculty(int $facultyId): void {
+        $exceptionBuilder = ValidationException::build();
         $faculty = $this->facultyRepository->findById($facultyId);
         if (!$faculty) {
-            throw new \Exception("Facoltà non trovata");
+            $exceptionBuilder->addError(ValidationErrorCode::FACULTY_REQUIRED);
         }
+        $exceptionBuilder->throwIfAny();
 
         $this->facultyRepository->delete($facultyId);
     }

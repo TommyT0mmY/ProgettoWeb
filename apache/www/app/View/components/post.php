@@ -15,12 +15,31 @@ $courseId = $post->course->courseId ?? '';
 $courseName = $post->course->courseName ?? '';
 $description = $post->description ?? '';
 $tags = $post->tags ?? [];
-$attachmentPath = $post->attachmentPath ?? '';
+$attachments = $post->attachments ?? [];
 $likes = $post->likes ?? 0;
 $dislikes = $post->dislikes ?? 0;
 $likedByUser = $post->likedByUser ?? null;
 $courseLink = $courseId ? "/courses/{$courseId}" : '#';
 $categoryLink = $categoryId ? ($currentPageUrl ?? '/') . "?categoryId={$categoryId}" : '#';
+
+/**
+ * Helper function to get file type class for icon styling
+ */
+if (!function_exists('getFileTypeClass')) {
+    function getFileTypeClass(string $extension): string {
+        $extension = strtolower($extension);
+        $types = [
+            'pdf' => 'file-pdf',
+            'doc' => 'file-word', 'docx' => 'file-word',
+            'xls' => 'file-excel', 'xlsx' => 'file-excel',
+            'ppt' => 'file-powerpoint', 'pptx' => 'file-powerpoint',
+            'jpg' => 'file-image', 'jpeg' => 'file-image', 'png' => 'file-image', 'gif' => 'file-image', 'webp' => 'file-image',
+            'zip' => 'file-archive', 'rar' => 'file-archive', '7z' => 'file-archive',
+            'txt' => 'file-text', 'md' => 'file-text',
+        ];
+        return $types[$extension] ?? 'file-generic';
+    }
+}
 ?>
 <article class="post" data-post-id="<?=h($postId)?>" data-author-id="<?=h($authorId)?>" data-course-id="<?=h($courseId)?>">
     <header>
@@ -57,11 +76,26 @@ $categoryLink = $categoryId ? ($currentPageUrl ?? '/') . "?categoryId={$category
         </div>
     </div>
     <p data-field="description"><?= nl2br(h($description)) ?></p>
+    
+    <div class="post-attachments" data-field="attachments" style="display: <?= !empty($attachments) ? '' : 'none' ?>;">
+        <span class="attachments-label">Attachments:</span>
+        <div class="attachments-list">
+            <?php foreach ($attachments as $attachment): ?>
+            <a href="<?= h($attachment->getUrl()) ?>" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="attachment-btn <?= getFileTypeClass($attachment->getExtension()) ?>"
+               title="<?= h($attachment->originalName) ?> (<?= h($attachment->getFormattedSize()) ?>)">
+                <span class="attachment-icon"></span>
+                <span class="attachment-name"><?= h($attachment->originalName) ?></span>
+                <span class="attachment-size"><?= h($attachment->getFormattedSize()) ?></span>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    
     <footer>
         <ul class="review" data-field="reviewList">
-            <?php if ($attachmentPath): ?>
-            <li><a href="<?=h($attachmentPath)?>" download>Download Notes</a></li>
-            <?php endif; ?>
             <li class="reaction reaction-like <?= $forAdmin ? 'disabled' : '' ?>">
                 <button type="button" class="btn-like <?= $likedByUser === true ? 'active' : '' ?>" <?= $forAdmin ? 'disabled' : '' ?> aria-label="Like this post">
                     <img src="/images/icons/like.svg" alt="">

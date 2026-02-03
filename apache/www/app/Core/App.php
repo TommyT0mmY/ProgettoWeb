@@ -69,7 +69,11 @@ class App {
     public function handleError(\Exception $e, ?Request $request): void {
         $code = intval($e->getCode() ?: 500);
         if ($request === null) {
-            Response::create()->withStatusCode(500)->withContent("Internal Server Error")->send();
+            Response::create()
+                ->withStatusCode(500)
+                ->withHeader('Content-Type', 'text/plain; charset=UTF-8')
+                ->withContent("Internal Server Error")
+                ->send();
             exit();
         }
         $isApiRequest = str_starts_with($request->getUri(), '/api/');
@@ -80,13 +84,20 @@ class App {
         }
         // For API requests, return JSON error response
         if ($isApiRequest) {
-            Response::create()->withStatusCode($code)->json([
-                "success" => false,
-                "error" => $e->getMessage()
-            ])->send();
+            Response::create()
+                ->withStatusCode($code)
+                ->json([
+                    "success" => false,
+                    "error" => $e->getMessage()
+                ])
+                ->send();
             exit();
         }
-        http_response_code(intval($code));
-        echo "An error occurred: " . h($e->getMessage()); 
+        // For non-API requests, return plain text error
+        Response::create()
+            ->withStatusCode($code)
+            ->withHeader('Content-Type', 'text/html; charset=UTF-8')
+            ->withContent("An error occurred: " . h($e->getMessage()))
+            ->send();
     }
 }
