@@ -209,8 +209,7 @@ class TagController extends BaseController {
         $this->tagService->deleteTag($tagId, $courseId);
         
         return Response::create()->json([
-            "success" => true,
-            "message" => "Tag deleted successfully"
+            "success" => true
         ]);
     }
 }

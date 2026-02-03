@@ -149,8 +149,7 @@ class FacultyController extends BaseController {
         $this->facultyService->deleteFaculty($facultyId);
         
         return Response::create()->json([
-            "success" => true,
-            "message" => "Faculty deleted successfully"
+            "success" => true
         ]);
     }
 }

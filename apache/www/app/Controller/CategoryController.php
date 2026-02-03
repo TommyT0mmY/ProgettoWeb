@@ -139,8 +139,7 @@ class CategoryController extends BaseController {
         $this->categoryService->deleteCategory($categoryId);
         
         return Response::create()->json([
-            "success" => true,
-            "message" => "Category deleted successfully"
+            "success" => true
         ]);
     }
 }

@@ -261,8 +261,7 @@ class CourseController extends BaseController {
         $this->courseService->deleteCourse($courseId);
         
         return Response::create()->json([
-            "success" => true,
-            "message" => "Course deleted successfully"
+            "success" => true
         ]);
     }
 }
