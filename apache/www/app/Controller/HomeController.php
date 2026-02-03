@@ -16,9 +16,9 @@ use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
 
 class HomeController extends BaseController {
-    private $postService;
-    private $courseService;
-    private $categoryService;
+    private PostService $postService;
+    private CourseService $courseService;
+    private CategoryService $categoryService;
 
     public function __construct(Container $container)
     {

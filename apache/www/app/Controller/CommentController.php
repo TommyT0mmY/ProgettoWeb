@@ -16,31 +16,14 @@ use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\DTO\CreateCommentDTO;
-use Unibostu\Model\DTO\CreatePostDTO;
-use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CommentService;
-use Unibostu\Model\Service\CourseService;
-use Unibostu\Model\Service\CategoryService;
-use Unibostu\Model\Service\TagService;
-use Unibostu\Model\Service\UserService;
-
 
 class CommentController extends BaseController {
-    private $postService;
-    private $commentService;
-    private $courseService;
-    private $categoryService;
-    private $tagService;
-    private $userService;
+    private CommentService $commentService;
 
     public function __construct(Container $container) {
         parent::__construct($container);
-        $this->postService = new PostService();
         $this->commentService = new CommentService();
-        $this->courseService = new CourseService();
-        $this->categoryService = new CategoryService();
-        $this->tagService = new TagService();
-        $this->userService = new UserService();
     }
 
     #[Post("/api/posts/:postid/comments")]
@@ -131,3 +114,4 @@ class CommentController extends BaseController {
         ]);
     }
 }
+

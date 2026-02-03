@@ -27,13 +27,13 @@ use Unibostu\Model\Service\AttachmentService;
 
 
 class PostController extends BaseController {
-    private $postService;
-    private $commentService;
-    private $courseService;
-    private $categoryService;
-    private $tagService;
-    private $userService;
-    private $attachmentService;
+    private PostService $postService;
+    private CommentService $commentService;
+    private CourseService $courseService;
+    private CategoryService $categoryService;
+    private TagService $tagService;
+    private UserService $userService;
+    private AttachmentService $attachmentService;
 
     public function __construct(Container $container) {
         parent::__construct($container);

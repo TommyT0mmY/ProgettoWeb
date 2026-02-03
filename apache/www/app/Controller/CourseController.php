@@ -21,12 +21,11 @@ use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\exceptions\ValidationErrorCode;
 
 class CourseController extends BaseController {
-    
-    private $postService;
-    private $courseService;
-    private $categoryService;
-    private $facultyService;
-    private $tagService;
+    private PostService $postService;
+    private CourseService $courseService;
+    private CategoryService $categoryService;
+    private FacultyService $facultyService;
+    private TagService $tagService;
 
     public function __construct(Container $container) {
         parent::__construct($container);
