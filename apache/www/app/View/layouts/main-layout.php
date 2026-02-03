@@ -45,7 +45,7 @@
 <body>
     <?= $this->component('header', ['userId' => $userId]) ?>
     <div class="nav-main-container">
-        <?= $this->component('sidebar', ['courses' => $courses]) ?>
+        <?= $this->component('sidebar', ['courses' => $courses, 'userId' => $userId]) ?>
         <main>
             <?= $content ?>
         </main>

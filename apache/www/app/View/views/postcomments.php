@@ -28,7 +28,7 @@ if (!$isAdmin) {
 $this->extend($layout, $layoutParams);
 ?>
 
-<a href="/">Go back to homepage</a>
+<a href="javascript:history.back()" class="back-link">← Go back</a>
 
 <div class="post-container"> 
     <?php if (!empty($post)): ?>

@@ -5,6 +5,19 @@
     --sidebar-width: 17rem;
 }
 
+/* Accessibility - Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
 main,h1,ul,p{
     margin: 0;
     padding: 0;
@@ -736,6 +749,23 @@ nav h2 {
     box-shadow: var(--shadow-md), var(--focus-ring);
 }
 
+/* Checkbox styles in filter form */
+#filter-form input[type="checkbox"] {
+    margin-right: var(--space-xs);
+    cursor: pointer;
+}
+
+#filter-form fieldset p {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-xxs);
+}
+
+#filter-form fieldset p label {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
 /* User Profile - Ban/Unban */
 .user-banned {
     color: var(--color-error);
@@ -818,8 +848,28 @@ nav h2 {
     box-shadow: var(--shadow-md), var(--focus-ring);
 }
 
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
 
+.btn-create-post {
+    padding: var(--space-sm) var(--space-lg);
+    background-color: var(--color-blue-500);
+    color: var(--color-white);
+    text-decoration: none;
+    font-weight: var(--fw-semibold);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+}
 
-
-
+.btn-create-post:hover {
+    background-color: var(--color-blue-600);
+    box-shadow: var(--shadow-md);
+}
 
