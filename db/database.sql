@@ -175,6 +175,23 @@ alter table likes add constraint FK_like_post
      references posts (post_id)
      on delete cascade;
 
+-- Post Attachments table for multiple file uploads
+create table post_attachments (
+     attachment_id int not null auto_increment,
+     post_id int not null,
+     file_name varchar(255) not null,
+     original_name varchar(255) not null,
+     mime_type varchar(100) not null,
+     file_size int not null,
+     created_at timestamp not null default current_timestamp,
+     constraint ID_post_attachments primary key (attachment_id)
+);
+
+alter table post_attachments add constraint FK_attachment_post
+     foreign key (post_id)
+     references posts (post_id)
+     on delete cascade;
+
 -- Index Section
 -- _____________
 
@@ -182,6 +199,7 @@ create index IDX_likes_post on likes (post_id);
 create index IDX_posts_course on posts (course_id);
 create index IDX_comments_post on comments (post_id);
 create index IDX_posts_user on posts (user_id);
+create index IDX_attachments_post on post_attachments (post_id);
 
 
 
