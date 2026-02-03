@@ -92,6 +92,8 @@ class TagService {
         $exceptionBuilder->throwIfAny();
 
         $this->tagRepository->update($tagId, $tag_name);
+    }
+
     /**
      * Deletes a tag
      * @throws ValidationException if validation fails
@@ -104,8 +106,6 @@ class TagService {
         }
         $exceptionBuilder->throwIfAny();
 
-        $this->tagRepository->delete($tagId, $courseId);
-    }
         $this->tagRepository->delete($tagId, $courseId);
     }
 }
