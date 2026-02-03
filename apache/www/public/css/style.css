@@ -109,6 +109,7 @@ body > header img.menu-container {
 .post {
     box-sizing: border-box;
     width: 100%;
+    min-width: 0;
     background: var(--color-bg-light);
     border-radius: var(--radius-xl);
     padding: var(--space-xs);
@@ -116,6 +117,7 @@ body > header img.menu-container {
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
+    overflow: hidden;
 }
 
 /* Header e Titolo */
@@ -123,6 +125,19 @@ body > header img.menu-container {
     color: var(--color-blue-700); 
     margin: 0 0 var(--space-xxs) 0;
     font-size: var(--fs-md);
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.post header p {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* Descrizione del post */
+.post > p[data-field="description"] {
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 /* Stile dei Metadata (Corsi, Categorie, Tag) */
@@ -133,6 +148,8 @@ body > header img.menu-container {
     margin: var(--space-xs) 0;
     background-color: var(--color-bg-metadata);
     border-radius: var(--radius-md);
+    min-width: 0;
+    overflow: hidden;
 }
 
 .metadata-section {
@@ -140,6 +157,7 @@ body > header img.menu-container {
     align-items: flex-start;
     gap: var(--space-xs);
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .metadata-label {
@@ -216,6 +234,8 @@ body > header img.menu-container {
     padding: var(--space-xs);
     background-color: var(--color-bg-metadata);
     border-radius: var(--radius-md);
+    min-width: 0;
+    overflow: hidden;
 }
 
 .post-attachments .attachments-label {
@@ -230,6 +250,7 @@ body > header img.menu-container {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs);
+    min-width: 0;
 }
 
 .attachment-btn {
@@ -244,7 +265,8 @@ body > header img.menu-container {
     font-size: var(--fs-sm);
     color: var(--color-text);
     transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
-    max-width: 12.5rem;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .attachment-btn:hover {
