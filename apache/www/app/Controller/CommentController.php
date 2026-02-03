@@ -109,8 +109,7 @@ class CommentController extends BaseController {
         $isAdmin = $currentRole === Role::ADMIN;
         $this->commentService->deleteComment((int)$commentId, (int)$postId, $userId, $isAdmin);
         return Response::create()->json([
-            'success' => true,
-            'message' => 'Comment deleted'
+            'success' => true
         ]);
     }
 }

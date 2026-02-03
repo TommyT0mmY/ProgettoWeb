@@ -79,7 +79,7 @@ class Request {
      * @return string Referer URL or empty string if not set.
      */
     public function getReferer(): string {
-        return $this->referer;
+        return $this->referer ?? '';
     }
 
     /**

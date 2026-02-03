@@ -187,7 +187,7 @@ class PostController extends BaseController {
 
         try {
             $this->postService->deletePost((int)$postId, $userId, $isAdmin);
-            if ($request->getReferer() === null || str_contains($request->getReferer(), '/posts/')) {
+            if ($request->getReferer() === '' || str_contains($request->getReferer(), '/posts/')) {
                 // If the request comes from the post detail page, redirect to home
                 return Response::create()->json([
                     'success' => true,
