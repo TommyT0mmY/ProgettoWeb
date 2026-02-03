@@ -4,9 +4,8 @@ declare(strict_types=1);
 namespace Unibostu\Core\exceptions;
 
 /**
- * Class ValidationException
- *
- * Represents a domain exception for user input validation errors.
+ * Exception for input validation errors (HTTP 422).
+ * To build this exception, use ValidationException::build().
  */
 final class ValidationException extends DomainException {
     protected int $httpStatusCode = 422;
@@ -23,18 +22,18 @@ final class ValidationException extends DomainException {
     }
 
     /**
-     * Retrieves the list of error codes. 
+     * Returns a list of error code names included in this exception.
      *
-     * @return array<string> An array of error code names.
+     * @return string[] Error code names.
      */
     public function getErrorCodes(): array {
         return array_map(fn($error) => $error->name, $this->errors);
     }
 
     /**
-     * Creates a new instance of ValidationExceptionBuilder.
+     * Creates a new builder for ValidationException.
      *
-     * @return ValidationExceptionBuilder A new instance of the builder.
+     * @return ValidationExceptionBuilder New builder instance.
      */
     public static function build(): ValidationExceptionBuilder {
         return new ValidationExceptionBuilder();

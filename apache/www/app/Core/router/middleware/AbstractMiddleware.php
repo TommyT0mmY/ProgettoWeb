@@ -10,28 +10,27 @@ use Unibostu\Core\Http\Response;
 
 /**
  * Abstract base class for middleware components.
+ *
+ * The container needs to be injected via setContainer() before process() is called.
  */
 abstract class AbstractMiddleware {
-    /**
-     * The dependency injection container.
-     */
     protected ?Container $container = null;
 
     /**
-     * Set the container before calling `process`.
+     * Injects the DI container. Call this before process().
      *
-     * @param Container $container The dependency injection container
+     * @param Container $container DI container.
      */
     public function setContainer(Container $container): void {
         $this->container = $container;
     }
 
     /**
-     * Process an incoming request.
+     * Processes the request, optionally delegating to the next handler.
      *
-     * @param Request $request The incoming HTTP request
-     * @param RequestHandlerInterface $handler The request handler to delegate to
-     * @return Response The HTTP response
+     * @param Request $request Incoming request.
+     * @param RequestHandlerInterface $handler Next handler in chain.
+     * @return Response HTTP response.
      */
     abstract public function process(Request $request, RequestHandlerInterface $handler): Response; 
 }

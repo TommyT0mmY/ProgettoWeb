@@ -6,15 +6,11 @@ namespace Unibostu\Core;
 use Unibostu\Core\security\CsrfProtection;
 
 /**
- * Class RenderingEngine
+ * Template rendering engine for the view layer.
  *
- * A simple rendering engine for the view layer. 
- *
- * Layouts are the outermost structure, they indirectly include Views
- * through the `$content` variable.
- * Views are the main content and can include Components, they can also
- * specify a Layout to wrap themselves in with `$this->extend()`.
- * Components are reusable pieces of UI that can be included in Views.
+ * Views can extend Layouts via `$this->extend()` and include Components
+ * via `$this->component()`. The rendered Layout receives the View content
+ * in the `$content` variable.
  */
 class RenderingEngine {
     private const basePath = __DIR__ . '/../View/';
@@ -33,11 +29,14 @@ class RenderingEngine {
         $this->csrfProtection = $this->container->get(CsrfProtection::class); 
     }
 
-    /** 
-     * Render a View with optional data.
+    /**
+     * Renders a view with optional data.
      *
-     * @param string $viewName The name of the View to render.
-     * @param array $data Associative array of data to be extracted into the View.
+     * If the view calls extend(), the output is wrapped in the specified layout.
+     *
+     * @param string $viewName View filename without extension, relative to views/ directory.
+     * @param array $data Variables to extract into view scope.
+     * @return string Rendered HTML.
      */
     public function render(string $viewName, array $data = []): string {
         extract($data);
@@ -63,10 +62,11 @@ class RenderingEngine {
     }
 
     /**
-     * Include a component within a View.
+     * Includes a component within a view.
      *
-     * @param string $name The name of the component to include.
-     * @param array $data Associative array of data to be extracted into the component.
+     * @param string $name Component filename without extension, relative to components/ directory.
+     * @param array $data Variables to extract into component scope.
+     * @throws \RuntimeException If called outside of render().
      */
     public function component(string $name, array $data = []): void {
         if (!$this->isRendering) {
@@ -77,16 +77,22 @@ class RenderingEngine {
     }
     
     /**
-     * Define which layout to use for rendering. (Called within a view)
+     * Sets the layout to wrap the view. Called within a view file.
      *
-     * @param string $layout The name of the layout to use.
-     * @param array $data Associative array of data to be extracted into the layout.
+     * @param string $layout Layout filename without extension, relative to layouts/ directory.
+     * @param array $data Variables to extract into layout scope.
      */
     public function extend(string $layout, array $data = []): void {
         $this->layout = $layout;
         $this->layoutData = $data;
     }
 
+    /**
+     * Generates a CSRF key/token pair for forms.
+     *
+     * @param bool $multiUse If true, token can be reused.
+     * @return array{csrfKey: string, csrfToken: string}
+     */
     public function generateCsrfPair(bool $multiUse = false): array {
         $key = bin2hex(random_bytes(16));
         return [

@@ -4,28 +4,31 @@ declare(strict_types=1);
 namespace Unibostu\Core;
 
 /**
- * Simple dependency injection container
+ * Simple dependency injection container.
  */
 class Container {
     private array $services = [];
     private array $instances = [];
     
     /**
-     * Register a service with a factory callable
+     * Registers a service factory.
      *
-     * @param string $name The name of the service
-     * @param callable $factory A callable that returns an instance of the service,
-     *        it can accept the container as a parameter for nested dependencies.
+     * @param string $name Service identifier (typically class name).
+     * @param callable $factory This function has the signature function(Container $container): mixed,
+     * the return value is the service instance.
      */
     public function register(string $name, callable $factory): void {
         $this->services[$name] = $factory;
     }
 
     /**
-     * Get a service instance by name
+     * Gets or creates a service instance.
      *
-     * @param string $name The name of the service
-     * @return mixed The service instance
+     * Instances are cached after first creation.
+     *
+     * @param string $name Service identifier.
+     * @return mixed Service instance.
+     * @throws \InvalidArgumentException If service not registered.
      */ 
     public function get(string $name) {
         if (!isset($this->instances[$name])) {
@@ -38,10 +41,10 @@ class Container {
     }
 
     /**
-     * Check if a service is registered
+     * Checks if a service is registered.
      *
-     * @param string $name The name of the service
-     * @return bool True if the service is registered, false otherwise
+     * @param string $name Service identifier.
+     * @return bool True if the service is registered, false otherwise.
      */
     public function has(string $name): bool {
         return isset($this->services[$name]);

@@ -22,7 +22,7 @@ $this->extend('admin-layout', [
     <button type="submit">Search</button>
 </form>
 
-<div class="post-container cards">
+<div class="post-container">
 <?php foreach ($users ?? [] as $user): ?>
     <section class="post card" >
         <header>

@@ -20,23 +20,29 @@ class UserService implements RoleService {
     /**
      * Gets all users.
      *
-     * @return UserDTO[] Array of UserDTO objects
+     * @return UserDTO[] All users.
      */
     public function getAllUsers(): array {
         return $this->userRepository->findAllUsers();
     }
 
     /**
-     * Retrieves the user profile by user ID.
+     * Gets a user profile.
      *
-     * @param string $userId The user ID.
-     *
-     * @return UserDTO|null The user profile DTO or null if not found.
+     * @param string $userId User ID.
+     * @return UserDTO|null User profile or null if not found.
      */
     public function getUserProfile(string $userId): ?UserDTO {
         return $this->userRepository->findByUserId($userId);
     }
 
+    /**
+     * Validates user credentials.
+     *
+     * @param string $userId User ID.
+     * @param string $password Plain text password.
+     * @return bool True if valid and not suspended.
+     */
     public function checkCredentials(string $userId, string $password): bool {
         $user = $this->userRepository->findByUserId($userId);
         if (!$user) {
@@ -51,10 +57,22 @@ class UserService implements RoleService {
         return true;
     }
 
+    /**
+     * Checks if a user exists.
+     *
+     * @param string $userId User ID.
+     * @return bool True if user exists.
+     */
     public function exists(string $userId): bool {
         return $this->userRepository->userExists($userId);
     }
 
+    /**
+     * Checks if a user is suspended.
+     *
+     * @param string $userId User ID.
+     * @return bool True if user is suspended.
+     */
     public function isSuspended(string $userId): bool {
         $user = $this->getUserProfile($userId); 
         if (!$user) {
@@ -65,9 +83,15 @@ class UserService implements RoleService {
 
     /**
      * Registers a new user.
-     * If the registration succeeds, no exception is thrown.
      *
-     * @throws ValidationException if validation fails
+     * @param UserDTO $dto User data with password.
+     * @throws ValidationException When username already exists.
+     * @throws ValidationException When username is empty.
+     * @throws ValidationException When faculty ID is empty.
+     * @throws ValidationException When faculty does not exist.
+     * @throws ValidationException When first name is empty.
+     * @throws ValidationException When last name is empty.
+     * @throws ValidationException When password is empty.
      */
     public function registerUser(UserDTO $dto): void {
         $exceptionBuilder = ValidationException::build();
@@ -98,9 +122,13 @@ class UserService implements RoleService {
     }
 
     /**
-     * Updates the profile of an existing user
+     * Updates a user profile.
      *
-     * @throws ValidationException if validation fails
+     * @param UserDTO $dto Updated user data.
+     * @throws ValidationException When user does not exist.
+     * @throws ValidationException When first name is empty.
+     * @throws ValidationException When last name is empty.
+     * @throws ValidationException When password is empty.
      */
     // TODO Review this method more carefully
     public function updateProfile(UserDTO $dto): void {
@@ -121,6 +149,12 @@ class UserService implements RoleService {
         $this->userRepository->updateProfile($dto);
     }
 
+    /**
+     * Suspends a user.
+     *
+     * @param string $userId User ID.
+     * @throws ValidationException When user does not exist.
+     */
     public function suspendUser(string $userId): void {
         $user = $this->getUserProfile($userId);
         if (!$user) {
@@ -129,6 +163,12 @@ class UserService implements RoleService {
         $this->userRepository->suspendUser($userId);
     }
 
+    /**
+     * Unsuspends a user.
+     *
+     * @param string $userId User ID.
+     * @throws ValidationException When user does not exist.
+     */
     public function unsuspendUser(string $userId): void {
         $user = $this->getUserProfile($userId);
         if (!$user) {
@@ -138,9 +178,17 @@ class UserService implements RoleService {
     }
 
     /**
-     * Updates basic profile information (without password) for an existing user.
+     * Updates basic profile information without password.
      *
-     * @throws ValidationException if validation fails
+     * @param string $userId User ID.
+     * @param string $firstName New first name.
+     * @param string $lastName New last name.
+     * @param int $facultyId New faculty ID.
+     * @throws ValidationException When user does not exist.
+     * @throws ValidationException When first name is empty.
+     * @throws ValidationException When last name is empty.
+     * @throws ValidationException When faculty ID is empty.
+     * @throws ValidationException When faculty does not exist.
      */
     public function updateBasicProfile(string $userId, string $firstName, string $lastName, int $facultyId): void {
         $exceptionBuilder = ValidationException::build();
@@ -167,9 +215,14 @@ class UserService implements RoleService {
     }
 
     /**
-     * Updates user password after verifying the current password.
+     * Updates user password after verifying current password.
      *
-     * @throws ValidationException if validation fails or current password is incorrect
+     * @param string $userId User ID.
+     * @param string $currentPassword Current password.
+     * @param string $newPassword New password.
+     * @throws ValidationException When user does not exist.
+     * @throws ValidationException When current password is incorrect.
+     * @throws ValidationException When new password is empty.
      */
     public function updatePassword(string $userId, string $currentPassword, string $newPassword): void {
         $exceptionBuilder = ValidationException::build();

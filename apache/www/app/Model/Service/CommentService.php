@@ -22,22 +22,23 @@ class CommentService {
     }
 
     /**
-     * Gets all comments for a post with authors
-     * 
-     * @param int $postId Post ID
-     * @return CommentWithAuthorDTO[] Array of comments with authors
+     * Gets all comments for a post.
+     *
+     * @param int $postId Post ID.
+     * @return CommentDTO[] Comments with authors.
      */
     public function getCommentsByPostId(int $postId): array {
         return $this->commentRepository->findByPostId($postId);
     }
 
     /**
-     * Creates a new comment
-     * 
-     * @throws ValidationException if userId is invalid or doesn't exist
-     * @throws ValidationException if comment text is empty
-     * @throws ValidationException if user is suspended
-     * @return CommentWithAuthorDTO The created comment with author
+     * Creates a new comment.
+     *
+     * @param CreateCommentDTO $dto Comment data.
+     * @return CommentDTO Created comment with author.
+     * @throws ValidationException When user does not exist.
+     * @throws ValidationException When user is suspended.
+     * @throws ValidationException When comment text is empty.
      */
     public function createComment(CreateCommentDTO $dto): CommentDTO {
         // Verify user exists
@@ -61,14 +62,16 @@ class CommentService {
     }
 
     /**
-     * Deletes a comment
-     * 
-     * @param int $commentId Comment ID
-     * @param int $postId Post ID
-     * @param string $userId User ID of the requester
-     * @param bool $isAdmin Whether the requester is an admin
-     * @throws ValidationException if userId doesn't exist or comment doesn't exist
-     * @throws DomainException if user is not owner of comment (and not admin)
+     * Deletes a comment.
+     *
+     * Admins can delete any comment, users only their own.
+     *
+     * @param int $commentId Comment ID.
+     * @param int $postId Post ID.
+     * @param string $userId Requester user ID.
+     * @param bool $isAdmin Whether requester is admin.
+     * @throws ValidationException When comment does not exist.
+     * @throws DomainException When user is not the comment owner and not admin.
      */
     public function deleteComment(int $commentId, int $postId, string $userId, bool $isAdmin = false): void {
         $comment = $this->commentRepository->findById($commentId, $postId);

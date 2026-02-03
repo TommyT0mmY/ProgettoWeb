@@ -8,12 +8,7 @@ use PDO;
 use Unibostu\Core\exceptions\RepositoryException;
 
 /**
- * Abstract BaseRepository
- *
- * Provides common functionality for all repositories including:
- * - PDO connection management
- * - Transaction handling helpers
- * - Common query patterns
+ * Base repository with PDO connection and transaction helpers.
  */
 abstract class BaseRepository {
     protected PDO $pdo;
@@ -23,49 +18,40 @@ abstract class BaseRepository {
     }
 
     /**
-     * Convert a database row array to a DTO object
-     * Subclasses must implement this method
+     * Converts a database row to a DTO object.
      *
-     * @param array $row Database row as associative array
-     * @return object The corresponding DTO object
+     * @param array $row Database row.
+     * @return object DTO instance.
      */
     abstract protected function rowToDTO(array $row): object;
 
-    /**
-     * Begin a database transaction
-     */
     protected function beginTransaction(): void {
         $this->pdo->beginTransaction();
     }
 
-    /**
-     * Commit the current transaction
-     */
     protected function commit(): void {
         $this->pdo->commit();
     }
 
-    /**
-     * Rollback the current transaction
-     */
     protected function rollback(): void {
         $this->pdo->rollBack();
     }
 
     /**
-     * Check if currently in a transaction
+     * @return bool True if in transaction.
      */
     protected function inTransaction(): bool {
         return $this->pdo->inTransaction();
     }
 
     /**
-     * Execute a callback within a database transaction
-     * Automatically handles commit/rollback based on success/failure
+     * Executes a callback within a database transaction.
      *
-     * @param callable $callback The callback to execute within the transaction
-     * @return mixed The return value of the callback
-     * @throws RepositoryException if an error occurs during execution
+     * Automatically commits on success or rolls back on failure.
+     *
+     * @param callable $callback Operation to execute.
+     * @return mixed Callback return value.
+     * @throws RepositoryException
      */
     protected function executeInTransaction(callable $callback): mixed {
         $this->beginTransaction();

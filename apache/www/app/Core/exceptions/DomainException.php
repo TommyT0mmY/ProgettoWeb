@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Unibostu\Core\exceptions;
 
+/**
+ * Base exception for domain/business logic errors (HTTP 400).
+ */
 abstract class DomainException extends \RuntimeException {
     protected int $httpStatusCode = 400;
 

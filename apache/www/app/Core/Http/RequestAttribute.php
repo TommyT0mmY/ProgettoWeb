@@ -4,24 +4,18 @@ declare(strict_types=1);
 namespace Unibostu\Core\Http;
 
 /**
- * Request Attributes are used to store additional information in the request object.
- * This enum defines the possible attributes that can be stored in the request.
+ * Request attributes injected by middleware.
+ *
+ * Request attributes store additional information in the request object.
+ * This enum defines the possible attributes that can be stored.
  */
 enum RequestAttribute: string {
-    /**
-     * The URL path variables.
-     */
+    /** URL path variables from route matching. */
     case PATH_VARIABLES = "path_variables";
-    /**
-     * The role of the client making the request.
-     */
+    /** Authenticated role (USER, ADMIN, GUEST). */
     case ROLE = "role";
-    /**
-     * The ID of the role of the client making the request.
-     */
+    /** Authenticated entity ID. */
     case ROLE_ID = "role_id";
-    /**
-     * The fields extracted from the request body.
-     */
+    /** Validated request body fields. */
     case FIELDS = "fields";
 }

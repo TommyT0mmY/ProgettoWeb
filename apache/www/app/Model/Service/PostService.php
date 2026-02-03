@@ -26,33 +26,40 @@ class PostService {
     }
 
     /**
-     * Gets posts based on specified filters
-     * 
-     * @param PostQuery $postQuery Query with filters
-     * @return PostDTO[] Array of PostDTO matching the filters
+     * Gets posts matching filters.
+     *
+     * @param PostQuery $postQuery Query filters.
+     * @return PostDTO[] Matching posts.
      */
     public function getPosts(PostQuery $postQuery): array {
         return $this->postRepository->findWithFilters($postQuery);
     }
 
     /**
-     * Gets a single post with details
-     * @param int $postId Post ID
-     * @param string|null $userId Current user ID to populate likedByUser
-     * @return PostDTO|null Post details or null if not found
+     * Gets a single post with details.
+     *
+     * @param int $postId Post ID.
+     * @param string|null $userId User ID to populate likedByUser.
+     * @return PostDTO|null Post or null if not found.
      */
     public function getPostDetails(int $postId, ?string $userId = null): ?PostDTO {
         return $this->postRepository->findById($postId, $userId);
     }
 
     /**
-     * Creates a new post for a user
-     * Users can only post to ONE SINGLE course
-     * Tags must belong to the same course
-     * Categories are optional
+     * Creates a new post.
+     * 
+     * Posts are always posted inside a course, and the user must be enrolled in that course.
+     * Tags must belong to the selected course.
+     * Categories are optional.
      *
-     * @throws ValidationException if userId is invalid or course doesn't belong to user
-     * @return int The created post ID
+     * @param CreatePostDTO $dto Post data.
+     * @return int Created post ID.
+     * @throws ValidationException When user does not exist.
+     * @throws ValidationException When user is not enrolled in the course.
+     * @throws ValidationException When tags do not belong to the course.
+     * @throws ValidationException When title is empty.
+     * @throws ValidationException When description is empty.
      */
     public function createPost(CreatePostDTO $dto): int {
         $exceptionBuilder = ValidationException::build();
@@ -87,47 +94,26 @@ class PostService {
         return $this->postRepository->save($dto);
     }
 
-    /**
-     * Reaction (like/dislike) to a post
-     * 
-     * @param int $postId Post ID
-     * @param string $userId User ID
-     * @param string $reaction "like", "dislike" or "remove"
-     */
-    public function setReaction(int $postId, string $userId, string $reaction): void {
-        $post = $this->postRepository->findById($postId);
-        if (!$post) {
-            ValidationException::build()
-                ->addError(ValidationErrorCode::POST_NOT_FOUND)
-                ->throwIfAny();
-        }
-        if ($reaction === 'remove') {
-            $this->postRepository->removeReaction($postId, $userId);
-        } elseif ($reaction === 'like') {
-            $this->postRepository->setReaction($postId, $userId, true);
-        } elseif ($reaction === 'dislike') {
-            $this->postRepository->setReaction($postId, $userId, false);
-        } else {
-            ValidationException::build()
-                ->addError(ValidationErrorCode::INVALID_REACTION)
-                ->throwIfAny();
-        }
-    }
 
     /**
-     * Gets the current user's reaction for a post
-     * @return string|null 'like', 'dislike' or null if no reaction
+     * Gets user's reaction on a post.
+     *
+     * @param int $postId Post ID.
+     * @param string $userId User ID.
+     * @return string|null "like", "dislike", or null.
      */
     public function getUserReaction(int $postId, string $userId): ?string {
         return $this->postRepository->getUserReaction($postId, $userId);
     }
 
     /**
-     * Toggle like on a post
-     * If user already liked, removes it
-     * If user disliked, changes to like
-     * If user hasn't reacted, adds like
-     * @return array with likes, dislikes, userReaction
+     * Toggles like on a post.
+     *
+     * Removes like if already liked, adds like otherwise.
+     *
+     * @param int $postId Post ID.
+     * @param string $userId User ID.
+     * @return array Stats with likes, dislikes, userReaction.
      */
     public function toggleLike(int $postId, string $userId): array {
         $currentReaction = $this->getUserReaction($postId, $userId);
@@ -176,11 +162,15 @@ class PostService {
     }
 
     /**
-     * Deletes a post
-     * 
-     * @param int $postId Post ID to delete
-     * @param string $userId User ID requesting deletion
-     * @param bool $isAdmin If true, user is admin and can delete any post
+     * Deletes a post.
+     *
+     * Admins can delete any post, users only their own.
+     *
+     * @param int $postId Post ID to delete.
+     * @param string $userId User ID requesting deletion.
+     * @param bool $isAdmin Whether user is admin.
+     * @throws ValidationException When post does not exist.
+     * @throws DomainException When user is not the post owner and not admin.
      */
     public function deletePost(int $postId, string $userId, bool $isAdmin = false): void {
         $post = $this->postRepository->findById($postId);

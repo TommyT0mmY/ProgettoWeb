@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Core\Http;
 
 /**
- * Class Response
- *
- * A simple HTTP response handler that encapsulates response content, status code, and headers.
+ * Immutable HTTP response builder.
  */
 class Response {
     public function __construct(
@@ -15,15 +13,16 @@ class Response {
         private array $headers = []
     ) {}
 
+    /**
+     * @return self New instance.
+     */
     public static function create(): self {
         return new self();
     }
 
     /**
-     * Set the response content immutably.
-     *
-     * @param string $content The content to set.
-     * @return self A new Response instance with the updated content.
+     * @param string $content Response body.
+     * @return self New instance with content.
      */
     public function withContent(string $content): self {
         $clone = clone $this;
@@ -32,10 +31,8 @@ class Response {
     }
 
     /**
-     * Set the HTTP status code immutably.
-     *
-     * @param int $statusCode The status code to set.
-     * @return self A new Response instance with the updated status code.
+     * @param int $statusCode HTTP status code.
+     * @return self New instance with status.
      */
     public function withStatusCode(int $statusCode): self {
         $clone = clone $this;
@@ -44,11 +41,9 @@ class Response {
     }
 
     /**
-     * Set a header immutably.
-     *
-     * @param string $name The header name.
-     * @param string $value The header value.
-     * @return self A new Response instance with the updated header.
+     * @param string $name Header name.
+     * @param string $value Header value.
+     * @return self New instance with header.
      */
     public function withHeader(string $name, string $value): self {
         $clone = clone $this;
@@ -57,11 +52,11 @@ class Response {
     }
 
     /**
-     * Add a header immutably (appends to existing header if present).
+     * Appends to existing header if present, otherwise sets it.
      *
-     * @param string $name The header name.
-     * @param string $value The header value to add.
-     * @return self A new Response instance with the added header.
+     * @param string $name Header name.
+     * @param string $value Header value to append.
+     * @return self New instance with header.
      */
     public function withAddedHeader(string $name, string $value): self {
         $clone = clone $this;
@@ -74,10 +69,8 @@ class Response {
     }
 
     /**
-     * Remove a header immutably.
-     *
-     * @param string $name The header name to remove.
-     * @return self A new Response instance without the specified header.
+     * @param string $name Header name.
+     * @return self New instance without header.
      */
     public function withoutHeader(string $name): self {
         $clone = clone $this;
@@ -86,11 +79,11 @@ class Response {
     }
 
     /**
-     * Set JSON content with appropriate headers.
+     * Sets JSON content with Content-Type header.
      *
-     * @param array $data The data to encode as JSON.
-     * @param int $status The HTTP status code.
-     * @return self A new Response instance with JSON content and headers.
+     * @param array $data Data to JSON encode.
+     * @param int|null $status Optional status code override, this is a shorthand for withStatusCode().
+     * @return self New instance with JSON content.
      */
     public function json(array $data, ?int $status = null): self {
         return $this
@@ -100,11 +93,11 @@ class Response {
     }
 
     /**
-     * Set a redirect response.
+     * Creates a redirect response.
      *
-     * @param string $url The URL to redirect to.
-     * @param int $status The HTTP status code for the redirect.
-     * @return self A new Response instance configured for redirection.
+     * @param string $url Redirect URL.
+     * @param int $status HTTP status code (default 302).
+     * @return self New instance configured for redirect.
      */
     public function redirect(string $url, int $status = 302): self {
         return $this
@@ -113,7 +106,7 @@ class Response {
     }
  
     /**
-     * Send the response to the client.
+     * Sends the response to the client.
      */
     public function send(): void {
         http_response_code($this->statusCode);

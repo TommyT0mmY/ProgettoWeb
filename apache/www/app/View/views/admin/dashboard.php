@@ -14,7 +14,7 @@ $this->extend('admin-layout', [
     <h2>Admin - Dashboard</h2>
 </header>
 
-<div class="post-container cards">
+<div class="post-container">
     <section class="post card" >
         <header>
             <h3>Faculties</h3>

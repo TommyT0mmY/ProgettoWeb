@@ -30,7 +30,7 @@ $this->extend('admin-layout', [
     Add Course
 </button>
 
-<div class="post-container cards">
+<div class="post-container">
 <?php foreach ($courses ?? [] as $course): ?>
     <section class="post card" >
         <header>

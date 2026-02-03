@@ -7,10 +7,10 @@ use Unibostu\Core\Http\Request;
 use Unibostu\Core\SessionManager;
 
 /**
- * Class CsrfProtection
+ * Manages CSRF token generation and validation.
  *
- * Manages CSRF token generation and validation to protect against 
- * Cross-Site Request Forgery attacks.
+ * Tokens are stored in session and expire after 1 hour. Single-use tokens
+ * are invalidated after successful validation.
  */
 final class CsrfProtection {
     private const CSRF_TOKEN_LIFETIME = 3600;           // 1 hour
@@ -30,9 +30,9 @@ final class CsrfProtection {
     /**
      * Generates a CSRF token for a given key.
      *
-     * @param string $key Identifier for the token (e.g., form name).
-     * @param bool $multiUse Whether the token can be used multiple times.
-     * @return string The generated CSRF token.
+     * @param string $key Unique identifier (e.g., form name).
+     * @param bool $multiUse If true, token survives validation.
+     * @return string Generated token.
      */
     public function generateToken(string $key, bool $multiUse = false): string {
         $this->maybeGarbageCollect();
@@ -47,11 +47,13 @@ final class CsrfProtection {
     }
 
     /**
-     * Validates a CSRF token for a given key.
+     * Validates a CSRF token.
      *
-     * @param string $key Identifier for the token (e.g., form name).
-     * @param string $token The token to validate.
-     * @return bool True if the token is valid, false otherwise.
+     * Single-use tokens are invalidated on successful validation.
+     *
+     * @param string $key Token identifier.
+     * @param string $token Token value to validate.
+     * @return bool True if valid.
      */
     public function validateToken(string $key, string $token): bool {
         $this->maybeGarbageCollect();
@@ -71,12 +73,12 @@ final class CsrfProtection {
     }
 
     /**
-     * Validates CSRF token from an HTTP request.
+     * Validates CSRF token from request body.
      *
-     * Expects the request to contain 'csrf-key' and 'csrf-token' parameters in the request body.
+     * Expects 'csrf-key' and 'csrf-token' in the request body.
      *
-     * @param Request $request The HTTP request to validate.
-     * @return bool True if the token is valid, false otherwise.
+     * @param Request $request HTTP request.
+     * @return bool True if valid.
      */
     public function validateRequest(Request $request): bool {
         $key = $request->post(self::KEY_CSRF_KEY);

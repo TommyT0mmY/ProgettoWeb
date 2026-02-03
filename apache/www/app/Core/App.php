@@ -11,6 +11,10 @@ use Unibostu\Core\router\RouteLoader;
 use Unibostu\Core\security\Auth;
 use Unibostu\Core\security\CsrfProtection;
 
+/**
+ * Application entry point.
+ * Bootstraps services, routes, and dispatches HTTP requests.
+ */
 class App {
     private Router $router;
     private Container $container;
@@ -55,6 +59,9 @@ class App {
         return;
     }
 
+    /**
+     * Dispatches the current HTTP request and sends the response.
+     */
     public function run(): void {
         $request = null;
         try {

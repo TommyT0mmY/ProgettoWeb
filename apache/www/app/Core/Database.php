@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Unibostu\Core;
 use PDO;
 
+/**
+ * Singleton PDO connection manager.
+ */
 class Database {
     private static ?PDO $pdo = null;
 
@@ -11,6 +14,11 @@ class Database {
         throw new \Exception('Not implemented');
     }
 
+    /**
+     * Returns the shared PDO connection, creating it if needed.
+     *
+     * @return PDO Shared connection instance.
+     */
     public static function getConnection(): PDO {
         if (isset(self::$pdo)) {
             return self::$pdo;

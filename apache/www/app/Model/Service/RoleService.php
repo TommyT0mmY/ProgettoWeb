@@ -4,27 +4,26 @@ declare(strict_types=1);
 namespace Unibostu\Model\Service;
 
 /**
- * Interface RoleService
- *
- * Defines methods for role-based services such as user and admin services.
+ * Interface for role-based authentication services.
+ * 
+ * @see UserService
+ * @see AdminService
  */
 interface RoleService {
     /**
-     * Checks if the provided credentials are valid.
+     * Validates credentials for an account.
      *
-     * @param string $id The account ID.
-     * @param string $password The password.
-     *
-     * @return bool True if credentials are valid, false otherwise.
+     * @param string $id Account identifier.
+     * @param string $password Plain text password.
+     * @return bool True if valid.
      */
     public function checkCredentials(string $id, string $password): bool;
 
     /**
-     * Checks if an account with the given ID exists.
+     * Checks if an account exists.
      *
-     * @param string $id The account ID.
-     *
-     * @return bool True if the account exists, false otherwise.
+     * @param string $id Account identifier.
+     * @return bool True if exists.
      */
     public function exists(string $id): bool;
 
@@ -32,7 +31,6 @@ interface RoleService {
      * Checks if the account with the given ID is suspended.
      *
      * @param string $id The account ID.
-     *
      * @return bool True if the account is suspended, false otherwise.
      */
     public function isSuspended(string $id): bool;

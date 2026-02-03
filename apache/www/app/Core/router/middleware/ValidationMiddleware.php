@@ -5,6 +5,7 @@ namespace Unibostu\Core\router\middleware;
 
 use Attribute;
 use Unibostu\Core\exceptions\DomainErrorCode;
+use Unibostu\Core\exceptions\ValidationErrorCode;
 use Unibostu\Core\exceptions\ValidationException;
 use Unibostu\Core\exceptions\ValidationExceptionBuilder;
 use Unibostu\Core\Http\Request;
@@ -13,17 +14,37 @@ use Unibostu\Core\Http\RequestHandlerInterface;
 use Unibostu\Core\Http\Response;
 use Unibostu\Core\security\CsrfProtection;
 
+/**
+ * Validates CSRF tokens and extracts body fields.
+ *
+ * Injects FIELDS RequestAttribute into the request with validated data.
+ * Returns JSON error response on validation failure.
+ * 
+ * @see RequestAttribute::FIELDS
+ */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
 class ValidationMiddleware extends AbstractMiddleware {
 
+    /**
+     * Configures validation rules.
+     *
+     * @param array<string, ValidationErrorCode> $mandatoryBodyFields Required fields with error codes.
+     * @param string[] $optionalBodyFields Optional fields to extract onto the request.
+     * @param bool $validateCsrf Whether to validate CSRF token.
+     */
     public function __construct(
-        /** @var array<string, ValidationErrorCode> */
         private array $mandatoryBodyFields = [],
-        /** @var string[] */
         private array $optionalBodyFields = [],
         private bool $validateCsrf = true
     ) {}
 
+    /**
+     * Validates CSRF and extracts request body fields.
+     *
+     * @param Request $request Incoming request.
+     * @param RequestHandlerInterface $handler Next handler.
+     * @return Response HTTP response or JSON error.
+     */
     public function process(Request $request, RequestHandlerInterface $handler): Response {
         // Csrf protection
         $csrfProtection = $this->container->get(CsrfProtection::class);

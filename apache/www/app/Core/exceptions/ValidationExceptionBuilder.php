@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Core\exceptions;
 
 /**
- * Class ValidationExceptionBuilder
- *
- * A builder class for constructing and throwing ValidationException instances
- * based on accumulated validation errors.
+ * Builder for ValidationException with multiple errors.
  */
 class ValidationExceptionBuilder {
     private array $errors = [];
@@ -16,8 +13,8 @@ class ValidationExceptionBuilder {
     /**
      * Adds a validation error code to the builder.
      *
-     * @param \UnitEnum $validationErrorCode The validation error code to add.
-     * @return self The current instance of the builder.
+     * @param \UnitEnum $validationErrorCode Error code to add.
+     * @return self Same instance for chaining.
      */
     public function addError(\UnitEnum $validationErrorCode): self {
         $this->errors[] = $validationErrorCode;
@@ -25,28 +22,31 @@ class ValidationExceptionBuilder {
     }
 
     /**
-     * Verifies if there are any errors added to the builder.
+     * Checks if any errors have been added.
      *
-     * @return bool True if there are errors, false otherwise.
+     * @return bool True if errors exist.
      */
     public function hasErrors(): bool {
         return !empty($this->errors);
     }
 
     /**
-     * Sets the main error code for the validation exception.
+     * Sets the main error code for the exception. Under normal usage,
+     * this shouldn't be necessary to change, as the default INVALID_REQUEST
+     * is sufficient.
      *
-     * @param \UnitEnum $mainErrorCode The main error code to set.
-     * @return self The current instance of the builder.
+     * @param \UnitEnum $mainErrorCode Main error code to set.
+     * @return self Same instance for chaining.
      */
     public function setMainErrorCode(\UnitEnum $mainErrorCode): self {
         $this->mainErrorCode = $mainErrorCode;
         return $this;
     }
+
     /**
-     * Throws a ValidationException if there are any errors added to the builder.
+     * Throws ValidationException if any errors were added.
      *
-     * @throws ValidationException If there are validation errors.
+     * @throws ValidationException
      */
     public function throwIfAny(): void {
         if ($this->hasErrors()) {

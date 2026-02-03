@@ -12,6 +12,14 @@ use Unibostu\Core\Http\Response;
 use Unibostu\Core\security\Auth;
 use Unibostu\Core\security\Role;
 
+/**
+ * Enforces authentication for specified roles.
+ *
+ * Injects ROLE and ROLE_ID RequestAttributes into the request.
+ * 
+ * @see RequestAttribute::ROLE
+ * @see RequestAttribute::ROLE_ID
+ */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
 class AuthMiddleware extends AbstractMiddleware {
     /** @var Role[] */
@@ -21,6 +29,14 @@ class AuthMiddleware extends AbstractMiddleware {
         $this->roles = $roles;
     }
 
+    /**
+     * Processes authentication for the request.
+     *
+     * @param Request $request Incoming request.
+     * @param RequestHandlerInterface $handler Next handler.
+     * @return Response HTTP response.
+     * @throws RuntimeException With code 401 if unauthorized.
+     */
     public function process(Request $request, RequestHandlerInterface $handler): Response {
         /** @var Auth  */
         $auth = $this->container->get(Auth::class);

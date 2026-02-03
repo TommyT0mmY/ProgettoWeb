@@ -28,7 +28,7 @@ $this->extend('admin-layout', [
     Add Tag
 </button>
 
-<div class="post-container cards">
+<div class="post-container">
 <?php foreach ($tags ?? [] as $tag): ?>
     <section class="post card" >
         <header>

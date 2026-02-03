@@ -20,7 +20,7 @@ $this->extend('admin-layout', [
 </form>
 <button type="button" data-action="add" data-entity="category" data-url="/categories/add">Add Category</button>
 
-<div class="post-container cards">
+<div class="post-container">
 <?php foreach ($categories ?? [] as $category): ?>
     <section class="post card" >
         <header>

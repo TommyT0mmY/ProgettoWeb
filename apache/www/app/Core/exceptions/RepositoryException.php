@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace Unibostu\Core\exceptions;
 
 /**
- * Class RepositoryException
- *
- * Represents a repository/data access layer exception.
- * Used for database errors and data persistence failures.
+ * Exception for data access layer failures (HTTP 500).
  */
 final class RepositoryException extends DomainException {
     protected int $httpStatusCode = 500;
