@@ -115,11 +115,12 @@ class Form {
                 this.#submitButton.textContent = originalButtonText;
             }
         });
-        // Clear errors on input
+        // Clear errors and status message on input
         this.#form.addEventListener('input', (e) => {
             this.#clearFieldError(e.target);
             this.#setFieldError('');
             this.setGeneralError('');
+            this.setStatusMessage('');
             e.target.classList.toggle('has-value', Boolean(e.target.value));
         });
         // If everything is set up correctly, enable the submit button
