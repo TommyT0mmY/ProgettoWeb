@@ -52,9 +52,9 @@ class TagService {
      * Creates a new tag
      * @throws ValidationException if validation fails
      */
-    public function createTag(string $tag_name, int $courseId): void {
+    public function createTag(string $tagName, int $courseId): void {
         $exceptionBuilder = ValidationException::build();
-        if (empty($tag_name)) {
+        if (empty($tagName)) {
             $exceptionBuilder->addError(ValidationErrorCode::TAG_REQUIRED);
         }
 
@@ -62,22 +62,22 @@ class TagService {
             $exceptionBuilder->addError(ValidationErrorCode::COURSE_REQUIRED);
         }
 
-        $existing = $this->tagRepository->findByTypeAndCourse($tag_name, $courseId);
+        $existing = $this->tagRepository->findByTypeAndCourse($tagName, $courseId);
         if ($existing) {
             $exceptionBuilder->addError(ValidationErrorCode::TAG_ALREADY_EXISTS);
         }
         $exceptionBuilder->throwIfAny();
 
-        $this->tagRepository->save($tag_name, $courseId);
+        $this->tagRepository->save($tagName, $courseId);
     }
 
     /**
      * Updates a tag
      * @throws ValidationException if validation fails
      */
-    public function updateTag(int $tagId, string $tag_name, int $courseId): void {
+    public function updateTag(int $tagId, string $tagName, int $courseId): void {
         $exceptionBuilder = ValidationException::build();
-        if (empty($tag_name)) {
+        if (empty($tagName)) {
             $exceptionBuilder->addError(ValidationErrorCode::TAG_REQUIRED);
         }
 
@@ -91,7 +91,7 @@ class TagService {
         }
         $exceptionBuilder->throwIfAny();
 
-        $this->tagRepository->update($tagId, $tag_name);
+        $this->tagRepository->update($tagId, $tagName);
     }
 
     /**

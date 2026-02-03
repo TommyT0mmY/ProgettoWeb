@@ -1,29 +1,17 @@
 # TODO LIST
 
 - [x] Pulsanti in navbar a caso, toglierli: preferences non porta a nulla; register login e logout sono mostrati tutti assieme, mostrare soltanto logout; home è inutile
-- [x] Una singola home, non home ed admin home
-- [x] post template fare un component che riceve isAdmin
+- [ ] Il server non dovrebbe restituire messaggi "message" dal controller perchè questo compito spetta alla view
+- [ ] Gli attachments dovrebbero usare <template> per il rendering
 - [ ] dashboard fare il js di tutto
 - [ ] Fare cartelle per organizzare meglio le view
-- [x] L'admin puo aprire i commenti ed eliminarli ma non rispondere
 - [ ] Fare solo un numero di font size nella base
 - [x] Nella visualizzazione di un singolo post il tasto indietro dovrebbe fare history back
-- [x] Se scrolli la navbar scrolla giu
 - [?] Cambiare post-container
 - [ ] Nella navbar separare i corsi per facolta
-- [x] CommunityController dovrebbe chiamarsi CourseController e sostituire ogni altro utilizzo del termine Community con Course
 - [ ] Admin dashboard 
 - [ ] User preferences: cambio password, username, ecc...
 - [ ] Allegati ai post
-- [x] La visualizzazione di un post in homepage deve mostrare il nome della community (attualmente mostrata come un tag)
-- [x] Il tipo del post andrebbe mostrato in maniera diversa da un tag
-- [x] La sidebar ha bisogno di molti fix
-- [x] La topbar ha gli elementi disallineati
-- [x] I button di like e dislike hanno la hitbox sbagliata e non mostrano se sono attualmente attivati dall'utente
-- [x] Il logo nella topbar dovrebbe essere un link alla homepage
 - [ ] Fare dei test per verificare il corretto caricamento dei post (con filtri) anche in infinite scroll
 - [ ] Infinite scroll edge case pagina dezoomata, funziona tutto? fare test
 - [ ] Infinite scroll fa un piccolo scatto
-- [x] like/dislike disattivati x admin
-- [x] pulsante x sospendere user nel suo profilo.
-- [x] visualizzazione commenti x admin
