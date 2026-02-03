@@ -10,4 +10,5 @@ enum DomainErrorCode {
     case ACCESS_DENIED;
     case USER_ALREADY_EXISTS;
     case INVALID_DATA;
+    case DATABASE_ERROR;
 }
