@@ -58,7 +58,6 @@ create table posts (
      post_id int not null auto_increment,
      title varchar(100) not null,
      description text not null,
-     attachment_path varchar(255) default null,
      created_at timestamp not null,
      user_id varchar(60) not null,
      course_id int not null,
