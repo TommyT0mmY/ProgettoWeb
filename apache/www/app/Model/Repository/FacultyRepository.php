@@ -4,17 +4,10 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\FacultyDTO;
-use Unibostu\Core\Database;
+use Unibostu\Core\exceptions\RepositoryException;
 use PDO;
-use RuntimeException;
 
-class FacultyRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
-
+class FacultyRepository extends BaseRepository {
     /**
      * Gets faculty details by ID.
      *
@@ -84,52 +77,80 @@ class FacultyRepository {
     /**
      * Saves a new faculty
      *
-     * @throws RuntimeException in case of error
+     * @param FacultyDTO $faculty The faculty data to save
+     * @throws RepositoryException in case of error
      */
     public function save(string $facultyName): void {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO faculties (faculty_name)
-             VALUES (:facultyName)"
-        );
-        $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
-        
-        if (!$stmt->execute()) {
-            throw new RuntimeException("Errore durante il salvataggio della facoltà");
+        try {
+            $this->beginTransaction();
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO faculties (faculty_name)
+                 VALUES (:facultyName)"
+            );
+            $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to save faculty record");
+            }
+            $this->commit();
+        } catch (\Throwable $e) {
+            if ($this->inTransaction()) {
+                $this->rollback();
+            }
+            throw new RepositoryException("Failed to save faculty: " . $e->getMessage(), 0, $e);
         }
     }
 
     /**
      * Updates faculty data
      *
-     * @throws RuntimeException in case of error
+     * @param $facultyId int The ID of the faculty to update
+     * @param $facultyName string The new name of the faculty
+     * @throws RepositoryException in case of error
      */
     public function update(int $facultyId, string $facultyName): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE faculties 
-             SET faculty_name = :facultyName
-             WHERE faculty_id = :facultyId"
-        );
-        $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
-        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            throw new RuntimeException("Errore durante l'aggiornamento della facoltà");
+        try {
+            $this->beginTransaction();
+            $stmt = $this->pdo->prepare(
+                "UPDATE faculties 
+                 SET faculty_name = :facultyName
+                 WHERE faculty_id = :facultyId"
+            );
+            $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
+            $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to update faculty record");
+            }
+            $this->commit();
+        } catch (\Throwable $e) {
+            if ($this->inTransaction()) {
+                $this->rollback();
+            }
+            throw new RepositoryException("Failed to update faculty: " . $e->getMessage(), 0, $e);
         }
     }
 
     /**
      * Deletes a faculty
      *
-     * @throws RuntimeException in case of error
+     * @param $facultyId int The ID of the faculty to delete
+     * @throws RepositoryException in case of error
      */
     public function delete(int $facultyId): void {
-        $stmt = $this->pdo->prepare(
-            "DELETE FROM faculties WHERE faculty_id = :facultyId"
-        );
-        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            throw new RuntimeException("Errore durante l'eliminazione della facoltà");
+        try {
+            $this->beginTransaction();
+            $stmt = $this->pdo->prepare(
+                "DELETE FROM faculties WHERE faculty_id = :facultyId"
+            );
+            $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to delete faculty record");
+            }
+            $this->commit();
+        } catch (\Throwable $e) {
+            if ($this->inTransaction()) {
+                $this->rollback();
+            }
+            throw new RepositoryException("Failed to delete faculty: " . $e->getMessage(), 0, $e);
         }
     }
 
@@ -139,7 +160,7 @@ class FacultyRepository {
      * @param array $row The database row
      * @return FacultyDTO The FacultyDTO object
      */
-    private function rowToDTO(array $row): FacultyDTO {
+    protected function rowToDTO(array $row): FacultyDTO {
         return new FacultyDTO(
             (int)$row['faculty_id'],
             $row['faculty_name']
