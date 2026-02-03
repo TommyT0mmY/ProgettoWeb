@@ -337,6 +337,23 @@ main {
     box-shadow: var(--shadow-md), var(--focus-ring);
 }
 
+/* Checkbox styles for create post form */
+.create-post-form input[type="checkbox"] {
+    width: auto;
+    margin-right: var(--space-xs);
+    cursor: pointer;
+}
+
+.create-post-form fieldset p {
+    display: flex;
+    align-items: center;
+}
+
+.create-post-form fieldset p label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
 @media (max-width: 768px) {
     .create-post-container {
         padding: var(--space-md);

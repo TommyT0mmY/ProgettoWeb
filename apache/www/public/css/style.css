@@ -567,6 +567,23 @@ nav h2 {
     box-shadow: var(--shadow-md), var(--focus-ring);
 }
 
+/* Checkbox styles in filter form */
+#filter-form input[type="checkbox"] {
+    margin-right: var(--space-xs);
+    cursor: pointer;
+}
+
+#filter-form fieldset p {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-xxs);
+}
+
+#filter-form fieldset p label {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
 /* User Profile - Ban/Unban */
 .user-banned {
     color: var(--color-error);
