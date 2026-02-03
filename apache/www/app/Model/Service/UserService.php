@@ -29,6 +29,16 @@ class UserService implements RoleService {
     }
 
     /**
+     * Search users by username.
+     *
+     * @param string $searchTerm The search term.
+     * @return UserDTO[] Matching users.
+     */
+    public function searchUsersByUsername(string $searchTerm): array {
+        return $this->userRepository->searchByUsername($searchTerm);
+    }
+
+    /**
      * Gets a user profile.
      *
      * @param string $userId User ID.

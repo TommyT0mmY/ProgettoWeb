@@ -49,8 +49,9 @@ class DashboardController extends BaseController {
     #[AuthMiddleware(Role::ADMIN)]
     public function getUsers(Request $request): Response {
         $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
+        $searchTerm = $request->get('search');
 
-        $users = $this->userService->getAllUsers();
+        $users = $searchTerm ? $this->userService->searchUsersByUsername($searchTerm) : $this->userService->getAllUsers();
         $faculties = [];
         foreach ($users as $user) {
             $faculties[$user->userId] = $this->facultyService->getFacultyDetails($user->facultyId);
