@@ -30,7 +30,9 @@ $this->extend('admin-layout', [
         </header>
         <p>First Name: <?= h($user->firstName) ?></p>
         <p>Last Name: <?= h($user->lastName) ?></p>
+        <?php if (isset($faculties[$user->userId])): ?>
         <p>Faculty: <?= h($faculties[$user->userId]->facultyName ) ?></p>
+        <?php endif; ?>
         <p><?= h($user->suspended) ? 'Suspended' : 'Active' ?></p>
         <footer>
             <ul class="review">
