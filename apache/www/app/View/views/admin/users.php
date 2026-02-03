@@ -38,15 +38,6 @@ $this->extend('admin-layout', [
             <ul class="review">
                     <li>
                         <button type="button" 
-                                data-action="delete" 
-                                data-entity="user" 
-                                data-id="<?= h($user->userId) ?>"
-                                data-url="/api/delete-user/<?= h($user->userId) ?>">
-                            Delete
-                        </button>
-                    </li>
-                    <li>
-                        <button type="button" 
                                 data-action="view" 
                                 data-entity="user" 
                                 data-id="<?= h($user->userId) ?>"
