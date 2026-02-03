@@ -1,5 +1,6 @@
 # TODO LIST
 
+- [ ] Pulsanti in navbar a caso, toglierli: preferences non porta a nulla; register login e logout sono mostrati tutti assieme, mostrare soltanto logout; home è inutile
 - [x] Una singola home, non home ed admin home
 - [x] post template fare un component che riceve isAdmin
 - [ ] dashboard fare il js di tutto
