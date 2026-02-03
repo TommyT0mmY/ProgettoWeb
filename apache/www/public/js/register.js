@@ -38,6 +38,10 @@ const configs = {
             field: 'password',
             message: 'Password is required.'
         },
+        PASSWORD_TOO_SHORT: {
+            field: 'password',
+            message: 'Password must be at least 6 characters long.'
+        },
         FIRSTNAME_REQUIRED: {
             field: 'firstname',
             message: 'First name is required.'
