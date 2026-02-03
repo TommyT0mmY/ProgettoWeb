@@ -4,20 +4,16 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\TagDTO;
-use Unibostu\Core\Database;
+use Unibostu\Core\exceptions\RepositoryException;
 use PDO;
 
-class TagRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
-
-
-
+class TagRepository extends BaseRepository {
     /**
-     * Recupera un tag tramite tipo e corso
+     * Retrieves a tag by ID and course
+     * 
+     * @param int $tagId The ID of the tag
+     * @param int $courseId The ID of the course
+     * @return TagDTO|null The TagDTO object or null if not found
      */
     public function findByIdAndCourse(int $tagId, int $courseId): ?TagDTO {
         $stmt = $this->pdo->prepare(
@@ -32,13 +28,17 @@ class TagRepository {
     }
 
     /**
-     * Recupera un tag tramite tipo e corso
+     * Retrieves a tag by name and course
+     * 
+     * @param string $tagName The name of the tag
+     * @param int $courseId The ID of the course
+     * @return TagDTO|null The TagDTO object or null if not found
      */
-    public function findByTypeAndCourse(string $tag_name, int $courseId): ?TagDTO {
+    public function findByTypeAndCourse(string $tagName, int $courseId): ?TagDTO {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM tags WHERE tag_name = :tag_name AND course_id = :courseId"
+            "SELECT * FROM tags WHERE tag_name = :tagName AND course_id = :courseId"
         );
-        $stmt->bindValue(':tag_name', $tag_name, PDO::PARAM_STR);
+        $stmt->bindValue(':tagName', $tagName, PDO::PARAM_STR);
         $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -47,7 +47,10 @@ class TagRepository {
     }
 
     /**
-     * Recupera tutti i tag di un corso
+     * Retrieves all tags for a course
+     * 
+     * @param int $courseId The ID of the course
+     * @return TagDTO[] Array of TagDTO objects
      */
     public function findByCourse(int $courseId): array {
         $stmt = $this->pdo->prepare(
@@ -80,54 +83,68 @@ class TagRepository {
     }
 
     /**
-     * Salva un nuovo tag
-     * @throws \Exception in caso di errore
+     * Saves a new tag
+     * 
+     * @param string $tagName The name of the tag
+     * @param int $courseId The ID of the course
+     * @throws RepositoryException
      */
-    public function save(string $tag_name, int $courseId): void {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO tags (tag_name, course_id)
-             VALUES (:tag_name, :courseId)"
-        );
-        $stmt->bindValue(':tag_name', $tag_name, PDO::PARAM_STR);
-        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante il salvataggio del tag");
-        }
+    public function save(string $tagName, int $courseId): void {
+        $this->executeInTransaction(function() use ($tagName, $courseId) {
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO tags (tag_name, course_id)
+                 VALUES (:tagName, :courseId)"
+            );
+            $stmt->bindValue(':tagName', $tagName, PDO::PARAM_STR);
+            $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to save tag");
+            }
+        });
     }
 
     /**
-     * Aggiorna un tag
-     * @throws \Exception in caso di errore
+     * Updates a tag
+     * 
+     * @param int $tagId The ID of the tag to update
+     * @param string $tagName The new name of the tag
+     * @throws RepositoryException
      */
-    public function update(int $tagId, string $tag_name): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE tags SET tag_name = :tag_name WHERE tag_id = :tagId"
-        );
-        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
-        $stmt->bindValue(':tag_name', $tag_name, PDO::PARAM_STR);
+    public function update(int $tagId, string $tagName): void {
+        $this->executeInTransaction(function() use ($tagId, $tagName) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE tags SET tag_name = :tagName WHERE tag_id = :tagId"
+            );
+            $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
+            $stmt->bindValue(':tagName', $tagName, PDO::PARAM_STR);
 
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'aggiornamento del tag");
-        }
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to update tag");
+            }
+        });
     }
 
     /**
-     * Elimina un tag
-     * @throws \Exception in caso di errore
+     * Deletes a tag
+     * 
+     * @param int $tagId The ID of the tag to delete
+     * @throws RepositoryException
      */
     public function delete(int $tagId): void {
-        $stmt = $this->pdo->prepare(
-            "DELETE FROM tags WHERE tag_id = :tagId"
-        );
-        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'eliminazione del tag");
-        }
+        $this->executeInTransaction(function() use ($tagId) {
+            $stmt = $this->pdo->prepare(
+                "DELETE FROM tags WHERE tag_id = :tagId"
+            );
+            $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to delete tag");
+            }
+        });
     }
 
-    private function rowToDTO(array $row): TagDTO {
+    protected function rowToDTO(array $row): TagDTO {
         return new TagDTO(
             (int)$row['tag_id'],
             $row['tag_name'],

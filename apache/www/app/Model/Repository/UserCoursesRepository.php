@@ -4,18 +4,13 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\CourseDTO;
-use Unibostu\Core\Database;
+use Unibostu\Core\exceptions\RepositoryException;
 use PDO;
 
-class UserCoursesRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
+class UserCoursesRepository extends BaseRepository {
 
     /**
-     * Recupera i corsi di un utente
+     * Retrieves courses for a user
      * @return CourseDTO[]
      */
     public function findCoursesByUser(string $userId): array {
@@ -37,24 +32,22 @@ class UserCoursesRepository {
     }
 
     /**
-     * Salva i corsi di un utente
+     * Saves user courses
+     * 
      * @param string $userId
      * @param int[] $courseIds
-     * @throws \Exception in caso di errore
+     * @throws RepositoryException
      */
     public function saveUserCourses(string $userId, array $courseIds): void {
-        // Inizia una transazione
-        $this->pdo->beginTransaction();
-
-        try {
-            // Rimuovi i corsi esistenti per l'utente
+        $this->executeInTransaction(function() use ($userId, $courseIds) {
+            // Remove existing courses for the user
             $deleteStmt = $this->pdo->prepare(
                 "DELETE FROM user_courses WHERE user_id = :userId"
             );
             $deleteStmt->bindValue(':userId', $userId, PDO::PARAM_STR);
             $deleteStmt->execute();
 
-            // Aggiungi i nuovi corsi
+            // Add new courses
             $insertStmt = $this->pdo->prepare(
                 "INSERT INTO user_courses (user_id, course_id) VALUES (:userId, :courseId)"
             );
@@ -63,14 +56,7 @@ class UserCoursesRepository {
                 $insertStmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
                 $insertStmt->execute();
             }
-
-            // Conferma la transazione
-            $this->pdo->commit();
-        } catch (\Exception $e) {
-            // Annulla la transazione in caso di errore
-            $this->pdo->rollBack();
-            throw new \Exception("Errore nel salvataggio dei corsi dell'utente.", 0, $e);
-        }
+        });
     }
 
     public function subscribeUserToCourse(string $userId, int $courseId): void {
@@ -91,7 +77,7 @@ class UserCoursesRepository {
         $stmt->execute();
     }
 
-    private function rowToDTO(array $row): CourseDTO {
+    protected function rowToDTO(array $row): CourseDTO {
         return new CourseDTO(
             (int)$row['course_id'],
             $row['course_name'],

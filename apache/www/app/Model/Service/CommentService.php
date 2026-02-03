@@ -7,6 +7,10 @@ use Unibostu\Model\Repository\CommentRepository;
 use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\DTO\CreateCommentDTO;
 use Unibostu\Model\DTO\CommentDTO;
+use Unibostu\Core\exceptions\DomainException;
+use Unibostu\Core\exceptions\DomainErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
+use Unibostu\Core\exceptions\ValidationErrorCode;
 
 class CommentService {
     private CommentRepository $commentRepository;
@@ -18,54 +22,65 @@ class CommentService {
     }
 
     /**
-     * Ottiene tutti i commenti di un post con gli autori
-     * @return CommentWithAuthorDTO[] Array di commenti con autori
+     * Gets all comments for a post with authors
+     * 
+     * @param int $postId Post ID
+     * @return CommentWithAuthorDTO[] Array of comments with authors
      */
     public function getCommentsByPostId(int $postId): array {
         return $this->commentRepository->findByPostId($postId);
     }
 
     /**
-     * Crea un nuovo commento
-     * @throws \Exception se l'userId non è valido o non esiste
-     * @throws \Exception se il testo del commento è vuoto
-     * @throws \Exception se l'utente è sospeso
-     * @return CommentWithAuthorDTO Il commento creato con l'autore
+     * Creates a new comment
+     * 
+     * @throws ValidationException if userId is invalid or doesn't exist
+     * @throws ValidationException if comment text is empty
+     * @throws ValidationException if user is suspended
+     * @return CommentWithAuthorDTO The created comment with author
      */
     public function createComment(CreateCommentDTO $dto): CommentDTO {
-        // Verifica che l'utente esista
+        // Verify user exists
         $user = $this->userRepository->findByUserId($dto->userId);
         if (!$user) {
-            throw new \Exception("Utente non trovato");
+            ValidationException::build()
+                ->addError(ValidationErrorCode::USER_NOT_FOUND)
+                ->throwIfAny();
         }
-
         if ($user->suspended) {
-            throw new \Exception("Utente sospeso, non può creare commenti");
+            ValidationException::build()
+                ->addError(ValidationErrorCode::USER_SUSPENDED)
+                ->throwIfAny();
         }
-
         if (empty($dto->text)) {
-            throw new \Exception("Il testo del commento non può essere vuoto");
+            ValidationException::build()
+                ->addError(ValidationErrorCode::COMMENT_TEXT_REQUIRED)
+                ->throwIfAny();
         }
-
         return $this->commentRepository->save($dto);
     }
 
     /**
-     * Cancella un commento
-     * @throws \Exception se l'userId non esiste o non è proprietario del commento (e non è admin)
-     * @throws \Exception se il commento non esiste
+     * Deletes a comment
+     * 
+     * @param int $commentId Comment ID
+     * @param int $postId Post ID
+     * @param string $userId User ID of the requester
+     * @param bool $isAdmin Whether the requester is an admin
+     * @throws ValidationException if userId doesn't exist or comment doesn't exist
+     * @throws DomainException if user is not owner of comment (and not admin)
      */
     public function deleteComment(int $commentId, int $postId, string $userId, bool $isAdmin = false): void {
         $comment = $this->commentRepository->findById($commentId, $postId);
         if (!$comment) {
-            throw new \Exception("Commento non trovato");
+            ValidationException::build()
+                ->addError(ValidationErrorCode::COMMENT_NOT_FOUND)
+                ->throwIfAny();
         }
-
         // Admin can delete any comment, users can only delete their own
         if (!$isAdmin && $comment->author->userId !== $userId) {
-            throw new \Exception("Non sei il proprietario di questo commento");
+            throw new DomainException(DomainErrorCode::NOT_COMMENT_OWNER);
         }
-
         $this->commentRepository->delete($commentId, $postId);
     }
 }

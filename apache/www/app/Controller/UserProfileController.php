@@ -23,11 +23,11 @@ use Unibostu\Model\Service\UserService;
 use Unibostu\Model\Service\FacultyService;
 
 class UserProfileController extends BaseController {
-    private $postService;
-    private $courseService;
-    private $userService;
-    private $facultyService;
-    private $categoryService;
+    private PostService $postService;
+    private CourseService $courseService;
+    private UserService $userService;
+    private FacultyService $facultyService;
+    private CategoryService $categoryService;
 
     public function __construct(Container $container) {
         parent::__construct($container);

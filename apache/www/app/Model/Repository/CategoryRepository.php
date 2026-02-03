@@ -4,18 +4,15 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\CategoryDTO;
-use Unibostu\Core\Database;
+use Unibostu\Core\exceptions\RepositoryException;
 use PDO;
 
-class CategoryRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
-
+class CategoryRepository extends BaseRepository {
     /**
-     * Recupera una categoria tramite ID
+     * Retrieves a category by ID
+     * 
+     * @param int $categoryId The ID of the category
+     * @return CategoryDTO|null The CategoryDTO object or null if not found
      */
     public function findById(int $categoryId): ?CategoryDTO {
         $stmt = $this->pdo->prepare(
@@ -29,7 +26,10 @@ class CategoryRepository {
     }
 
     /**
-     * Recupera una categoria tramite nome
+     * Retrieves a category by name
+     * 
+     * @param string $categoryName The name of the category
+     * @return CategoryDTO|null The CategoryDTO object or null if not found
      */
     public function findByName(string $categoryName): ?CategoryDTO {
         $stmt = $this->pdo->prepare(
@@ -42,7 +42,7 @@ class CategoryRepository {
     }
 
     /**
-     * Recupera tutte le categorie
+     * Retrieves all categories
      */
     public function findAll(): array {
         $stmt = $this->pdo->prepare(
@@ -56,6 +56,8 @@ class CategoryRepository {
 
     /**
      * Search categories by name
+     * 
+     * @param string $searchTerm The search term
      */
     public function searchByName(string $searchTerm): array {
         $stmt = $this->pdo->prepare(
@@ -65,58 +67,65 @@ class CategoryRepository {
         $stmt->bindValue(':searchTerm', $likeTerm, PDO::PARAM_STR);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         return array_map([$this, 'rowToDTO'], $rows);
     }
 
     /**
-     * Salva una nuova categoria
-     * @throws \Exception in caso di errore
+     * Saves a new category
+     * @throws RepositoryException in case of error
      */
     public function save(string $categoryName): void {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO categories (category_name)
-             VALUES (:categoryName)"
-        );
-        $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
-        
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante il salvataggio della categoria");
-        }
+        $this->executeInTransaction(function() use ($categoryName) {
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO categories (category_name)
+                 VALUES (:categoryName)"
+            );
+            $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to save category");
+            }
+        });
     }
 
     /**
-     * Aggiorna una categoria
-     * @throws \Exception in caso di errore
+     * Updates a category
+     * 
+     * @param int $categoryId The ID of the category to update
+     * @param string $categoryName The new name of the category
+     * @throws RepositoryException in case of error
      */
     public function update(int $categoryId, string $categoryName): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE categories SET category_name = :categoryName WHERE category_id = :categoryId"
-        );
-        $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
-        $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
-
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'aggiornamento della categoria");
-        }
+        $this->executeInTransaction(function() use ($categoryId, $categoryName) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE categories SET category_name = :categoryName WHERE category_id = :categoryId"
+            );
+            $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+            $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to update category");
+            }
+        });
     }
 
     /**
-     * Elimina una categoria
-     * @throws \Exception in caso di errore
+     * Deletes a category
+     * 
+     * @param int $categoryId The ID of the category to delete
+     * @throws RepositoryException in case of error
      */
     public function delete(int $categoryId): void {
-        $stmt = $this->pdo->prepare(
-            "DELETE FROM categories WHERE category_id = :categoryId"
-        );
-        $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'eliminazione della categoria");
-        }
+        $this->executeInTransaction(function() use ($categoryId) {
+            $stmt = $this->pdo->prepare(
+                "DELETE FROM categories WHERE category_id = :categoryId"
+            );
+            $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to delete category");
+            }
+        });
     }
 
-    private function rowToDTO(array $row): CategoryDTO {
+    protected function rowToDTO(array $row): CategoryDTO {
         return new CategoryDTO(
             (int)$row['category_id'],
             $row['category_name']

@@ -13,7 +13,7 @@ final class ValidationException extends DomainException {
     private array $errors = [];
 
     public function __construct(
-        \UnitEnum $mainErrorCode = DomainErrorCode::INVALID_DATA,
+        \UnitEnum $mainErrorCode = ValidationErrorCode::INVALID_REQUEST,
         array $errors = [],
         int $code = 0,
         ?\Throwable $previous = null

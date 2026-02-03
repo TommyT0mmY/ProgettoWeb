@@ -22,6 +22,7 @@ enum ValidationErrorCode {
     case COURSE_REQUIRED;
     case TAG_REQUIRED;
     case USER_NOT_FOUND;
+    case USER_SUSPENDED;
     case INVALID_REQUEST;
     // File upload errors
     case FILE_TOO_LARGE;
@@ -46,12 +47,6 @@ enum ValidationErrorCode {
     case USER_NOT_ENROLLED;
     case POST_NOT_FOUND;
     case COMMENT_NOT_FOUND;
-    case COMMENT_SAVE_FAILED;
-    case DATABASE_ERROR;
-    case REACTION_UPDATE_FAILED;
-    case REACTION_SAVE_FAILED;
-    case REACTION_REMOVAL_FAILED;
     case INVALID_REACTION;
-    case INSUFFICIENT_PERMISSIONS;
     case TAG_MISMATCH;
 }

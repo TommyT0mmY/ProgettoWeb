@@ -4,21 +4,15 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\UserDTO;
-use Unibostu\Core\Database;
+use Unibostu\Core\exceptions\RepositoryException;
 use PDO;
 
-class UserRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
-
-
+class UserRepository extends BaseRepository {
     /**
-     * Recupera tutti gli utenti
+     * Retrieves all users
      * 
-     * @return UserDTO[] Array di UserDTO objects
+     * @return UserDTO[] Array of UserDTO objects
+     * @throws RepositoryException
      */
     public function findAllUsers(): array {
         $stmt = $this->pdo->prepare(
@@ -26,11 +20,15 @@ class UserRepository {
         );
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return array_map([$this, 'rowToPrivateDTO'], $rows);
+        return array_map([$this, 'rowToDTO'], $rows);
     }
 
     /**
-     * Recupera un utente tramite ID utente
+     * Retrieves a user by user ID
+     *
+     * @param string $userId The user ID
+     * @return UserDTO|null The UserDTO object or null if not found
+     * @throws RepositoryException
      */
     public function findByUserId(string $userId): ?UserDTO {
         $stmt = $this->pdo->prepare(
@@ -40,12 +38,13 @@ class UserRepository {
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $row ? $this->rowToPrivateDTO($row) : null;
+        return $row ? $this->rowToDTO($row) : null;
     }
 
     /**
      * Verifies if the user exists 
      *
+     * @param string $userId The user ID
      * @return bool True if the user exists, false otherwise
      */
     public function userExists(string $userId): bool {
@@ -61,120 +60,136 @@ class UserRepository {
     /**
      * Registers a new user.
      *
-     * @throws \RuntimeException in case of error
+     * @throws RepositoryException if registration fails
      */
     public function register(UserDTO $dto): void {
-        $stmtUtenti = $this->pdo->prepare(
-            "INSERT INTO users 
-                (user_id, password, first_name, last_name, faculty_id, suspended)
-                VALUES (:userId, :password, :firstName, :lastName, :facultyId, :suspended)"
-        );
-        $stmtUtenti->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
-        $stmtUtenti->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
-        $stmtUtenti->bindValue(':firstName', $dto->firstName, PDO::PARAM_STR);
-        $stmtUtenti->bindValue(':lastName', $dto->lastName, PDO::PARAM_STR);
-        $stmtUtenti->bindValue(':facultyId', $dto->facultyId, PDO::PARAM_INT);
-        $stmtUtenti->bindValue(':suspended', false, PDO::PARAM_BOOL);
-        $success = $stmtUtenti->execute();
-        if (!$success) {
-            throw new \RuntimeException("Error during user save operation");
-        }
+        $this->executeInTransaction(function() use ($dto) {
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO users 
+                    (user_id, password, first_name, last_name, faculty_id, suspended)
+                    VALUES (:userId, :password, :firstName, :lastName, :facultyId, :suspended)"
+            );
+            $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
+            $stmt->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
+            $stmt->bindValue(':firstName', $dto->firstName, PDO::PARAM_STR);
+            $stmt->bindValue(':lastName', $dto->lastName, PDO::PARAM_STR);
+            $stmt->bindValue(':facultyId', $dto->facultyId, PDO::PARAM_INT);
+            $stmt->bindValue(':suspended', false, PDO::PARAM_BOOL);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to register user");
+            }
+        });
     }
 
     /**
      * Updates user profile information.
      *
-     * @throws \RuntimeException in case of error
+     * @throws RepositoryException if update fails
      */
     // TODO Review this method more carefully
     public function updateProfile(UserDTO $dto): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE users 
-             SET first_name = :firstName, last_name = :lastName, password = :password
-             WHERE user_id = :userId"
-        );
-        $stmt->bindValue(':firstName', $dto->firstName, PDO::PARAM_STR);
-        $stmt->bindValue(':lastName', $dto->lastName, PDO::PARAM_STR);
-        $stmt->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
-        $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
-        if (!$stmt->execute()) {
-            throw new \RuntimeException("Error during user profile update");
-        }
+        $this->executeInTransaction(function() use ($dto) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE users 
+                 SET first_name = :firstName, last_name = :lastName, password = :password
+                 WHERE user_id = :userId"
+            );
+            $stmt->bindValue(':firstName', $dto->firstName, PDO::PARAM_STR);
+            $stmt->bindValue(':lastName', $dto->lastName, PDO::PARAM_STR);
+            $stmt->bindValue(':password', password_hash($dto->password, PASSWORD_BCRYPT), PDO::PARAM_STR);
+            $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to update user profile");
+            }
+        });
     }
 
     /**
      * Suspends a user account.
      *
-     * @throws \RuntimeException in case of error
+     * @throws RepositoryException if suspension fails
      */
     public function suspendUser(string $userId): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE users 
-             SET suspended = true
-             WHERE user_id = :userId"
-        );
-        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
-        if (!$stmt->execute()) {
-            throw new \RuntimeException("Error during user suspension");
-        }
+        $this->executeInTransaction(function() use ($userId) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE users 
+                 SET suspended = true
+                 WHERE user_id = :userId"
+            );
+            $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to suspend user");
+            }
+        });
     }
 
     /**
      * Unsuspends a user account.
      *
-     * @throws \RuntimeException in case of error
+     * @throws RepositoryException if unsuspension fails
      */
     public function unsuspendUser(string $userId): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE users 
-             SET suspended = false
-             WHERE user_id = :userId"
-        );
-        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
-        if (!$stmt->execute()) {
-            throw new \RuntimeException("Error during user unsuspension");
-        }
+        $this->executeInTransaction(function() use ($userId) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE users 
+                 SET suspended = false
+                 WHERE user_id = :userId"
+            );
+            $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to unsuspend user");
+            }
+        });
     }
 
     /**
      * Updates basic user profile information (without password).
      *
-     * @throws \RuntimeException in case of error
+     * @throws RepositoryException if update fails
      */
     public function updateBasicProfile(string $userId, string $firstName, string $lastName, int $facultyId): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE users 
-             SET first_name = :firstName, last_name = :lastName, faculty_id = :facultyId
-             WHERE user_id = :userId"
-        );
-        $stmt->bindValue(':firstName', $firstName, PDO::PARAM_STR);
-        $stmt->bindValue(':lastName', $lastName, PDO::PARAM_STR);
-        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
-        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
-        if (!$stmt->execute()) {
-            throw new \RuntimeException("Error during user profile update");
-        }
+        $this->executeInTransaction(function() use ($userId, $firstName, $lastName, $facultyId) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE users 
+                 SET first_name = :firstName, last_name = :lastName, faculty_id = :facultyId
+                 WHERE user_id = :userId"
+            );
+            $stmt->bindValue(':firstName', $firstName, PDO::PARAM_STR);
+            $stmt->bindValue(':lastName', $lastName, PDO::PARAM_STR);
+            $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+            $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to update user profile");
+            }
+        });
     }
 
     /**
      * Updates user password.
      *
-     * @throws \RuntimeException in case of error
+     * @throws RepositoryException if update fails
      */
     public function updatePassword(string $userId, string $newPassword): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE users 
-             SET password = :password
-             WHERE user_id = :userId"
-        );
-        $stmt->bindValue(':password', password_hash($newPassword, PASSWORD_BCRYPT), PDO::PARAM_STR);
-        $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
-        if (!$stmt->execute()) {
-            throw new \RuntimeException("Error during password update");
-        }
+        $this->executeInTransaction(function() use ($userId, $newPassword) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE users 
+                 SET password = :password
+                 WHERE user_id = :userId"
+            );
+            $stmt->bindValue(':password', password_hash($newPassword, PASSWORD_BCRYPT), PDO::PARAM_STR);
+            $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to update password");
+            }
+        });
     }
 
-    private function rowToPrivateDTO(array $row): UserDTO {
+    protected function rowToDTO(array $row): UserDTO {
         return new UserDTO(
             userId: $row['user_id'],
             firstName: $row['first_name'],

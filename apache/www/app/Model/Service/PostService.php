@@ -9,6 +9,10 @@ use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Model\DTO\CreatePostDTO;
 use Unibostu\Model\DTO\PostDTO;
+use Unibostu\Core\exceptions\DomainException;
+use Unibostu\Core\exceptions\DomainErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
+use Unibostu\Core\exceptions\ValidationErrorCode;
 
 class PostService {
     private PostRepository $postRepository;
@@ -22,44 +26,44 @@ class PostService {
     }
 
     /**
-     * Ottiene i post in base ai filtri specificati
+     * Gets posts based on specified filters
      * 
-     * @param PostQuery $postQuery Query con i filtri
-     * @return PostDTO[] Array di PostDTO che soddisfano i filtri
+     * @param PostQuery $postQuery Query with filters
+     * @return PostDTO[] Array of PostDTO matching the filters
      */
     public function getPosts(PostQuery $postQuery): array {
         return $this->postRepository->findWithFilters($postQuery);
     }
 
     /**
-     * Ottiene un singolo post con dettagli
-     * @param int $postId ID del post
-     * @param string|null $userId ID dell'utente corrente per popolare likedByUser
-     * @return PostDTO|null Dettagli del post o null se non trovato
+     * Gets a single post with details
+     * @param int $postId Post ID
+     * @param string|null $userId Current user ID to populate likedByUser
+     * @return PostDTO|null Post details or null if not found
      */
     public function getPostDetails(int $postId, ?string $userId = null): ?PostDTO {
         return $this->postRepository->findById($postId, $userId);
     }
 
     /**
-     * Crea un nuovo post per un utente
-     * Gli utenti possono postare solo su UN UNICO corso
-     * I tag sono identificati univocamente tramite tag_id
-     * Le categorie sono facoltative
+     * Creates a new post for a user
+     * Users can only post to ONE SINGLE course
+     * Tags must belong to the same course
+     * Categories are optional
      *
-     * @throws \Exception se l'userId non è valido o il corso non appartiene all'utente
+     * @throws ValidationException if userId is invalid or course doesn't belong to user
      * @return int The created post ID
      */
     public function createPost(CreatePostDTO $dto): int {
-        // Risolvi userId a utente
+        $exceptionBuilder = ValidationException::build();
+        // Resolve userId to user
         $user = $this->userRepository->findByUserId($dto->userId);
         if (!$user) {
-            throw new \Exception("Utente non trovato");
+            $exceptionBuilder->addError(ValidationErrorCode::USER_NOT_FOUND);
         }
-
-        // Verifica che l'utente sia iscritto al corso
+        // Verify user is enrolled in the course
         if (!$this->courseRepository->isUserEnrolled($dto->userId, $dto->courseId)) {
-            throw new \Exception("L'utente non è iscritto a questo corso");
+            $exceptionBuilder->addError(ValidationErrorCode::USER_NOT_ENROLLED);
         }
 
         // Verifica che tutti i tag siano validi
@@ -68,27 +72,31 @@ class PostService {
                 throw new \Exception("Tag non valido");
             }
         }
-
-        if (empty($dto->title) || empty($dto->description)) {
-            throw new \Exception("Titolo e descrizione non possono essere vuoti");
+        if (empty($dto->title)) {
+            $exceptionBuilder->addError(ValidationErrorCode::TITLE_REQUIRED);
         }
-
+        if (empty($dto->description)) {
+            $exceptionBuilder->addError(ValidationErrorCode::DESCRIPTION_REQUIRED);
+        }
+        
+        $exceptionBuilder->throwIfAny();
         return $this->postRepository->save($dto);
     }
 
     /**
-     * Reazione (like/dislike) a un post
+     * Reaction (like/dislike) to a post
      * 
-     * @param int $postId ID del post
-     * @param string $userId ID dell'utente
-     * @param string $reaction "like", "dislike" o "remove"
+     * @param int $postId Post ID
+     * @param string $userId User ID
+     * @param string $reaction "like", "dislike" or "remove"
      */
     public function setReaction(int $postId, string $userId, string $reaction): void {
         $post = $this->postRepository->findById($postId);
         if (!$post) {
-            throw new \Exception("Post non trovato");
+            ValidationException::build()
+                ->addError(ValidationErrorCode::POST_NOT_FOUND)
+                ->throwIfAny();
         }
-        
         if ($reaction === 'remove') {
             $this->postRepository->removeReaction($postId, $userId);
         } elseif ($reaction === 'like') {
@@ -96,69 +104,66 @@ class PostService {
         } elseif ($reaction === 'dislike') {
             $this->postRepository->setReaction($postId, $userId, false);
         } else {
-            throw new \Exception("Reazione non valida");
+            ValidationException::build()
+                ->addError(ValidationErrorCode::INVALID_REACTION)
+                ->throwIfAny();
         }
     }
 
     /**
-     * Ottiene la reazione corrente dell'utente per un post
-     * @return string|null 'like', 'dislike' o null se non ha reagito
+     * Gets the current user's reaction for a post
+     * @return string|null 'like', 'dislike' or null if no reaction
      */
     public function getUserReaction(int $postId, string $userId): ?string {
         return $this->postRepository->getUserReaction($postId, $userId);
     }
 
     /**
-     * Toggle like su un post
-     * Se l'utente aveva già messo like, lo rimuove
-     * Se aveva messo dislike, lo cambia in like
-     * Se non aveva reagito, aggiunge like
-     * @return array con likes, dislikes, userReaction
+     * Toggle like on a post
+     * If user already liked, removes it
+     * If user disliked, changes to like
+     * If user hasn't reacted, adds like
+     * @return array with likes, dislikes, userReaction
      */
     public function toggleLike(int $postId, string $userId): array {
         $currentReaction = $this->getUserReaction($postId, $userId);
-        
         if ($currentReaction === 'like') {
-            // Se aveva già like, lo rimuove
+            // If already liked, remove it
             $this->postRepository->removeReaction($postId, $userId);
         } else {
-            // Se aveva dislike o niente, mette like
+            // If disliked or nothing, add like
             $this->postRepository->setReaction($postId, $userId, true);
         }
-        
         return $this->getPostReactionStats($postId, $userId);
     }
 
     /**
-     * Toggle dislike su un post
-     * Se l'utente aveva già messo dislike, lo rimuove
-     * Se aveva messo like, lo cambia in dislike
-     * Se non aveva reagito, aggiunge dislike
-     * @return array con likes, dislikes, userReaction
+     * Toggle dislike on a post
+     * If user already disliked, removes it
+     * If user liked, changes to dislike
+     * If user hasn't reacted, adds dislike
+     * @return array with likes, dislikes, userReaction
      */
     public function toggleDislike(int $postId, string $userId): array {
         $currentReaction = $this->getUserReaction($postId, $userId);
-        
         if ($currentReaction === 'dislike') {
-            // Se aveva già dislike, lo rimuove
+            // If already disliked, remove it
             $this->postRepository->removeReaction($postId, $userId);
         } else {
-            // Se aveva like o niente, mette dislike
+            // If liked or nothing, add dislike
             $this->postRepository->setReaction($postId, $userId, false);
         }
-        
         return $this->getPostReactionStats($postId, $userId);
     }
 
     /**
-     * Ottiene le statistiche delle reazioni per un post
-     * @return array con likes, dislikes, userReaction
+     * Gets reaction statistics for a post
+     * @return array with likes, dislikes, userReaction
      */
     private function getPostReactionStats(int $postId, string $userId): array {
         $likes = $this->postRepository->countLikes($postId);
         $dislikes = $this->postRepository->countDislikes($postId);
         $userReaction = $this->getUserReaction($postId, $userId);
-        
         return [
             'likes' => $likes,
             'dislikes' => $dislikes,
@@ -167,23 +172,23 @@ class PostService {
     }
 
     /**
-     * Elimina un post
+     * Deletes a post
      * 
-     * @param int $postId ID del post da eliminare
-     * @param string $userId ID dell'utente che richiede l'eliminazione
-     * @param bool $isAdmin Se true, l'utente è admin e può cancellare qualsiasi post
+     * @param int $postId Post ID to delete
+     * @param string $userId User ID requesting deletion
+     * @param bool $isAdmin If true, user is admin and can delete any post
      */
     public function deletePost(int $postId, string $userId, bool $isAdmin = false): void {
         $post = $this->postRepository->findById($postId);
         if (!$post) {
-            throw new \Exception("Post non trovato");
+            ValidationException::build()
+                ->addError(ValidationErrorCode::POST_NOT_FOUND)
+                ->throwIfAny();
         }
-
         // Admin can delete any post, users can only delete their own
         if (!$isAdmin && $post->author->userId !== $userId) {
-            throw new \Exception("Non hai i permessi per eliminare questo post");
+            throw new DomainException(DomainErrorCode::NOT_POST_OWNER);
         }
-
         $this->postRepository->delete($postId);
     }
 }

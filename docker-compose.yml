@@ -54,30 +54,6 @@ services:
       - PMA_PORT=3306
     networks:
       - lamp_docker
-  # Questo viene usato solo per generare dati di test nel database, non fa parte del progetto
-  # ma ci aiuta durante lo sviluppo a popolare il database con dati fittizi.
-  python:
-    build: ./python # Si basa sul Dockerfile nella cartella python
-    container_name: mock_data
-    restart: no
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - lamp_docker
-    #stdin_open: true # modalità interattiva
-    #tty: true        # mantieni il terminale aperto
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./python
-          target: /app
-        # rebuild se il Dockerfile o requirements.txt cambiano
-        - action: rebuild
-          path: ./python/Dockerfile
-        - action: rebuild
-          path: ./python/requirements.txt
-
   session-gc:
     build: ./cron
     restart: always
