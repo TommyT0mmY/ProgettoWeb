@@ -606,9 +606,20 @@ nav section {
 
 nav h2 {
     color: var(--color-blue-700);
-    font-size: var(--fs-sm);
+    font-size: var(--fs-lg);
     font-weight: var(--fw-bold);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+nav h3 {
+    color: var(--color-gray-600);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-xs);
     padding-left: var(--space-xs);
 }
 

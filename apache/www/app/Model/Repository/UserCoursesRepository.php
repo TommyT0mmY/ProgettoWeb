@@ -15,10 +15,11 @@ class UserCoursesRepository extends BaseRepository {
      */
     public function findCoursesByUser(string $userId): array {
         $stmt = $this->pdo->prepare(
-            "SELECT c.* FROM courses c
+            "SELECT c.*, f.faculty_name FROM courses c
                 JOIN user_courses uc ON c.course_id = uc.course_id
+                LEFT JOIN faculties f ON c.faculty_id = f.faculty_id
                 WHERE uc.user_id = :userId
-                ORDER BY c.course_name"
+                ORDER BY f.faculty_name, c.course_name"
         );
         $stmt->bindValue(':userId', $userId, PDO::PARAM_STR);
         $stmt->execute();
@@ -81,7 +82,8 @@ class UserCoursesRepository extends BaseRepository {
         return new CourseDTO(
             (int)$row['course_id'],
             $row['course_name'],
-            (int)$row['faculty_id']
+            (int)$row['faculty_id'],
+            $row['faculty_name'] ?? null
         );
     }
 }
