@@ -210,6 +210,166 @@ body > header img.menu-container {
     border-top: var(--border-width-hairline) solid var(--color-border-muted);
 }
 
+/* ============ POST ATTACHMENTS ============ */
+.post-attachments {
+    margin-top: var(--space-xs);
+    padding: var(--space-xs);
+    background-color: var(--color-bg-metadata);
+    border-radius: var(--radius-md);
+}
+
+.post-attachments .attachments-label {
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-sm);
+    color: var(--color-blue-700);
+    display: block;
+    margin-bottom: var(--space-xs);
+}
+
+.post-attachments .attachments-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+}
+
+.attachment-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xxs);
+    padding: var(--space-2xs) var(--space-xs);
+    background-color: var(--color-bg-light);
+    border: var(--border-width-hairline) solid var(--color-border-muted);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-size: var(--fs-sm);
+    color: var(--color-text);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    max-width: 12.5rem;
+}
+
+.attachment-btn:hover {
+    background-color: var(--color-blue-100);
+    border-color: var(--color-blue-700);
+    box-shadow: var(--shadow-sm);
+}
+
+.attachment-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.attachment-btn .attachment-icon {
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+    flex-shrink: 0;
+}
+
+.attachment-btn .attachment-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+}
+
+.attachment-btn .attachment-size {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+}
+
+/* File type icons using pseudo-element with text */
+.attachment-btn .attachment-icon::before {
+    display: block;
+    font-size: var(--fs-icon-label);
+    font-weight: var(--fw-bold);
+    text-align: center;
+    line-height: var(--icon-size-sm);
+    border-radius: var(--radius-xs);
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+}
+
+/* PDF */
+.attachment-btn.file-pdf {
+    border-left: var(--border-width-thick) solid var(--color-file-pdf);
+}
+.attachment-btn.file-pdf .attachment-icon::before {
+    content: "PDF";
+    background-color: var(--color-file-pdf);
+    color: var(--color-white);
+}
+
+/* Word */
+.attachment-btn.file-word {
+    border-left: var(--border-width-thick) solid var(--color-file-word);
+}
+.attachment-btn.file-word .attachment-icon::before {
+    content: "DOC";
+    background-color: var(--color-file-word);
+    color: var(--color-white);
+}
+
+/* Excel */
+.attachment-btn.file-excel {
+    border-left: var(--border-width-thick) solid var(--color-file-excel);
+}
+.attachment-btn.file-excel .attachment-icon::before {
+    content: "XLS";
+    background-color: var(--color-file-excel);
+    color: var(--color-white);
+}
+
+/* PowerPoint */
+.attachment-btn.file-powerpoint {
+    border-left: var(--border-width-thick) solid var(--color-file-powerpoint);
+}
+.attachment-btn.file-powerpoint .attachment-icon::before {
+    content: "PPT";
+    background-color: var(--color-file-powerpoint);
+    color: var(--color-white);
+}
+
+/* Images */
+.attachment-btn.file-image {
+    border-left: var(--border-width-thick) solid var(--color-file-image);
+}
+.attachment-btn.file-image .attachment-icon::before {
+    content: "IMG";
+    background-color: var(--color-file-image);
+    color: var(--color-white);
+}
+
+/* Archives */
+.attachment-btn.file-archive {
+    border-left: var(--border-width-thick) solid var(--color-file-archive);
+}
+.attachment-btn.file-archive .attachment-icon::before {
+    content: "ZIP";
+    background-color: var(--color-file-archive);
+    color: var(--color-white);
+}
+
+/* Text */
+.attachment-btn.file-text {
+    border-left: var(--border-width-thick) solid var(--color-file-text);
+}
+.attachment-btn.file-text .attachment-icon::before {
+    content: "TXT";
+    background-color: var(--color-file-text);
+    color: var(--color-white);
+}
+
+/* Generic */
+.attachment-btn.file-generic {
+    border-left: var(--border-width-thick) solid var(--color-file-generic);
+}
+.attachment-btn.file-generic .attachment-icon::before {
+    content: "FILE";
+    background-color: var(--color-file-generic);
+    color: var(--color-white);
+}
+
 .review {
     list-style: none;
     display: flex;
