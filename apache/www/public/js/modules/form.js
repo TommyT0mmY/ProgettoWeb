@@ -15,6 +15,7 @@ class Form {
     /**
      * @param {HTMLFormElement} form
      * @param {Object} configs
+     * @param {boolean} configs.useMultipart - If true, sends as multipart/form-data instead of JSON
      */
     constructor(form, configs) {
         this.#form = form;
@@ -45,22 +46,37 @@ class Form {
                 if (!isValid) {
                     return;
                 }
-                // Submitting form data
-                let formData = this.serializeForm();
-                if (typeof this.#configs?.getPayload === 'function') { // If a custom payload function is provided
-                    const customPayload = await this.#configs.getPayload();
-                    if (customPayload === false) {
-                        return;
+                
+                // Determine if we should use multipart/form-data or JSON
+                const useMultipart = this.#configs?.useMultipart === true;
+                let response;
+                
+                if (useMultipart) {
+                    // Use FormData for multipart/form-data (file uploads)
+                    const formData = this.#getFormDataForMultipart();
+                    response = await fetch(this.#configs.endpoint, {
+                        method: 'POST',
+                        body: formData // No Content-Type header needed; browser sets it automatically
+                    });
+                } else {
+                    // JSON submission
+                    let formData = this.serializeForm();
+                    if (typeof this.#configs?.getPayload === 'function') { // If a custom payload function is provided
+                        const customPayload = await this.#configs.getPayload();
+                        if (customPayload === false) {
+                            return;
+                        }
+                        formData = customPayload;
                     }
-                    formData = customPayload;
+                    response = await fetch(this.#configs.endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
                 }
-                const response = await fetch(this.#configs.endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+                
                 // Response handling
                 const responseData = await response.json();
                 if (!responseData.success) { // Displaying errors
@@ -71,6 +87,16 @@ class Form {
                     });
                     return;
                 }
+                
+                // Handle file-specific errors (partial success)
+                if (responseData.fileErrors && responseData.fileErrors.length > 0) {
+                    const errorMapping = this.#configs?.responseErrorsMapping ?? {};
+                    responseData.fileErrors.forEach(errorCode => {
+                        const { field, message = 'File upload error.' } = errorMapping[errorCode] ?? {};
+                        (!field) ? this.setGeneralError(message) : this.#setFieldError(field, message);
+                    });
+                }
+                
                 if (!response.ok) { // HTTP response status codes not in 200-299 range
                     throw new Error("Network or server error, response code: " + response.status);
                 }
@@ -98,6 +124,24 @@ class Form {
         });
         // If everything is set up correctly, enable the submit button
         this.#submitButton.disabled = false;
+    }
+
+    /**
+     * Get FormData object for multipart/form-data submission (file uploads)
+     * @returns {FormData}
+     */
+    #getFormDataForMultipart() {
+        const formData = new FormData(this.#form);
+        
+        // Add CSRF tokens
+        if (!formData.has('csrf-key')) {
+            formData.append('csrf-key', window.csrfKey);
+        }
+        if (!formData.has('csrf-token')) {
+            formData.append('csrf-token', window.csrfToken);
+        }
+        
+        return formData;
     }
 
     serializeForm() {

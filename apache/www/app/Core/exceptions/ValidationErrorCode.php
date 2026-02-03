@@ -23,4 +23,13 @@ enum ValidationErrorCode {
     case TAG_REQUIRED;
     case USER_NOT_FOUND;
     case INVALID_REQUEST;
+    // File upload errors
+    case FILE_TOO_LARGE;
+    case FILE_TYPE_NOT_ALLOWED;
+    case FILE_UPLOAD_ERROR;
+    case FILE_MAX_COUNT_EXCEEDED;
+    case FILE_NAME_TOO_LONG;
+    // Attachment errors
+    case ATTACHMENT_FILENAME_INVALID;
+    case ATTACHMENT_NOT_FOUND;
 }
