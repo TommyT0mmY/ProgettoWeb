@@ -1,16 +1,13 @@
 <?php
 /**
  * @var array<\Unibostu\Model\DTO\CourseDTO> $courses
+ * @var string $userId
  */
 ?>
 <nav id="navbar" aria-label="Main navigation">
   <div class="sidebar-content">
     <ul class="nav-main">
-      <li><a href="/">Home</a></li>
-      <li><a href="/register">Register</a></li>
-      <li><a href="/login">Login</a></li>
       <li><a href="#" id="logout-link">Logout</a></li>
-      <li><a href="/studentpreferences">Preferences</a></li>
     </ul>
     
     <section>
@@ -21,9 +18,6 @@
             <a href="/courses/<?= h($course->courseId); ?>"><?= h($course->courseName); ?></a>
           </li>
         <?php endforeach; ?>
-          <li>
-            <a href="/select-courses">Browse all courses</a>
-          </li>
       </ul>
     </section>
   </div>
