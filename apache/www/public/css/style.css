@@ -135,7 +135,7 @@ body > header img.menu-container {
 
 /* Header e Titolo */
 .post header h3 {
-    color: var(--color-blue-700); 
+    color: var(--color-text);
     margin: 0 0 var(--space-xxs) 0;
     font-size: var(--fs-md);
     overflow-wrap: break-word;
