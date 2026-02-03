@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/popup.css" />
     <script type="module" src="/js/navbar.js"></script>
+    <script type="module" src="/js/logout.js"></script>
     <link rel="stylesheet" href="/css/style.css">
     <?php if (!empty($additionalHeadCode)): ?>
         <?php foreach ($additionalHeadCode as $code): ?>

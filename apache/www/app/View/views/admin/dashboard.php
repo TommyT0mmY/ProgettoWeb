@@ -10,8 +10,9 @@ $this->extend('admin-layout', [
 ]);
 ?>
 
-<header>
+<header class="dashboard-header">
     <h2>Admin - Dashboard</h2>
+    <a href="#" id="logout-link">Logout</a>
 </header>
 
 <div class="post-container cards">

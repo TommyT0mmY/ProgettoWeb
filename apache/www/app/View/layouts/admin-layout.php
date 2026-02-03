@@ -36,6 +36,7 @@ declare(strict_types=1);
     <link rel="stylesheet" href="/css/base.css" />
     <link rel="stylesheet" href="/css/popup.css" />
     <link rel="stylesheet" href="/css/style.css">
+    <script type="module" src="/js/logout.js"></script>
     <?php if (!empty($additionalHeadCode)): ?>
         <?php foreach ($additionalHeadCode as $code): ?>
             <?= $code ?>
