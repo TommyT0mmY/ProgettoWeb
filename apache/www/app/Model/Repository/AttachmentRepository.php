@@ -3,16 +3,10 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Repository;
 
-use Unibostu\Core\Database;
 use Unibostu\Model\DTO\AttachmentDTO;
 use PDO;
 
-class AttachmentRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
+class AttachmentRepository extends BaseRepository {
 
     /**
      * Save a new attachment record
@@ -113,7 +107,7 @@ class AttachmentRepository {
     /**
      * Convert database row to DTO
      */
-    private function rowToDTO(array $row): AttachmentDTO {
+    protected function rowToDTO(array $row): AttachmentDTO {
         return new AttachmentDTO(
             attachmentId: (int)$row['attachment_id'],
             postId: (int)$row['post_id'],

@@ -4,19 +4,12 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\AdminDTO;
-use Unibostu\Model\DTO\CreateAdminDTO;
-use Unibostu\Core\Database;
 use PDO;
 
-class AdminRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
+class AdminRepository extends BaseRepository {
 
     /**
-     * Recupera un amministratore tramite ID
+     * Retrieves an administrator by ID
      */
     public function findByAdminId(string $adminId): ?AdminDTO {
         $stmt = $this->pdo->prepare(
@@ -42,7 +35,7 @@ class AdminRepository {
         return (int)$result['count'] > 0;
     }
 
-    private function rowToDTO(array $row): AdminDTO {
+    protected function rowToDTO(array $row): AdminDTO {
         return new AdminDTO(
             $row['admin_id'],
             $row['password']

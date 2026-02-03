@@ -4,16 +4,10 @@ declare(strict_types=1);
 namespace Unibostu\Model\Repository;
 
 use Unibostu\Model\DTO\CourseDTO;
-use Unibostu\Core\Database;
+use Unibostu\Core\exceptions\RepositoryException;
 use PDO;
 
-class CourseRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
-
+class CourseRepository extends BaseRepository {
 
     public function exists(int $courseId): bool {
         $stmt = $this->pdo->prepare(
@@ -27,7 +21,9 @@ class CourseRepository {
     }
 
     /**
-     * Recupera un corso tramite ID
+     * Retrieves a course by ID
+     *
+     * @throws RepositoryException if query fails
      */
     public function findById(int $courseId): ?CourseDTO {
         $stmt = $this->pdo->prepare(
@@ -41,7 +37,9 @@ class CourseRepository {
     }
 
     /**
-     * Recupera tutti i corsi
+     * Retrieves all courses
+     *
+     * @throws RepositoryException if query fails
      */
     public function findAll(): array {
         $stmt = $this->pdo->prepare(
@@ -54,7 +52,9 @@ class CourseRepository {
     }
 
     /**
-     * Recupera i corsi di una facolta
+     * Retrieves courses by faculty
+     *
+     * @throws RepositoryException if query fails
      */
     public function findByFaculty(int $facultyId): array {
         $stmt = $this->pdo->prepare(
@@ -99,58 +99,67 @@ class CourseRepository {
     }
 
     /**
-     * Salva un nuovo corso
-     * @throws \Exception in caso di errore
+     * Saves a new course
+     *
+     * @throws RepositoryException if save fails
      */
     public function save(string $courseName, int $facultyId): void {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO courses (course_name, faculty_id)
-             VALUES (:courseName, :facultyId)"
-        );
-        $stmt->bindValue(':courseName', $courseName, PDO::PARAM_STR);
-        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante il salvataggio del corso");
-        }
+        $this->executeInTransaction(function() use ($courseName, $facultyId) {
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO courses (course_name, faculty_id)
+                 VALUES (:courseName, :facultyId)"
+            );
+            $stmt->bindValue(':courseName', $courseName, PDO::PARAM_STR);
+            $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to save course");
+            }
+        });
     }
 
     /**
-     * Aggiorna i dati di un corso
-     * @throws \Exception in caso di errore
+     * Updates course data
+     *
+     * @throws RepositoryException if update fails
      */
     public function update(int $courseId, string $courseName, int $facultyId): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE courses 
-             SET course_name = :courseName, faculty_id = :facultyId
-             WHERE course_id = :courseId"
-        );
-        $stmt->bindValue(':courseName', $courseName, PDO::PARAM_STR);
-        $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
-        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'aggiornamento del corso");
-        }
+        $this->executeInTransaction(function() use ($courseId, $courseName, $facultyId) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE courses 
+                 SET course_name = :courseName, faculty_id = :facultyId
+                 WHERE course_id = :courseId"
+            );
+            $stmt->bindValue(':courseName', $courseName, PDO::PARAM_STR);
+            $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
+            $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to update course");
+            }
+        });
     }
 
     /**
-     * Elimina un corso
-     * @throws \Exception in caso di errore
+     * Deletes a course
+     *
+     * @throws RepositoryException if deletion fails
      */
     public function delete(int $courseId): void {
-        $stmt = $this->pdo->prepare(
-            "DELETE FROM courses WHERE course_id = :courseId"
-        );
-        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
-        
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore durante l'eliminazione del corso");
-        }
+        $this->executeInTransaction(function() use ($courseId) {
+            $stmt = $this->pdo->prepare(
+                "DELETE FROM courses WHERE course_id = :courseId"
+            );
+            $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to delete course");
+            }
+        });
     }
 
     /**
-     * Verifica se un utente è iscritto a un corso
+     * Checks if a user is enrolled in a course
      */
     public function isUserEnrolled(string $userId, int $courseId): bool {
         $stmt = $this->pdo->prepare(
@@ -163,7 +172,7 @@ class CourseRepository {
         return $stmt->fetchColumn() > 0;
     }
 
-    private function rowToDTO(array $row): CourseDTO {
+    protected function rowToDTO(array $row): CourseDTO {
         return new CourseDTO(
             (int)$row['course_id'],
             $row['course_name'],
@@ -171,4 +180,3 @@ class CourseRepository {
         );
     }
 }
-

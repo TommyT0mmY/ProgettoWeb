@@ -90,9 +90,7 @@ class TagRepository extends BaseRepository {
      * @throws RepositoryException
      */
     public function save(string $tagName, int $courseId): void {
-        try {
-            $this->beginTransaction();
-            
+        $this->executeInTransaction(function() use ($tagName, $courseId) {
             $stmt = $this->pdo->prepare(
                 "INSERT INTO tags (tag_name, course_id)
                  VALUES (:tagName, :courseId)"
@@ -101,16 +99,9 @@ class TagRepository extends BaseRepository {
             $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
             
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to save tag record");
+                throw new RepositoryException("Failed to save tag");
             }
-            
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to save tag: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     /**
@@ -121,9 +112,7 @@ class TagRepository extends BaseRepository {
      * @throws RepositoryException
      */
     public function update(int $tagId, string $tagName): void {
-        try {
-            $this->beginTransaction();
-            
+        $this->executeInTransaction(function() use ($tagId, $tagName) {
             $stmt = $this->pdo->prepare(
                 "UPDATE tags SET tag_name = :tagName WHERE tag_id = :tagId"
             );
@@ -131,16 +120,9 @@ class TagRepository extends BaseRepository {
             $stmt->bindValue(':tagName', $tagName, PDO::PARAM_STR);
 
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to update tag record");
+                throw new RepositoryException("Failed to update tag");
             }
-            
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to update tag: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     /**
@@ -150,25 +132,16 @@ class TagRepository extends BaseRepository {
      * @throws RepositoryException
      */
     public function delete(int $tagId): void {
-        try {
-            $this->beginTransaction();
-            
+        $this->executeInTransaction(function() use ($tagId) {
             $stmt = $this->pdo->prepare(
                 "DELETE FROM tags WHERE tag_id = :tagId"
             );
             $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
             
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to delete tag record");
+                throw new RepositoryException("Failed to delete tag");
             }
-            
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to delete tag: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     protected function rowToDTO(array $row): TagDTO {

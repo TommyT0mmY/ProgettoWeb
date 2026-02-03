@@ -6,12 +6,10 @@ namespace Unibostu\Model\Repository;
 use Unibostu\Model\DTO\PostDTO;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Model\DTO\CreatePostDTO;
-
-use Unibostu\Core\Database;
+use Unibostu\Core\exceptions\RepositoryException;
 use PDO;
 
-class PostRepository {
-    private PDO $pdo;
+class PostRepository extends BaseRepository {
     private PostTagRepository $postTagRepository;
     private UserRepository $userRepository;
     private CourseRepository $courseRepository;
@@ -19,7 +17,7 @@ class PostRepository {
     private AttachmentRepository $attachmentRepository;
     
     public function __construct() {
-        $this->pdo = Database::getConnection();
+        parent::__construct();
         $this->postTagRepository = new PostTagRepository();
         $this->userRepository = new UserRepository();
         $this->courseRepository = new CourseRepository();
@@ -152,7 +150,7 @@ class PostRepository {
     }
 
     /**
-     * Recupera i post di un utente
+     * Retrieves posts by user
      */
     public function findByUserId(string $userId): array {
         $stmt = $this->pdo->prepare(
@@ -176,8 +174,7 @@ class PostRepository {
      * @return int The created post ID
      */
     public function save(CreatePostDTO $dto): int {
-        try {
-            $this->pdo->beginTransaction();
+        return $this->executeInTransaction(function() use ($dto) {
             $stmt = $this->pdo->prepare(
                 "INSERT INTO posts 
                 (title, description, created_at, user_id, course_id, category_id)
@@ -196,21 +193,18 @@ class PostRepository {
                     $this->postTagRepository->addTagToPost($postId, $tag['tagId'], $tag['courseId']);
                 }
             }
-            $this->pdo->commit();
             return $postId;
-        } catch (\Exception $e) {
-            $this->pdo->rollBack();
-            throw $e;
-        }
+        });
     }
 
     /**
-     * Aggiunge un voto (like/dislike) da parte di un utente a un post
-     * Usa la tabella likes per tracciare chi ha votato
+     * Adds a vote (like/dislike) from a user to a post
+     * Uses the likes table to track who voted
      * 
-     * @param int $postId ID del post
-     * @param string $userId ID dell'utente
-     * @param bool $isLike true per like, false per dislike
+     * @param int $postId Post ID
+     * @param string $userId User ID
+     * @param bool $isLike true for like, false for dislike
+     * @throws RepositoryException
      */
     public function setReaction(int $postId, string $userId, bool $isLike): void {
         // Verifica se l'utente ha già votato
@@ -223,54 +217,60 @@ class PostRepository {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ((int)$result['count'] > 0) {
-            $stmtUpdate = $this->pdo->prepare(
-                "UPDATE likes SET is_like = :is_like WHERE post_id = :postId AND user_id = :userId"
-            );
-            $stmtUpdate->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
-            $stmtUpdate->bindValue(':postId', $postId, PDO::PARAM_INT);
-            $stmtUpdate->bindValue(':userId', $userId, PDO::PARAM_STR);
-            if (!$stmtUpdate->execute()) {
-                throw new \Exception("Errore durante l'aggiornamento del voto");
-            }
+            $this->executeInTransaction(function() use ($postId, $userId, $isLike) {
+                $stmtUpdate = $this->pdo->prepare(
+                    "UPDATE likes SET is_like = :is_like WHERE post_id = :postId AND user_id = :userId"
+                );
+                $stmtUpdate->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
+                $stmtUpdate->bindValue(':postId', $postId, PDO::PARAM_INT);
+                $stmtUpdate->bindValue(':userId', $userId, PDO::PARAM_STR);
+                
+                if (!$stmtUpdate->execute()) {
+                    throw new RepositoryException("Failed to update vote");
+                }
+            });
         } else {
-            // Inserisci il voto nella tabella likes
-            $stmtVote = $this->pdo->prepare(
-                "INSERT INTO likes (post_id, user_id, is_like) VALUES (:postId, :userId, :is_like)"
-            );
-            $stmtVote->bindValue(':postId', $postId, PDO::PARAM_INT);
-            $stmtVote->bindValue(':userId', $userId, PDO::PARAM_STR);
-            $stmtVote->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
-            
-            if (!$stmtVote->execute()) {
-                throw new \Exception("Errore durante il salvataggio del voto");
-            }
+            $this->executeInTransaction(function() use ($postId, $userId, $isLike) {
+                $stmtVote = $this->pdo->prepare(
+                    "INSERT INTO likes (post_id, user_id, is_like) VALUES (:postId, :userId, :is_like)"
+                );
+                $stmtVote->bindValue(':postId', $postId, PDO::PARAM_INT);
+                $stmtVote->bindValue(':userId', $userId, PDO::PARAM_STR);
+                $stmtVote->bindValue(':is_like', $isLike ? 1 : 0, PDO::PARAM_INT);
+                
+                if (!$stmtVote->execute()) {
+                    throw new RepositoryException("Failed to save vote");
+                }
+            });
         }
     }
 
     /**
-     * Rimuove un voto (like/dislike) da parte di un utente da un post
-     * Usa la tabella likes per tracciare chi ha tolto il voto
+     * Removes a vote (like/dislike) from a user from a post
+     * Uses the likes table to track who removed the vote
      * 
-     * @param int $postId ID del post
-     * @param string $userId ID dell'utente
+     * @param int $postId Post ID
+     * @param string $userId User ID
+     * @throws RepositoryException
      */
     public function removeReaction(int $postId, string $userId): bool {
-        // Rimuovi il voto dalla tabella likes
-        $stmtDelete = $this->pdo->prepare(
-            "DELETE FROM likes WHERE post_id = :postId AND user_id = :userId"
-        );
-        $stmtDelete->bindValue(':postId', $postId, PDO::PARAM_INT);
-        $stmtDelete->bindValue(':userId', $userId, PDO::PARAM_STR);
-        
-        if (!$stmtDelete->execute()) {
-            throw new \Exception("Errore durante la rimozione del voto");
-        }
-        
-        return true;
+        return $this->executeInTransaction(function() use ($postId, $userId) {
+            $stmtDelete = $this->pdo->prepare(
+                "DELETE FROM likes WHERE post_id = :postId AND user_id = :userId"
+            );
+            $stmtDelete->bindValue(':postId', $postId, PDO::PARAM_INT);
+            $stmtDelete->bindValue(':userId', $userId, PDO::PARAM_STR);
+            
+            if (!$stmtDelete->execute()) {
+                throw new RepositoryException("Failed to remove vote");
+            }
+            
+            return true;
+        });
     }
 
     /**
-     * Conta i like di un post
+     * Counts the likes of a post
      */
     public function countLikes(int $postId): int {
         $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE post_id = :postId AND is_like = 1");
@@ -281,7 +281,7 @@ class PostRepository {
     }
 
     /**
-     * Conta i dislike di un post
+     * Counts the dislikes of a post
      */
     public function countDislikes(int $postId): int {
         $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM likes WHERE post_id = :postId AND is_like = 0");
@@ -292,7 +292,7 @@ class PostRepository {
     }
 
     /**
-     * Verifica che l'utente ha messo like o dislike
+     * Checks if the user has voted (like or dislike)
      */
     private function hasUserVoted(int $postId, string $userId): ?bool {
         $stmt = $this->pdo->prepare(
@@ -311,8 +311,8 @@ class PostRepository {
     }
 
     /**
-     * Ottiene la reazione dell'utente per un post
-     * @return string|null 'like', 'dislike' o null
+     * Gets the user's reaction for a post
+     * @return string|null 'like', 'dislike' or null
      */
     public function getUserReaction(int $postId, string $userId): ?string {
         $stmt = $this->pdo->prepare(
@@ -331,7 +331,7 @@ class PostRepository {
     }
 
     /**
-     * Elimina un post
+     * Deletes a post
      */
     public function delete(int $postId): bool {
         $stmt = $this->pdo->prepare("DELETE FROM posts WHERE post_id = :postId");
@@ -339,7 +339,7 @@ class PostRepository {
         return $stmt->execute();
     }
 
-    private function rowToDTO(array $row, ?string $currentUserId = null): PostDTO {
+    protected function rowToDTO(array $row, ?string $currentUserId = null): PostDTO {
         $postId = (int)$row['post_id'];
         $tags = $this->postTagRepository->findTagsByPost($postId);
         $course = $this->courseRepository->findById((int)$row['course_id']);

@@ -81,23 +81,16 @@ class FacultyRepository extends BaseRepository {
      * @throws RepositoryException in case of error
      */
     public function save(string $facultyName): void {
-        try {
-            $this->beginTransaction();
+        $this->executeInTransaction(function() use ($facultyName) {
             $stmt = $this->pdo->prepare(
                 "INSERT INTO faculties (faculty_name)
                  VALUES (:facultyName)"
             );
             $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to save faculty record");
+                throw new RepositoryException("Failed to save faculty");
             }
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to save faculty: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     /**
@@ -108,8 +101,7 @@ class FacultyRepository extends BaseRepository {
      * @throws RepositoryException in case of error
      */
     public function update(int $facultyId, string $facultyName): void {
-        try {
-            $this->beginTransaction();
+        $this->executeInTransaction(function() use ($facultyId, $facultyName) {
             $stmt = $this->pdo->prepare(
                 "UPDATE faculties 
                  SET faculty_name = :facultyName
@@ -118,15 +110,9 @@ class FacultyRepository extends BaseRepository {
             $stmt->bindValue(':facultyName', $facultyName, PDO::PARAM_STR);
             $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to update faculty record");
+                throw new RepositoryException("Failed to update faculty");
             }
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to update faculty: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     /**
@@ -136,22 +122,15 @@ class FacultyRepository extends BaseRepository {
      * @throws RepositoryException in case of error
      */
     public function delete(int $facultyId): void {
-        try {
-            $this->beginTransaction();
+        $this->executeInTransaction(function() use ($facultyId) {
             $stmt = $this->pdo->prepare(
                 "DELETE FROM faculties WHERE faculty_id = :facultyId"
             );
             $stmt->bindValue(':facultyId', $facultyId, PDO::PARAM_INT);
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to delete faculty record");
+                throw new RepositoryException("Failed to delete faculty");
             }
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to delete faculty: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     /**

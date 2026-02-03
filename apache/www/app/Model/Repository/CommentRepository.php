@@ -3,21 +3,16 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Repository;
 
-use Dom\Comment;
 use Unibostu\Model\DTO\CommentDTO;
 use Unibostu\Model\DTO\CreateCommentDTO;
-use Unibostu\Core\Database;
+use Unibostu\Core\exceptions\RepositoryException;
 use PDO;
-use Unibostu\Model\DTO\UserDTO;
-use Unibostu\Core\exceptions\ValidationErrorCode;
-use Unibostu\Core\exceptions\ValidationException;
 
-class CommentRepository {
-    private PDO $pdo;
+class CommentRepository extends BaseRepository {
     private UserRepository $userRepository;
 
     public function __construct() {
-        $this->pdo = Database::getConnection();
+        parent::__construct();
         $this->userRepository = new UserRepository();
     }
 
@@ -55,40 +50,51 @@ class CommentRepository {
     }
 
     /**
-     * Salva un nuovo commento da DTO
+     * Saves a new comment from DTO
+     *
+     * @throws RepositoryException if save fails
      */
     public function save(CreateCommentDTO $dto): CommentDTO {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO comments 
-             (post_id, comment_text, created_at, deleted, user_id, parent_comment_id)
-             VALUES (:postId, :text, :createdAt, :deleted, :userId, :parentCommentId)"
-        );
-        $stmt->bindValue(':postId', $dto->postId, PDO::PARAM_INT);
-        $stmt->bindValue(':text', $dto->text, PDO::PARAM_STR);
-        $stmt->bindValue(':createdAt', date('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $stmt->bindValue(':deleted', false, PDO::PARAM_BOOL);
-        $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
-        $stmt->bindValue(':parentCommentId', $dto->parentCommentId, PDO::PARAM_INT);
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore nel salvataggio del commento");
-        }
-        return $this->lastInsertedComment();
+        return $this->executeInTransaction(function() use ($dto) {
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO comments 
+                 (post_id, comment_text, created_at, deleted, user_id, parent_comment_id)
+                 VALUES (:postId, :text, :createdAt, :deleted, :userId, :parentCommentId)"
+            );
+            $stmt->bindValue(':postId', $dto->postId, PDO::PARAM_INT);
+            $stmt->bindValue(':text', $dto->text, PDO::PARAM_STR);
+            $stmt->bindValue(':createdAt', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindValue(':deleted', false, PDO::PARAM_BOOL);
+            $stmt->bindValue(':userId', $dto->userId, PDO::PARAM_STR);
+            $stmt->bindValue(':parentCommentId', $dto->parentCommentId, PDO::PARAM_INT);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to save comment");
+            }
+            
+            return $this->lastInsertedComment();
+        });
     }
 
     /**
-     * Segna un commento come cancellato (soft delete)
+     * Marks a comment as deleted (soft delete)
+     *
+     * @throws RepositoryException if deletion fails
      */
     public function delete(int $commentId, int $postId): void {
-        $stmt = $this->pdo->prepare(
-            "UPDATE comments SET deleted = true, comment_text = :text 
-             WHERE comment_id = :commentId AND post_id = :postId"
-        );
-        $stmt->bindValue(':text', 'comment deleted', PDO::PARAM_STR);
-        $stmt->bindValue(':commentId', $commentId, PDO::PARAM_INT);
-        $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
-        if (!$stmt->execute()) {
-            throw new \Exception("Errore nella cancellazione del commento");
-        }
+        $this->executeInTransaction(function() use ($commentId, $postId) {
+            $stmt = $this->pdo->prepare(
+                "UPDATE comments SET deleted = true, comment_text = :text 
+                 WHERE comment_id = :commentId AND post_id = :postId"
+            );
+            $stmt->bindValue(':text', 'comment deleted', PDO::PARAM_STR);
+            $stmt->bindValue(':commentId', $commentId, PDO::PARAM_INT);
+            $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
+            
+            if (!$stmt->execute()) {
+                throw new RepositoryException("Failed to delete comment");
+            }
+        });
     }
 
     private function lastInsertedComment(): CommentDTO {
@@ -97,7 +103,7 @@ class CommentRepository {
         return $this->rowToDTO($row);
     }
 
-    private function rowToDTO(array $row): CommentDTO {
+    protected function rowToDTO(array $row): CommentDTO {
         $author = $this->userRepository->findByUserId($row['user_id']);
         $dto = new CommentDTO(
             author: $author,

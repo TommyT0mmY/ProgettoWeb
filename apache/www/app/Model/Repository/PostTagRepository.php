@@ -3,20 +3,16 @@ declare(strict_types=1);
 
 namespace Unibostu\Model\Repository;
 
-use Unibostu\Core\Database;
 use Unibostu\Model\DTO\TagDTO;
 use PDO;
 
-class PostTagRepository {
-    private PDO $pdo;
-
-    public function __construct() {
-        $this->pdo = Database::getConnection();
-    }
+class PostTagRepository extends BaseRepository {
 
     /**
-     * Recupera tutti i tag di un post
-     * @return array Array di array con chiavi TagDTO
+     * Retrieves all tags for a post
+     * 
+     * @param int $postId The ID of the post
+     * @return array Array of arrays with TagDTO keys
      */
     public function findTagsByPost(int $postId): array {
         $stmt = $this->pdo->prepare(
@@ -32,7 +28,10 @@ class PostTagRepository {
     }
 
     /**
-     * Recupera i post di un tag specifico
+     * Retrieves posts for a specific tag
+     * 
+     * @param int $tagId The ID of the tag
+     * @return array Array of arrays with post_id keys
      */
     public function findPostsByTag(int $tagId): array {
         $stmt = $this->pdo->prepare(
@@ -44,7 +43,7 @@ class PostTagRepository {
     }
 
     /**
-     * Aggiunge un tag a un post
+     * Adds a tag to a post
      */
     public function addTagToPost(int $postId, int $tagId, int $courseId): bool {
         $stmt = $this->pdo->prepare(
@@ -58,7 +57,7 @@ class PostTagRepository {
     }
 
     /**
-     * Rimuove un tag da un post
+     * Removes a tag from a post
      */
     public function removeTagFromPost(int $postId, int $tagId): bool {
         $stmt = $this->pdo->prepare(
@@ -69,7 +68,7 @@ class PostTagRepository {
         return $stmt->execute();
     }
 
-    private function rowToDTO(array $row): TagDTO {
+    protected function rowToDTO(array $row): TagDTO {
         return new TagDTO(
             (int)$row['tag_id'],
             $row['tag_name'],

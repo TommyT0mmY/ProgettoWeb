@@ -75,23 +75,16 @@ class CategoryRepository extends BaseRepository {
      * @throws RepositoryException in case of error
      */
     public function save(string $categoryName): void {
-        try {
-            $this->beginTransaction();
+        $this->executeInTransaction(function() use ($categoryName) {
             $stmt = $this->pdo->prepare(
                 "INSERT INTO categories (category_name)
                  VALUES (:categoryName)"
             );
             $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to save category record");
+                throw new RepositoryException("Failed to save category");
             }
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to save category: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     /**
@@ -102,23 +95,16 @@ class CategoryRepository extends BaseRepository {
      * @throws RepositoryException in case of error
      */
     public function update(int $categoryId, string $categoryName): void {
-        try {
-            $this->beginTransaction();
+        $this->executeInTransaction(function() use ($categoryId, $categoryName) {
             $stmt = $this->pdo->prepare(
                 "UPDATE categories SET category_name = :categoryName WHERE category_id = :categoryId"
             );
             $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
             $stmt->bindValue(':categoryName', $categoryName, PDO::PARAM_STR);
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to update category record");
+                throw new RepositoryException("Failed to update category");
             }
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to update category: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     /**
@@ -128,22 +114,15 @@ class CategoryRepository extends BaseRepository {
      * @throws RepositoryException in case of error
      */
     public function delete(int $categoryId): void {
-        try {
-            $this->beginTransaction();
+        $this->executeInTransaction(function() use ($categoryId) {
             $stmt = $this->pdo->prepare(
                 "DELETE FROM categories WHERE category_id = :categoryId"
             );
             $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
             if (!$stmt->execute()) {
-                throw new RepositoryException("Failed to delete category record");
+                throw new RepositoryException("Failed to delete category");
             }
-            $this->commit();
-        } catch (\Throwable $e) {
-            if ($this->inTransaction()) {
-                $this->rollback();
-            }
-            throw new RepositoryException("Failed to delete category: " . $e->getMessage(), 0, $e);
-        }
+        });
     }
 
     protected function rowToDTO(array $row): CategoryDTO {

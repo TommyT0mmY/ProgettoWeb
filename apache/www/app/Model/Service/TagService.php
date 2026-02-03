@@ -20,7 +20,7 @@ class TagService {
     }
 
     /**
-     * Recupera tutti i tag di un corso
+     * Retrieves all tags for a course
      */
     public function getTagsByCourse(int $courseId): array {
         return $this->tagRepository->findByCourse($courseId);
@@ -41,8 +41,8 @@ class TagService {
     }
 
     /**
-     * Recupera i tag di un post
-     * @return array Array di array con chiavi TagDTO
+     * Retrieves tags for a post
+     * @return array Array of arrays with TagDTO keys
      */
     public function getTagsByPost(int $postId): array {
         return $this->postTagRepository->findTagsByPost($postId);

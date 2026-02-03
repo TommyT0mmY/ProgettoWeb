@@ -11,7 +11,7 @@ namespace Unibostu\Core\exceptions;
  */
 class ValidationExceptionBuilder {
     private array $errors = [];
-    private \UnitEnum $mainErrorCode = DomainErrorCode::INVALID_DATA;
+    private \UnitEnum $mainErrorCode = ValidationErrorCode::INVALID_REQUEST;
     
     /**
      * Adds a validation error code to the builder.
