@@ -18,25 +18,25 @@ $this->extend('loggedout-layout', [
         <output class="form-error-message" for="currentpassword newpassword confirmpassword" role="alert"></output>
         
         <div class="field-holder">
-            <input type="password" name="currentpassword" id="currentpassword" aria-describedby="currentpassword-error" required>
+            <input type="password" name="currentpassword" id="currentpassword" aria-describedby="currentpassword-error" required/>
             <label for="currentpassword">Current Password</label>
             <output class="field-error-message" id="currentpassword-error" for="currentpassword"></output>
         </div>
         
         <div class="field-holder">
-            <input type="password" name="newpassword" id="newpassword" aria-describedby="newpassword-error" minlength="6" required>
+            <input type="password" name="newpassword" id="newpassword" aria-describedby="newpassword-error" minlength="6" required/>
             <label for="newpassword">New Password</label>
             <output class="field-error-message" id="newpassword-error" for="newpassword"></output>
         </div>
         
         <div class="field-holder">
-            <input type="password" name="confirmpassword" id="confirmpassword" aria-describedby="confirmpassword-error" minlength="6" required>
+            <input type="password" name="confirmpassword" id="confirmpassword" aria-describedby="confirmpassword-error" minlength="6" required/>
             <label for="confirmpassword">Confirm New Password</label>
             <output class="field-error-message" id="confirmpassword-error" for="confirmpassword"></output>
         </div>
         
-        <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>">
-        <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>">
+        <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>"/>
+        <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>"/>
         
         <output class="form-status-message" for="currentpassword newpassword confirmpassword" role="status"></output>
         
