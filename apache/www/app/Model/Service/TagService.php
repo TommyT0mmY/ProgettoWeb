@@ -106,6 +106,6 @@ class TagService {
         }
         $exceptionBuilder->throwIfAny();
 
-        $this->tagRepository->delete($tagId, $courseId);
+        $this->tagRepository->delete($tagId);
     }
 }

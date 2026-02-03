@@ -51,8 +51,7 @@ class CourseController extends BaseController {
         if (is_array($tagIds)) {
             foreach ($tagIds as $tagId) {
                 $tags[] = [
-                    'tagId' => (int)$tagId,
-                    'courseId' => (int)$courseId
+                    'tagId' => (int)$tagId
                 ];
             }
         }

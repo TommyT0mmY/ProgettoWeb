@@ -109,10 +109,9 @@ class PostController extends BaseController {
         // Parse tags
         $tags = [];
         if (!empty($tagIds) && is_array($tagIds)) {
-            $tags = array_map(function($tagId) use ($courseId) {
+            $tags = array_map(function($tagId) {
                 return [
-                    'tagId' => (int)$tagId,
-                    'courseId' => (int)$courseId
+                    'tagId' => (int)$tagId
                 ];
             }, $tagIds);
         }
@@ -242,11 +241,10 @@ class PostController extends BaseController {
         $tags = [];
         $tagIds = $request->get('tags');
         $courseId = $request->get('courseId');
-        if (is_array($tagIds) && !empty($courseId)) {
+        if (is_array($tagIds)) {
             foreach ($tagIds as $tagId) {
                 $tags[] = [
-                    'tagId' => (int)$tagId,
-                    'courseId' => (int)$courseId
+                    'tagId' => (int)$tagId
                 ];
             }
         }

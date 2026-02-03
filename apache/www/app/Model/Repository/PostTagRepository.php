@@ -46,14 +46,13 @@ class PostTagRepository {
     /**
      * Aggiunge un tag a un post
      */
-    public function addTagToPost(int $postId, int $tagId, int $courseId): bool {
+    public function addTagToPost(int $postId, int $tagId): bool {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO post_tags (post_id, tag_id, course_id)
-             VALUES (:postId, :tagId, :courseId)"
+            "INSERT INTO post_tags (post_id, tag_id)
+             VALUES (:postId, :tagId)"
         );
         $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
         $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
-        $stmt->bindValue(':courseId', $courseId, PDO::PARAM_INT);
         return $stmt->execute();
     }
 

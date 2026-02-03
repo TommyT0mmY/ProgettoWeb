@@ -74,9 +74,8 @@ class PostRepository {
             $sql .= " INNER JOIN post_tags pt ON p.post_id = pt.post_id";
             $tagConditions = [];
             foreach ($postQuery->getTags() as $tag) {
-                $tagConditions[] = "(pt.tag_id = ? AND pt.course_id = ?)";
+                $tagConditions[] = "pt.tag_id = ?";
                 $params[] = $tag['tagId'];
-                $params[] = $tag['courseId'];
             }
             if (!empty($tagConditions)) {
                 $conditions[] = "(" . implode(" OR ", $tagConditions) . ")";
@@ -193,7 +192,7 @@ class PostRepository {
             $postId = (int)$this->pdo->lastInsertId();
             if (!empty($dto->tags)) { // Save tags
                 foreach ($dto->tags as $tag) {
-                    $this->postTagRepository->addTagToPost($postId, $tag['tagId'], $tag['courseId']);
+                    $this->postTagRepository->addTagToPost($postId, $tag['tagId']);
                 }
             }
             $this->pdo->commit();

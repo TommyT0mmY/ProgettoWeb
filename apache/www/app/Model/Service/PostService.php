@@ -44,7 +44,7 @@ class PostService {
     /**
      * Crea un nuovo post per un utente
      * Gli utenti possono postare solo su UN UNICO corso
-     * I tag devono essere dello stesso corso
+     * I tag sono identificati univocamente tramite tag_id
      * Le categorie sono facoltative
      *
      * @throws \Exception se l'userId non è valido o il corso non appartiene all'utente
@@ -62,13 +62,10 @@ class PostService {
             throw new \Exception("L'utente non è iscritto a questo corso");
         }
 
-        // Verifica che tutti i tag appartengono al corso selezionato
+        // Verifica che tutti i tag siano validi
         foreach ($dto->tags as $tag) {
-            if (!isset($tag['tagId']) || !isset($tag['courseId'])) {
+            if (!isset($tag['tagId'])) {
                 throw new \Exception("Tag non valido");
-            }
-            if ($tag['courseId'] !== $dto->courseId) {
-                throw new \Exception("I tag devono appartenere al corso selezionato");
             }
         }
 
