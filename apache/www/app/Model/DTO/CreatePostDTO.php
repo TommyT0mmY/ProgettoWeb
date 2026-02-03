@@ -12,7 +12,6 @@ readonly class CreatePostDTO {
     public array $tags;
     /** @var int Array of category IDs */
     public ?int $category;
-    public ?string $attachmentPath;
 
     public function __construct(
         string $userId,
@@ -20,14 +19,12 @@ readonly class CreatePostDTO {
         string $title,
         string $description,
         array $tags = [],
-        ?int $category = null,
-        ?string $attachmentPath = null,
+        ?int $category = null
     ) {
         $this->userId = $userId;
         $this->courseId = $courseId;
         $this->title = $title;
         $this->description = $description;
-        $this->attachmentPath = $attachmentPath;
         $this->tags = $tags;
         $this->category = $category;
     }
