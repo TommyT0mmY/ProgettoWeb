@@ -92,9 +92,9 @@ class Response {
      * @param int $status The HTTP status code.
      * @return self A new Response instance with JSON content and headers.
      */
-    public function json(array $data, int $status = 200): self {
+    public function json(array $data, ?int $status = null): self {
         return $this
-            ->withStatusCode($status)
+            ->withStatusCode($status ?? $this->statusCode)
             ->withHeader('Content-Type', 'application/json')
             ->withContent(json_encode($data));
     }
