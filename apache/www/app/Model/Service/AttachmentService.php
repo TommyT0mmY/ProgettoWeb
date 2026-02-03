@@ -36,6 +36,28 @@ class AttachmentService {
     }
 
     /**
+     * Validate uploaded files without saving them
+     * Call this before creating a post to ensure files are valid
+     * 
+     * @param array $files The $_FILES array for the upload field
+     * @throws ValidationException if validation fails
+     */
+    public function validateFiles(array $files): void {
+        $normalizedFiles = $this->normalizeFilesArray($files);
+        // Validate file count
+        $actualFiles = array_filter($normalizedFiles, fn($f) => $f['error'] !== UPLOAD_ERR_NO_FILE);
+        if (count($actualFiles) > self::MAX_FILES_PER_POST) {
+            ValidationException::build()
+                ->addError(ValidationErrorCode::FILE_MAX_COUNT_EXCEEDED)
+                ->throwIfAny();
+        }
+        // Validate each file
+        foreach ($actualFiles as $file) {
+            $this->validateFile($file);
+        }
+    }
+
+    /**
      * Process and save uploaded files for a post
      * 
      * @param int $postId The post ID to attach files to
@@ -49,7 +71,7 @@ class AttachmentService {
         $normalizedFiles = $this->normalizeFilesArray($files);
         // Validate file count
         if (count($normalizedFiles) > self::MAX_FILES_PER_POST) {
-            throw ValidationException::build()
+            ValidationException::build()
                 ->addError(ValidationErrorCode::FILE_MAX_COUNT_EXCEEDED)
                 ->throwIfAny();
         }
