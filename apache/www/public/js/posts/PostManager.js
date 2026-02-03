@@ -31,7 +31,7 @@ export class PostManager {
         const authorId = postElement.dataset.authorId;
         
         // Create and setup delete button if user is the author or admin
-        if (this.#currentUser && (this.#currentUser === authorId || this.#isAdmin)) {
+        if ((this.#currentUser && this.#currentUser === authorId) || this.#isAdmin) {
             this.createAndSetupDeleteButton(postElement, postId);
         }
         
