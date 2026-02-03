@@ -20,6 +20,7 @@ $layoutParams = [
     'additionalHeadCode' => [
         '<script type="module" src="/js/posts/multi-post.js"></script>',
         '<script type="module" src="/js/ban-user.js"></script>',
+        '<link rel="stylesheet" href="/css/profile.css" />',
     ],
 ];
 
@@ -34,11 +35,15 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
 
 <article class="user-profile-details">
     <section>
-    <h2>Personal details</h2>    
+    <h2>Personal details</h2>
+        <div class="container">    
         <div class="profile"><?= h(substr($viewedUser->firstName ?? '', 0, 1) . '.' . substr($viewedUser->lastName ?? '', 0, 1)); ?></div>
+        <section>
         <p>Username: <strong><?= h($viewedUser->userId); ?></strong></p>
         <p>Name: <strong><?= h($viewedUser->firstName ?? ''); ?></strong></p>
         <p>Last name: <strong><?= h($viewedUser->lastName ?? ''); ?></strong></p>
+        </section>
+        </div>
         <?php if ($viewedUser->suspended): ?>
         <p class="user-banned">User banned</p>
         <?php endif; ?>
@@ -70,7 +75,7 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
         <?php endif; ?>
     </section>
 </article>
-<hr class="divider">
+<hr class="divider"/>
 <article class="user-posts">
     <h2><?= $isOwnProfile ? "My Posts" : h($viewedUser->firstName . "'s Posts") ?></h2>
     <?php if (empty($posts)): ?>

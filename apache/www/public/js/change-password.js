@@ -21,6 +21,10 @@ const configs = {
             field: 'newpassword',
             message: 'New password is required.'
         },
+        PASSWORD_TOO_SHORT: {
+            field: 'newpassword',
+            message: 'Password must be at least 6 characters long.'
+        },
         PASSWORD_INVALID: {
             field: 'currentpassword',
             message: 'Current password is incorrect.'

@@ -55,7 +55,7 @@ $this->extend('admin-layout', [
             <h3>Users</h3>
         </header>
         <p>Number of Users: <?= h(count($users ?? [])) ?></p>
-        <p>Manage Users, here you can add, edit, or delete users, that mainly are the students that use the platform.</p>
+        <p>Manage Users, here you can add, ban, or delete users, that mainly are the students that use this platform.</p>
         <footer>
             <ul class="review">
                     <li>

@@ -26,13 +26,13 @@ $this->extend('loggedout-layout', [
         </div>
         
         <div class="field-holder">
-            <input type="text" name="firstname" id="firstname" aria-describedby="firstname-error" value="<?= h($user->firstName ?? ''); ?>" required>
+            <input type="text" name="firstname" id="firstname" aria-describedby="firstname-error" value="<?= h($user->firstName ?? ''); ?>" required/>
             <label for="firstname">First Name</label>
             <output class="field-error-message" id="firstname-error" for="firstname"></output>
         </div>
         
         <div class="field-holder">
-            <input type="text" name="lastname" id="lastname" aria-describedby="lastname-error" value="<?= h($user->lastName ?? ''); ?>" required>
+            <input type="text" name="lastname" id="lastname" aria-describedby="lastname-error" value="<?= h($user->lastName ?? ''); ?>" required/>
             <label for="lastname">Last Name</label>
             <output class="field-error-message" id="lastname-error" for="lastname"></output>
         </div>
@@ -47,8 +47,8 @@ $this->extend('loggedout-layout', [
             <output class="field-error-message" id="facultyid-error" for="facultyid"></output>
         </div>
         
-        <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>">
-        <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>">
+        <input type="hidden" name="csrf-token" id="csrf-token" value="<?= $csrfToken; ?>"/>
+        <input type="hidden" name="csrf-key" id="csrf-key" value="<?= $csrfKey; ?>"/>
         
         <output class="form-status-message" role="status"></output>
         
