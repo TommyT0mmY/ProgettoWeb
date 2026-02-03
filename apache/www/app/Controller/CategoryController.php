@@ -12,6 +12,8 @@ use Unibostu\Core\router\middleware\AuthMiddleware;
 use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
+use Unibostu\Core\router\routes\Put;
+use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\CategoryService;
 
@@ -49,7 +51,7 @@ class CategoryController extends BaseController {
             'entityType' => 'category',
             'formTitle' => 'Edit Category',
             'formId' => 'edit-category-form',
-            'submitEndpoint' => '/api/edit-category',
+            'submitEndpoint' => '/api/categories/' . $categoryId,
             'backUrl' => '/categories',
             'fields' => [
                 [
@@ -81,7 +83,7 @@ class CategoryController extends BaseController {
             'entityType' => 'category',
             'formTitle' => 'Add Category',
             'formId' => 'add-category-form',
-            'submitEndpoint' => '/api/add-category',
+            'submitEndpoint' => '/api/categories',
             'backUrl' => '/categories',
             'fields' => [
                 [
@@ -96,15 +98,15 @@ class CategoryController extends BaseController {
         ]);
     }
 
-    #[Post('/api/edit-category')]
+    #[Put('/api/categories/:categoryId')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
-        "categoryname" => ValidationErrorCode::CATEGORY_REQUIRED,
-        "categoryid" => ValidationErrorCode::CATEGORY_REQUIRED
+        "categoryname" => ValidationErrorCode::CATEGORY_REQUIRED
     ])]
     public function updateCategory(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $categoryId = (int)$pathVars['categoryId'];
         $categoryName = $request->post("categoryname");
-        $categoryId = (int)$request->post("categoryid");
         
         $this->categoryService->updateCategory($categoryId, $categoryName);
         
@@ -113,7 +115,7 @@ class CategoryController extends BaseController {
         ]);
     }
     
-    #[Post('/api/add-category')]
+    #[Post('/api/categories')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
         "categoryname" => ValidationErrorCode::CATEGORY_REQUIRED
@@ -128,7 +130,7 @@ class CategoryController extends BaseController {
         ]);
     }
 
-    #[Post('/api/delete-category/:categoryId')]
+    #[Delete('/api/categories/:categoryId')]
     #[AuthMiddleware(Role::ADMIN)]
     public function deleteCategory(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);

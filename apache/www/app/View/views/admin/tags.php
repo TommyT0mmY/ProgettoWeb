@@ -24,7 +24,7 @@ $this->extend('admin-layout', [
 <button type="button" 
         data-action="add" 
         data-entity="tag" 
-        data-url="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags/add">
+        data-url="/tags/add?courseId=<?= h($course->courseId) ?>">
     Add Tag
 </button>
 
@@ -32,7 +32,7 @@ $this->extend('admin-layout', [
 <?php foreach ($tags ?? [] as $tag): ?>
     <section class="post card" >
         <header>
-            <h3><?= h($tag->tag_name ?? '') ?></h3>
+            <h3><?= h($tag->tagName ?? '') ?></h3>
         </header>
         <p>Tag ID: <?= h($tag->tagId ?? '') ?></p>
         <footer>
@@ -42,7 +42,7 @@ $this->extend('admin-layout', [
                                 data-action="edit" 
                                 data-entity="tag" 
                                 data-id="<?= h($tag->tagId) ?>"
-                                data-url="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags/<?= h($tag->tagId) ?>/edit">
+                                data-url="/tags/<?= h($tag->tagId) ?>/edit">
                             Edit
                         </button>
                     </li>
@@ -51,7 +51,7 @@ $this->extend('admin-layout', [
                                 data-action="delete" 
                                 data-entity="tag" 
                                 data-id="<?= h($tag->tagId) ?>"
-                                data-url="/api/delete-tag/<?= h($faculty->facultyId) ?>/<?= h($course->courseId) ?>/<?= h($tag->tagId) ?>">
+                                data-url="/api/tags/<?= h($tag->tagId) ?>">
                             Delete
                         </button>
                     </li>

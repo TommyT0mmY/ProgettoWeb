@@ -51,7 +51,7 @@ $this->extend('main-layout', [
             <?php foreach ($tags ?? [] as $tag): ?>
                 <p>
                     <input type="checkbox" name="tags[]" id="tag_<?= h($tag->tagId) ?>" value="<?= h($tag->tagId) ?>" />
-                    <label for="tag_<?= h($tag->tagId) ?>"><?= h($tag->tag_name) ?></label>
+                    <label for="tag_<?= h($tag->tagId) ?>"><?= h($tag->tagName) ?></label>
                 </p>
             <?php endforeach; ?>
         </div>

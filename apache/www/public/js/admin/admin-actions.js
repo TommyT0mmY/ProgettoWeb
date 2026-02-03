@@ -48,11 +48,11 @@ async function handleDelete(entityType, entityId, apiUrl, button) {
         button.textContent = 'Deleting...';
         
         const response = await fetch(apiUrl, {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: new URLSearchParams({
+            body: JSON.stringify({
                 'csrf-token': window.csrfToken,
                 'csrf-key': window.csrfKey
             })

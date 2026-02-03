@@ -12,6 +12,8 @@ use Unibostu\Core\router\middleware\AuthMiddleware;
 use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
+use Unibostu\Core\router\routes\Put;
+use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\TagService;
 use Unibostu\Model\Service\CourseService;
@@ -29,55 +31,52 @@ class TagController extends BaseController {
         $this->facultyService = new FacultyService();
     }
 
-    #[Get('/faculties/:facultyId/courses/:courseId/tags')]
+    #[Get('/tags')]
     #[AuthMiddleware(Role::ADMIN)]
     public function getTags(Request $request): Response {
         $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
-        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $facultyId = (int)$pathVars['facultyId'];
-        $courseId = (int)$pathVars['courseId'];
+        $courseId = (int)$request->get('courseId');
+
+        if (!$courseId) {
+            return Response::create()->redirect('/faculties');
+        }
 
         $searchTerm = $request->get('search');
         $tags = $searchTerm ? $this->tagService->searchTags($searchTerm, $courseId) : $this->tagService->getTagsByCourse($courseId);
+        
+        $course = $this->courseService->getCourseDetails($courseId);
+        $faculty = $this->facultyService->getFacultyDetails($course->facultyId);
 
         return $this->render("admin/tags", [
             'tags' => $tags,
-            'faculty' => $this->facultyService->getFacultyDetails($facultyId),
+            'faculty' => $faculty,
             'adminId' => $adminId,
-            'course' => $this->courseService->getCourseDetails($courseId)
+            'course' => $course
         ]);
     }
     
-    #[Get('/faculties/:facultyId/courses/:courseId/tags/:tagId/edit')]
+    #[Get('/tags/:tagId/edit')]
     #[AuthMiddleware(Role::ADMIN)]
     public function editTag(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $facultyId = (int)$pathVars['facultyId'];
-        $courseId = (int)$pathVars['courseId'];
         $tagId = (int)$pathVars['tagId'];
         
-        $tags = $this->tagService->getTagsByCourse($courseId);
-        $tag = null;
-        foreach ($tags as $t) {
-            if ($t->tagId === $tagId) {
-                $tag = $t;
-                break;
-            }
-        }
+        // Get tag details to find courseId
+        $tag = $this->tagService->getTagDetails($tagId);
         
         if (!$tag) {
-            return Response::create()->redirect('/faculties/' . $facultyId . '/courses/' . $courseId . '/tags');
+            return Response::create()->redirect('/faculties');
         }
         
-        $course = $this->courseService->getCourseDetails($courseId);
+        $course = $this->courseService->getCourseDetails($tag->courseId);
         
         return $this->render('admin/edit-entity', [
             'mode' => 'edit',
             'entityType' => 'tag',
             'formTitle' => 'Edit Tag',
             'formId' => 'edit-tag-form',
-            'submitEndpoint' => '/api/edit-tag',
-            'backUrl' => '/faculties/' . $facultyId . '/courses/' . $courseId . '/tags',
+            'submitEndpoint' => '/api/tags/' . $tagId,
+            'backUrl' => '/tags?courseId=' . $tag->courseId,
             'fields' => [
                 [
                     'name' => 'tagid',
@@ -89,14 +88,14 @@ class TagController extends BaseController {
                 [
                     'name' => 'tagname',
                     'label' => 'Tag Name',
-                    'value' => $tag->tag_name ?? '',
+                    'value' => $tag->tagName ?? '',
                     'type' => 'text',
                     'required' => true
                 ],
                 [
                     'name' => 'courseid',
                     'label' => 'Course ID',
-                    'value' => $courseId,
+                    'value' => $tag->courseId,
                     'type' => 'text',
                     'readonly' => true
                 ],
@@ -112,17 +111,19 @@ class TagController extends BaseController {
         ]);
     }
     
-    #[Get('/faculties/:facultyId/courses/:courseId/tags/add')]
+    #[Get('/tags/add')]
     #[AuthMiddleware(Role::ADMIN)]
     public function addTag(Request $request): Response {
-        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $facultyId = (int)$pathVars['facultyId'];
-        $courseId = (int)$pathVars['courseId'];
+        $courseId = (int)$request->get('courseId');
+        
+        if (!$courseId) {
+            return Response::create()->redirect('/faculties');
+        }
         
         $course = $this->courseService->getCourseDetails($courseId);
         
         if (!$course) {
-            return Response::create()->redirect('/faculties/' . $facultyId . '/courses');
+            return Response::create()->redirect('/faculties');
         }
         
         return $this->render('admin/edit-entity', [
@@ -130,8 +131,8 @@ class TagController extends BaseController {
             'entityType' => 'tag',
             'formTitle' => 'Add Tag',
             'formId' => 'add-tag-form',
-            'submitEndpoint' => '/api/add-tag',
-            'backUrl' => '/faculties/' . $facultyId . '/courses/' . $courseId . '/tags',
+            'submitEndpoint' => '/api/tags',
+            'backUrl' => '/tags?courseId=' . $courseId,
             'fields' => [
                 [
                     'name' => 'tagname',
@@ -159,16 +160,16 @@ class TagController extends BaseController {
         ]);
     }
     
-    #[Post('/api/edit-tag')]
+    #[Put('/api/tags/:tagId')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
         "tagname" => ValidationErrorCode::TAG_REQUIRED,
-        "tagid" => ValidationErrorCode::TAG_REQUIRED,
         "courseid" => ValidationErrorCode::COURSE_REQUIRED
     ])]
     public function updateTag(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $tagId = (int)$pathVars['tagId'];
         $tagName = $request->post("tagname");
-        $tagId = (int)$request->post("tagid");
         $courseId = (int)$request->post("courseid");
         
         $this->tagService->updateTag($tagId, $tagName, $courseId);
@@ -178,7 +179,7 @@ class TagController extends BaseController {
         ]);
     }
     
-    #[Post('/api/add-tag')]
+    #[Post('/api/tags')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
         "tagname" => ValidationErrorCode::TAG_REQUIRED,
@@ -195,12 +196,15 @@ class TagController extends BaseController {
         ]);
     }
 
-    #[Post('/api/delete-tag/:facultyId/:courseId/:tagId')]
+    #[Delete('/api/tags/:tagId')]
     #[AuthMiddleware(Role::ADMIN)]
     public function deleteTag(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $tagId = (int)$pathVars['tagId'];
-        $courseId = (int)$pathVars['courseId'];
+        
+        // Get tag to find courseId
+        $tag = $this->tagService->getTagDetails($tagId);
+        $courseId = $tag->courseId;
         
         $this->tagService->deleteTag($tagId, $courseId);
         

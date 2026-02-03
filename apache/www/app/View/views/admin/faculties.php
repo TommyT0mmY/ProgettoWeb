@@ -44,7 +44,7 @@ $this->extend('admin-layout', [
                                 data-action="delete" 
                                 data-entity="faculty" 
                                 data-id="<?= h($faculty->facultyId) ?>"
-                                data-url="/api/delete-faculty/<?= h($faculty->facultyId) ?>">
+                                data-url="/api/faculties/<?= h($faculty->facultyId) ?>">
                             Delete
                         </button>
                     </li>
@@ -53,7 +53,7 @@ $this->extend('admin-layout', [
                                 data-action="view" 
                                 data-entity="course" 
                                 data-id="<?= h($faculty->facultyId) ?>"
-                                data-url="/faculties/<?= h($faculty->facultyId) ?>/courses">
+                                data-url="/courses?facultyId=<?= h($faculty->facultyId) ?>">
                             View Courses
                         </button>
                     </li>

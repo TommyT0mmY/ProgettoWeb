@@ -12,6 +12,8 @@ use Unibostu\Core\router\middleware\AuthMiddleware;
 use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\router\routes\Get;
 use Unibostu\Core\router\routes\Post;
+use Unibostu\Core\router\routes\Put;
+use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\FacultyService;
 use Unibostu\Model\Service\CourseService;
@@ -59,7 +61,7 @@ class FacultyController extends BaseController {
             'entityType' => 'faculty',
             'formTitle' => 'Edit Faculty',
             'formId' => 'edit-faculty-form',
-            'submitEndpoint' => '/api/edit-faculty',
+            'submitEndpoint' => '/api/faculties/' . $facultyId,
             'backUrl' => '/faculties',
             'fields' => [
                 [
@@ -91,7 +93,7 @@ class FacultyController extends BaseController {
             'entityType' => 'faculty',
             'formTitle' => 'Add Faculty',
             'formId' => 'add-faculty-form',
-            'submitEndpoint' => '/api/add-faculty',
+            'submitEndpoint' => '/api/faculties',
             'backUrl' => '/faculties',
             'fields' => [
                 [
@@ -106,15 +108,15 @@ class FacultyController extends BaseController {
         ]);
     }
 
-    #[Post('/api/edit-faculty')]
+    #[Put('/api/faculties/:facultyId')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
-        "facultyname" => ValidationErrorCode::FACULTY_REQUIRED,
-        "facultyid" => ValidationErrorCode::FACULTY_REQUIRED
+        "facultyname" => ValidationErrorCode::FACULTY_REQUIRED
     ])]
     public function updateFaculty(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $facultyId = (int)$pathVars['facultyId'];
         $facultyName = $request->post("facultyname");
-        $facultyId = (int)$request->post("facultyid");
         
         $this->facultyService->updateFaculty($facultyId, $facultyName);
         
@@ -123,7 +125,7 @@ class FacultyController extends BaseController {
         ]);
     }
     
-    #[Post('/api/add-faculty')]
+    #[Post('/api/faculties')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
         "facultyname" => ValidationErrorCode::FACULTY_REQUIRED
@@ -138,7 +140,7 @@ class FacultyController extends BaseController {
         ]);
     }
 
-    #[Post('/api/delete-faculty/:facultyId')]
+    #[Delete('/api/faculties/:facultyId')]
     #[AuthMiddleware(Role::ADMIN)]
     public function deleteFaculty(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);

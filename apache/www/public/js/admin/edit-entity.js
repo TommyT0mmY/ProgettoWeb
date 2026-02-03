@@ -60,15 +60,27 @@ form.addEventListener('submit', async (e) => {
     formData.append('csrf-token', window.csrfToken);
     formData.append('csrf-key', window.csrfKey);
     
+    // Determine HTTP method based on mode
+    const httpMethod = mode === 'edit' ? 'PUT' : 'POST';
+    
     try {
         // Disable button
         const originalText = submitButton.textContent;
         submitButton.disabled = true;
         submitButton.textContent = 'Saving...';
         
+        // Convert FormData to JSON for PUT/POST
+        const dataObject = {};
+        formData.forEach((value, key) => {
+            dataObject[key] = value;
+        });
+        
         const response = await fetch(endpoint, {
-            method: 'POST',
-            body: formData
+            method: httpMethod,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataObject)
         });
         
         const data = await response.json();
