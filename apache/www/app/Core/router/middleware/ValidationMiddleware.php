@@ -44,7 +44,8 @@ class ValidationMiddleware extends AbstractMiddleware {
             $validExcBuilder = ValidationException::build();
             foreach ($this->mandatoryBodyFields as $fieldName => $errorCode) {
                 $fieldValue = $request->post($fieldName);
-                if ($fieldValue === null) {
+                // Check for null or empty string (empty string can come from multipart/form-data)
+                if ($fieldValue === null || $fieldValue === '') {
                     $validExcBuilder->addError($errorCode);
                 }
                 $capturedFields[$fieldName] = $fieldValue;
