@@ -106,34 +106,6 @@ class FacultyController extends BaseController {
         ]);
     }
 
-    #[Get('/faculties/:facultyId/edit-courses')]
-    #[AuthMiddleware(Role::ADMIN)]
-    public function editFacultyCourses(Request $request): Response {
-        $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
-        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $facultyId = (int)$pathVars['facultyId'];
-        
-        return $this->render("admin/change-courses", [
-            'faculty' => $this->facultyService->getFacultyDetails($facultyId),
-            'courses' => $this->courseService->getCoursesByFaculty($facultyId),
-            "adminId" => $adminId
-        ]);
-    }
-
-    #[Get('/api/faculties/:facultyId/courses')]
-    #[AuthMiddleware(Role::ADMIN)]
-    public function getCoursesApi(Request $request): Response {
-        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $facultyId = (int)$pathVars['facultyId'];
-        
-        $courses = $this->courseService->getCoursesByFaculty($facultyId);
-        
-        return Response::create()->json([
-            'success' => true,
-            'courses' => $courses
-        ]);
-    }
-
     #[Post('/api/edit-faculty')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
