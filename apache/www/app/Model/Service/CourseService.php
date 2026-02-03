@@ -6,6 +6,8 @@ namespace Unibostu\Model\Service;
 use Unibostu\Model\Repository\CourseRepository;
 use Unibostu\Model\DTO\CourseDTO;
 use Unibostu\Model\Repository\UserCoursesRepository;
+use Unibostu\Core\exceptions\ValidationErrorCode;
+use Unibostu\Core\exceptions\ValidationException;
 
 class CourseService {
     private CourseRepository $courseRepository;
@@ -17,7 +19,7 @@ class CourseService {
     }
 
     /**
-     * Ottiene i dettagli di un corso tramite ID
+     * Gets course details by ID
      * @return CourseDTO|null
      */
     public function getCourseDetails(int $courseId): ?CourseDTO {
@@ -25,7 +27,7 @@ class CourseService {
     }
 
     /**
-     * Recupera tutti i corsi
+     * Retrieves all courses
      * @return CourseDTO[]
      */
     public function getAllCourses(): array {
@@ -33,7 +35,7 @@ class CourseService {
     }
 
     /**
-     * Recupera i corsi di una facolta
+     * Retrieves courses for a faculty
      * @return CourseDTO[]
      */
     public function getCoursesByFaculty(int $facultyId): array {
@@ -53,7 +55,7 @@ class CourseService {
     }
     
     /**
-     * Recupera i corsi di un utente
+     * Retrieves courses for a user
      * @return CourseDTO[]
      */
     public function getCoursesByUser(string $userId): array {
@@ -61,8 +63,8 @@ class CourseService {
     }
 
     /**
-     * Salva i corsi di un utente
-     * @throws \Exception in caso di errore
+     * Saves user courses
+     * @throws ValidationException in case of error
      */
     public function saveUserCourses(string $userId, array $courseIds): void {
         $this->userCoursesRepository->saveUserCourses($userId, $courseIds);
@@ -85,50 +87,58 @@ class CourseService {
     }
 
     /**
-     * Crea un nuovo corso
-     * @throws \Exception se i dati non sono validi
+     * Creates a new course
+     * @throws ValidationException if data is invalid
      */
     public function createCourse(string $courseName, int $facultyId): void {
+        $builder = ValidationException::build();
+        
         if (empty($courseName)) {
-            throw new \Exception("Nome corso non può essere vuoto");
+            $builder->addError(ValidationErrorCode::COURSE_NAME_REQUIRED);
         }
 
         if ($facultyId <= 0) {
-            throw new \Exception("Facoltà non valida");
+            $builder->addError(ValidationErrorCode::FACULTY_INVALID);
         }
-
+        
+        $builder->throwIfAny();
         $this->courseRepository->save($courseName, $facultyId);
     }
 
     /**
-     * Aggiorna i dati di un corso
-     * @throws \Exception se il corso non esiste o i dati non sono validi
+     * Updates course data
+     * @throws ValidationException if course does not exist or data is invalid
      */
     public function updateCourse(int $courseId, string $courseName, int $facultyId): void {
+        $builder = ValidationException::build();
+        
         $course = $this->courseRepository->findById($courseId);
         if (!$course) {
-            throw new \Exception("Corso non trovato");
+            $builder->addError(ValidationErrorCode::COURSE_NOT_FOUND);
         }
 
         if (empty($courseName)) {
-            throw new \Exception("Nome corso non può essere vuoto");
+            $builder->addError(ValidationErrorCode::COURSE_NAME_REQUIRED);
         }
 
         if ($facultyId <= 0) {
-            throw new \Exception("Facoltà non valida");
+            $builder->addError(ValidationErrorCode::FACULTY_INVALID);
         }
 
+        $builder->throwIfAny();
         $this->courseRepository->update($courseId, $courseName, $facultyId);
     }
 
     /**
-     * Elimina un corso
-     * @throws \Exception se il corso non esiste
+     * Deletes a course
+     * @throws ValidationException if course does not exist
      */
     public function deleteCourse(int $courseId): void {
         $course = $this->courseRepository->findById($courseId);
         if (!$course) {
-            throw new \Exception("Corso non trovato");
+            ValidationException::build()
+                ->addError(ValidationErrorCode::COURSE_NOT_FOUND)
+                ->throwIfAny();
         }
 
         $this->courseRepository->delete($courseId);

@@ -86,7 +86,7 @@ class UserRepository {
      *
      * @throws \RuntimeException in case of error
      */
-    // TODO CONTROLLARE MEGLIO QUESTO METODO
+    // TODO Review this method more carefully
     public function updateProfile(UserDTO $dto): void {
         $stmt = $this->pdo->prepare(
             "UPDATE users 

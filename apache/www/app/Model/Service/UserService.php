@@ -102,7 +102,7 @@ class UserService implements RoleService {
      *
      * @throws ValidationException if validation fails
      */
-    // TODO CONTROLLARE MEGLIO QUESTO METODO
+    // TODO Review this method more carefully
     public function updateProfile(UserDTO $dto): void {
         $exceptionBuilder = ValidationException::build();
         $user = $this->getUserProfile($dto->userId);
@@ -124,7 +124,7 @@ class UserService implements RoleService {
     public function suspendUser(string $userId): void {
         $user = $this->getUserProfile($userId);
         if (!$user) {
-            throw new ValidationException(errors: [ValidationErrorCode::USERNAME_REQUIRED]);
+            ValidationException::build()->addError(ValidationErrorCode::USERNAME_REQUIRED)->throwIfAny();
         }
         $this->userRepository->suspendUser($userId);
     }
@@ -132,7 +132,7 @@ class UserService implements RoleService {
     public function unsuspendUser(string $userId): void {
         $user = $this->getUserProfile($userId);
         if (!$user) {
-            throw new ValidationException(errors: [ValidationErrorCode::USERNAME_REQUIRED]);
+            ValidationException::build()->addError(ValidationErrorCode::USERNAME_REQUIRED)->throwIfAny();
         }
         $this->userRepository->unsuspendUser($userId);
     }

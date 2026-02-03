@@ -252,19 +252,12 @@ class CourseController extends BaseController {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $courseId = (int)$pathVars['courseId'];
         
-        try {
-            $this->courseService->deleteCourse($courseId);
-            
-            return Response::create()->json([
-                "success" => true,
-                "message" => "Course deleted successfully"
-            ]);
-        } catch (\Exception $e) {
-            return Response::create()->json([
-                "success" => false,
-                "message" => $e->getMessage()
-            ], 500);
-        }
+        $this->courseService->deleteCourse($courseId);
+        
+        return Response::create()->json([
+            "success" => true,
+            "message" => "Course deleted successfully"
+        ]);
     }
 }
 

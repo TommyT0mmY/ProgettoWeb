@@ -32,4 +32,26 @@ enum ValidationErrorCode {
     // Attachment errors
     case ATTACHMENT_FILENAME_INVALID;
     case ATTACHMENT_NOT_FOUND;
+    // Category errors
+    case CATEGORY_NAME_REQUIRED;
+    case CATEGORY_ALREADY_EXISTS;
+    case CATEGORY_NOT_FOUND;
+    // Course errors
+    case COURSE_NAME_REQUIRED;
+    case COURSE_NOT_FOUND;
+    case TAG_NAME_REQUIRED;
+    case TAG_NOT_FOUND;
+    case TAG_ALREADY_EXISTS;
+    case ENROLLMENT_NOT_FOUND;
+    case USER_NOT_ENROLLED;
+    case POST_NOT_FOUND;
+    case COMMENT_NOT_FOUND;
+    case COMMENT_SAVE_FAILED;
+    case DATABASE_ERROR;
+    case REACTION_UPDATE_FAILED;
+    case REACTION_SAVE_FAILED;
+    case REACTION_REMOVAL_FAILED;
+    case INVALID_REACTION;
+    case INSUFFICIENT_PERMISSIONS;
+    case TAG_MISMATCH;
 }
