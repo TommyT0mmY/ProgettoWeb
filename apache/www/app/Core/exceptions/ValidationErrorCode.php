@@ -49,4 +49,5 @@ enum ValidationErrorCode {
     case COMMENT_NOT_FOUND;
     case INVALID_REACTION;
     case TAG_MISMATCH;
+    case PASSWORD_TOO_SHORT;
 }

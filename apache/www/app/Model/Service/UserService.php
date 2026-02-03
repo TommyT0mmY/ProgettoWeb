@@ -9,6 +9,8 @@ use Unibostu\Model\Repository\UserRepository;
 use Unibostu\Model\DTO\UserDTO;
 
 class UserService implements RoleService {
+    public const MIN_PASSWORD_LENGTH = 6;
+
     private UserRepository $userRepository;
     private FacultyService $facultyService;
 
@@ -92,6 +94,7 @@ class UserService implements RoleService {
      * @throws ValidationException When first name is empty.
      * @throws ValidationException When last name is empty.
      * @throws ValidationException When password is empty.
+     * @throws ValidationException When password is too short.
      */
     public function registerUser(UserDTO $dto): void {
         $exceptionBuilder = ValidationException::build();
@@ -116,6 +119,8 @@ class UserService implements RoleService {
         }
         if (empty($dto->password)) {
             $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_REQUIRED);
+        } elseif (strlen($dto->password) < self::MIN_PASSWORD_LENGTH) {
+            $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_TOO_SHORT);
         }
         $exceptionBuilder->throwIfAny();
         $this->userRepository->register($dto);
@@ -223,25 +228,24 @@ class UserService implements RoleService {
      * @throws ValidationException When user does not exist.
      * @throws ValidationException When current password is incorrect.
      * @throws ValidationException When new password is empty.
+     * @throws ValidationException When new password is too short.
      */
     public function updatePassword(string $userId, string $currentPassword, string $newPassword): void {
         $exceptionBuilder = ValidationException::build();
-        
         $user = $this->getUserProfile($userId);
         if (!$user) {
             $exceptionBuilder->addError(ValidationErrorCode::USERNAME_REQUIRED);
             $exceptionBuilder->throwIfAny();
         }
-        
         // Verify current password
         if (!password_verify($currentPassword, $user->password)) {
             $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_INVALID);
         }
-        
         if (empty($newPassword)) {
             $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_REQUIRED);
+        } elseif (strlen($newPassword) < self::MIN_PASSWORD_LENGTH) {
+            $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_TOO_SHORT);
         }
-        
         $exceptionBuilder->throwIfAny();
         $this->userRepository->updatePassword($userId, $newPassword);
     }
