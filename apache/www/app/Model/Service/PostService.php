@@ -72,15 +72,11 @@ class PostService {
         if (!$this->courseRepository->isUserEnrolled($dto->userId, $dto->courseId)) {
             $exceptionBuilder->addError(ValidationErrorCode::USER_NOT_ENROLLED);
         }
-        // Verify all tags belong to the selected course
+
+        // Verifica che tutti i tag siano validi
         foreach ($dto->tags as $tag) {
-            if (!isset($tag['tagId']) || !isset($tag['courseId'])) {
-                $exceptionBuilder->addError(ValidationErrorCode::TAG_REQUIRED);
-                break;
-            }
-            if ($tag['courseId'] !== $dto->courseId) {
-                $exceptionBuilder->addError(ValidationErrorCode::TAG_MISMATCH);
-                break;
+            if (!isset($tag['tagId'])) {
+                throw new \Exception("Tag non valido");
             }
         }
         if (empty($dto->title)) {

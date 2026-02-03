@@ -8,14 +8,14 @@ class PostQuery {
     private ?int $courseId = null;
     /** @var int Array of category IDs */
     private ?int $category = null;
-    /** @var array[['tagId' => int, 'courseId' => int]] Array of tags ['tagId' => int, 'courseId' => int] (for course filtering) */
+    /** @var array[['tagId' => int]] Array of tags ['tagId' => int] */
     private array $tags = [];
     /** Sort order: 'ASC' for ascending, 'DESC' for descending */
     private string $sortOrder = 'DESC';
     /** Last element ID for pagination (if ($sortOrder = 'DESC') => $lastPostId = PHP_INT_MAX; else 0) for first page */
     private int $lastPostId = PHP_INT_MAX;
     /** Limit for query results */
-    private int $limit = 5;
+    private int $limit = 10;
     /** User ID for filtering posts by author */
     private ?string $authorId = null;
     /** User ID for filtering posts by user */

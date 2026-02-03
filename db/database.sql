@@ -50,9 +50,8 @@ create table faculties (
 
 create table post_tags (
      post_id int not null,
-     course_id int not null,
      tag_id int not null,
-     constraint ID_post_tags primary key (post_id, course_id, tag_id));
+     constraint ID_post_tags primary key (post_id, tag_id));
 
 create table posts (
      post_id int not null auto_increment,
@@ -760,101 +759,101 @@ INSERT INTO `likes` (`post_id`, `user_id`, `is_like`) VALUES
 (45, 'a', true),
 (45, 'matteo.longo', true);
 
-INSERT INTO `post_tags` (`post_id`, `course_id`, `tag_id`) VALUES 
+INSERT INTO `post_tags` (`post_id`, `tag_id`) VALUES 
 -- Post 1 - Matrici (Algebra)
-(1, 1, 1),
+(1, 1),
 -- Post 2 - Spazi vettoriali (Algebra)
-(2, 1, 2),
+(2, 2),
 -- Post 3 - Rango (Algebra) - usa tag matrici
-(3, 1, 1),
+(3, 1),
 -- Post 4 - Esercizi d'esame (Algebra)
-(4, 1, 4),
+(4, 4),
 -- Post 5 - Limiti (Analisi 1)
-(5, 2, 5),
+(5, 5),
 -- Post 6 - Derivate (Analisi 1)
-(6, 2, 6),
+(6, 6),
 -- Post 7 - Integrali (Analisi 1)
-(7, 2, 7),
+(7, 7),
 -- Post 8 - Esercizi d'esame (Analisi 1)
-(8, 2, 8),
+(8, 8),
 -- Post 9 - Continuità (Analisi 1) - usa tag limiti
-(9, 2, 5),
+(9, 5),
 -- Post 10 - Sintassi (Programmazione)
-(10, 3, 9),
+(10, 9),
 -- Post 11 - Puntatori (Programmazione) - usa sintassi
-(11, 3, 9),
+(11, 9),
 -- Post 12 - Progetto (Programmazione) - usa sintassi
-(12, 3, 9),
+(12, 9),
 -- Post 13 - Ordinamento (ASD)
-(13, 4, 11),
+(13, 11),
 -- Post 14 - Grafi (ASD)
-(14, 4, 10),
+(14, 10),
 -- Post 15 - Esercizi d'esame (ASD)
-(15, 4, 12),
+(15, 12),
 -- Post 16 - Cinematica (Meccanica)
-(16, 5, 13),
+(16, 13),
 -- Post 17 - Cinematica (Meccanica)
-(17, 5, 13),
+(17, 13),
 -- Post 18 - Dinamica (Meccanica)
-(18, 5, 14),
+(18, 14),
 -- Post 19 - Reazioni (Chimica)
-(19, 6, 15),
+(19, 15),
 -- Post 20 - Laboratorio (Chimica)
-(20, 6, 17),
+(20, 17),
 -- Post 21 - Composti organici (Chimica)
-(21, 6, 16),
+(21, 16),
 -- Post 22 - Laboratorio (Chimica)
-(22, 6, 17),
+(22, 17),
 -- Post 23 - Spazi vettoriali (Algebra)
-(23, 1, 2),
+(23, 2),
 -- Post 24 - Matrici (Algebra)
-(24, 1, 1),
+(24, 1),
 -- Post 25 - Applicazioni lineari (Algebra)
-(25, 1, 3),
-(25, 1, 4),
+(25, 3),
+(25, 4),
 -- Post 26 - Limiti (Analisi 1)
-(26, 2, 5),
+(26, 5),
 -- Post 27 - Limiti (Analisi 1)
-(27, 2, 5),
+(27, 5),
 -- Post 28 - Integrali (Analisi 1)
-(28, 2, 7),
+(28, 7),
 -- Post 29 - Derivate e limiti (Analisi 1)
-(29, 2, 5),
-(29, 2, 6),
+(29, 5),
+(29, 6),
 -- Post 30 - Sintassi (Programmazione)
-(30, 3, 9),
+(30, 9),
 -- Post 31 - Sintassi (Programmazione)
-(31, 3, 9),
+(31, 9),
 -- Post 32 - Sintassi (Programmazione)
-(32, 3, 9),
+(32, 9),
 -- Post 33 - Esame (Programmazione)
-(33, 3, 9),
+(33, 9),
 -- Post 34 - Grafi (ASD)
-(34, 4, 10),
+(34, 10),
 -- Post 35 - Algoritmi ordinamento (ASD)
-(35, 4, 11),
-(35, 4, 12),
+(35, 11),
+(35, 12),
 -- Post 36 - Grafi (ASD)
-(36, 4, 10),
+(36, 10),
 -- Post 37 - Algoritmi (ASD)
-(37, 4, 11),
+(37, 11),
 -- Post 38 - Dinamica (Meccanica)
-(38, 5, 14),
+(38, 14),
 -- Post 39 - Dinamica (Meccanica)
-(39, 5, 14),
+(39, 14),
 -- Post 40 - Cinematica e Dinamica (Meccanica)
-(40, 5, 13),
-(40, 5, 14),
+(40, 13),
+(40, 14),
 -- Post 41 - Cinematica (Meccanica)
-(41, 5, 13),
+(41, 13),
 -- Post 42 - Reazioni (Chimica)
-(42, 6, 15),
+(42, 15),
 -- Post 43 - Composti organici (Chimica)
-(43, 6, 16),
+(43, 16),
 -- Post 44 - Laboratorio (Chimica)
-(44, 6, 17),
+(44, 17),
 -- Post 45 - Reazioni (Chimica)
-(45, 6, 15);
+(45, 15);
 
 INSERT INTO `administrators` (`admin_id`, `password`) VALUES
 -- password: aaaaaa

@@ -43,7 +43,7 @@ $this->extend('admin-layout', [
                                 data-action="delete" 
                                 data-entity="category" 
                                 data-id="<?= h($category->categoryId) ?>"
-                                data-url="/api/delete-category/<?= h($category->categoryId) ?>">
+                                data-url="/api/categories/<?= h($category->categoryId) ?>">
                             Delete
                         </button>
                     </li>

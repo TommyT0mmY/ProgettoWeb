@@ -28,6 +28,23 @@ class TagRepository extends BaseRepository {
     }
 
     /**
+     * Retrieves a tag by ID
+     * 
+     * @param int $tagId The ID of the tag
+     * @return TagDTO|null The TagDTO object or null if not found
+     */
+    public function findById(int $tagId): ?TagDTO {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM tags WHERE tag_id = :tagId"
+        );
+        $stmt->bindValue(':tagId', $tagId, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ? $this->rowToDTO($row) : null;
+    }
+
+    /**
      * Retrieves a tag by name and course
      * 
      * @param string $tagName The name of the tag

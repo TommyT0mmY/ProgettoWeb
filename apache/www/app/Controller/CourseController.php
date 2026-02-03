@@ -10,13 +10,15 @@ use Unibostu\Core\Http\RequestAttribute;
 use Unibostu\Core\router\middleware\AuthMiddleware;
 use Unibostu\Model\DTO\PostQuery;
 use Unibostu\Core\router\routes\Get;
+use Unibostu\Core\router\routes\Post;
+use Unibostu\Core\router\routes\Put;
+use Unibostu\Core\router\routes\Delete;
 use Unibostu\Core\security\Role;
 use Unibostu\Model\Service\PostService;
 use Unibostu\Model\Service\CourseService;
 use Unibostu\Model\Service\CategoryService;
 use Unibostu\Model\Service\TagService;
 use Unibostu\Model\Service\FacultyService;
-use Unibostu\Core\router\routes\Post;
 use Unibostu\Core\router\middleware\ValidationMiddleware;
 use Unibostu\Core\exceptions\ValidationErrorCode;
 
@@ -50,8 +52,7 @@ class CourseController extends BaseController {
         if (is_array($tagIds)) {
             foreach ($tagIds as $tagId) {
                 $tags[] = [
-                    'tagId' => (int)$tagId,
-                    'courseId' => (int)$courseId
+                    'tagId' => (int)$tagId
                 ];
             }
         }
@@ -84,13 +85,16 @@ class CourseController extends BaseController {
         return $this->render("course", $viewParams);
     }
 
-    #[Get('/faculties/:facultyId/courses')]
+    #[Get('/courses')]
     #[AuthMiddleware(Role::ADMIN)]
     public function getCourses(Request $request): Response {
         $adminId = $request->getAttribute(RequestAttribute::ROLE_ID);
-        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $facultyId = (int)$pathVars['facultyId'];
+        $facultyId = (int)$request->get('facultyId');
         $searchTerm = $request->get('search');
+
+        if (!$facultyId) {
+            return Response::create()->redirect('/faculties');
+        }
 
         $courses = $searchTerm ? $this->courseService->searchCoursesByNameAndFaculty($searchTerm, $facultyId) : $this->courseService->getCoursesByFaculty($facultyId);
         $tags = [];
@@ -108,27 +112,27 @@ class CourseController extends BaseController {
 
 
 
-    #[Get('/faculties/:facultyId/courses/:courseId/edit')]
+    #[Get('/courses/:courseId/edit')]
     #[AuthMiddleware(Role::ADMIN)]
     public function editCourse(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $facultyId = (int)$pathVars['facultyId'];
         $courseId = (int)$pathVars['courseId'];
         
         $course = $this->courseService->getCourseDetails($courseId);
-        $faculty = $this->facultyService->getFacultyDetails($facultyId);
         
-        if (!$course || !$faculty) {
+        if (!$course) {
             return Response::create()->redirect('/faculties');
         }
+        
+        $faculty = $this->facultyService->getFacultyDetails($course->facultyId);
         
         return $this->render('admin/edit-entity', [
             'mode' => 'edit',
             'entityType' => 'course',
             'formTitle' => 'Edit Course',
             'formId' => 'edit-course-form',
-            'submitEndpoint' => '/api/edit-course',
-            'backUrl' => '/faculties/' . $facultyId . '/courses',
+            'submitEndpoint' => '/api/courses/' . $courseId,
+            'backUrl' => '/courses?facultyId=' . $course->facultyId,
             'fields' => [
                 [
                     'name' => 'courseid',
@@ -163,11 +167,14 @@ class CourseController extends BaseController {
         ]);
     }
     
-    #[Get('/faculties/:facultyId/courses/add')]
+    #[Get('/courses/add')]
     #[AuthMiddleware(Role::ADMIN)]
     public function addCourse(Request $request): Response {
-        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
-        $facultyId = (int)$pathVars['facultyId'];
+        $facultyId = (int)$request->get('facultyId');
+        
+        if (!$facultyId) {
+            return Response::create()->redirect('/faculties');
+        }
         
         $faculty = $this->facultyService->getFacultyDetails($facultyId);
         
@@ -180,8 +187,8 @@ class CourseController extends BaseController {
             'entityType' => 'course',
             'formTitle' => 'Add Course',
             'formId' => 'add-course-form',
-            'submitEndpoint' => '/api/add-course',
-            'backUrl' => '/faculties/' . $facultyId . '/courses',
+            'submitEndpoint' => '/api/courses',
+            'backUrl' => '/courses?facultyId=' . $facultyId,
             'fields' => [
                 [
                     'name' => 'coursename',
@@ -209,16 +216,16 @@ class CourseController extends BaseController {
         ]);
     }
     
-    #[Post('/api/edit-course')]
+    #[Put('/api/courses/:courseId')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
         "coursename" => ValidationErrorCode::COURSE_REQUIRED,
-        "courseid" => ValidationErrorCode::COURSE_REQUIRED,
         "facultyid" => ValidationErrorCode::FACULTY_REQUIRED
     ])]
     public function updateCourse(Request $request): Response {
+        $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
+        $courseId = (int)$pathVars['courseId'];
         $courseName = $request->post("coursename");
-        $courseId = (int)$request->post("courseid");
         $facultyId = (int)$request->post("facultyid");
         
         $this->courseService->updateCourse($courseId, $courseName, $facultyId);
@@ -228,7 +235,7 @@ class CourseController extends BaseController {
         ]);
     }
     
-    #[Post('/api/add-course')]
+    #[Post('/api/courses')]
     #[AuthMiddleware(Role::ADMIN)]
     #[ValidationMiddleware([
         "coursename" => ValidationErrorCode::COURSE_REQUIRED,
@@ -245,7 +252,7 @@ class CourseController extends BaseController {
         ]);
     }
 
-    #[Post('/api/delete-course/:facultyId/:courseId')]
+    #[Delete('/api/courses/:courseId')]
     #[AuthMiddleware(Role::ADMIN)]
     public function deleteCourse(Request $request): Response {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
@@ -254,8 +261,7 @@ class CourseController extends BaseController {
         $this->courseService->deleteCourse($courseId);
         
         return Response::create()->json([
-            "success" => true,
-            "message" => "Course deleted successfully"
+            "success" => true
         ]);
     }
 }

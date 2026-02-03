@@ -8,7 +8,7 @@ readonly class CreatePostDTO {
     public int $courseId;
     public string $title;
     public string $description;
-    /** @var array Array of tag arrays with 'tagId' and 'courseId' keys */
+    /** @var array Array of tag arrays with 'tagId' key */
     public array $tags;
     /** @var int Array of category IDs */
     public ?int $category;

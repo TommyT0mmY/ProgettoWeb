@@ -27,6 +27,14 @@ class TagService {
     }
 
     /**
+     * Retrieves a tag by ID
+     * @return TagDTO|null The tag or null if not found
+     */
+    public function getTagDetails(int $tagId): ?TagDTO {
+        return $this->tagRepository->findById($tagId);
+    }
+
+    /**
      * Searches tags by name within a specific course.
      *
      * @param string $searchTerm The search term
@@ -106,6 +114,6 @@ class TagService {
         }
         $exceptionBuilder->throwIfAny();
 
-        $this->tagRepository->delete($tagId, $courseId);
+        $this->tagRepository->delete($tagId);
     }
 }

@@ -22,11 +22,10 @@ $this->extend('admin-layout', [
     <input type="search" name="search" placeholder="Search course" />
     <button type="submit">Search</button>
 </form>
-<p><a href="/faculties">Go back to faculties</a></p>
 <button type="button" 
         data-action="add" 
         data-entity="course" 
-        data-url="/faculties/<?= h($faculty->facultyId) ?>/courses/add">
+        data-url="/courses/add?facultyId=<?= h($faculty->facultyId) ?>">
     Add Course
 </button>
 
@@ -45,7 +44,7 @@ $this->extend('admin-layout', [
                                 data-action="edit" 
                                 data-entity="course" 
                                 data-id="<?= h($course->courseId) ?>"
-                                data-url="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/edit">
+                                data-url="/courses/<?= h($course->courseId) ?>/edit">
                             Edit
                         </button>
                     </li>
@@ -54,7 +53,7 @@ $this->extend('admin-layout', [
                                 data-action="delete" 
                                 data-entity="course" 
                                 data-id="<?= h($course->courseId) ?>"
-                                data-url="/api/delete-course/<?= h($faculty->facultyId) ?>/<?= h($course->courseId) ?>">
+                                data-url="/api/courses/<?= h($course->courseId) ?>">
                             Delete
                         </button>
                     </li>
@@ -63,7 +62,7 @@ $this->extend('admin-layout', [
                                 data-action="view" 
                                 data-entity="tag" 
                                 data-id="<?= h($course->courseId) ?>"
-                                data-url="/faculties/<?= h($faculty->facultyId) ?>/courses/<?= h($course->courseId) ?>/tags">
+                                data-url="/tags?courseId=<?= h($course->courseId) ?>">
                             View Tags
                         </button>
                     </li>
