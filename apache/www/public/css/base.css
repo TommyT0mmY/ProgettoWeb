@@ -47,6 +47,7 @@
     /* text colors */
     --color-white: oklch(0.99 0 264);
     --color-text: oklch(0.15 0 264);
+    --color-bold-text: oklch(0.3 0 264);
     --color-text-muted: oklch(0.4 0 264);
     --color-link: #1a73e8;
     --color-link-hover: #155ab6;

@@ -20,8 +20,8 @@ class AttachmentService {
     private const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip', 'rar'];
     private const ALLOWED_MIME_TYPES = [
         'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/msword', // doc
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // docx
         'text/plain',
         'image/jpeg',
         'image/png',

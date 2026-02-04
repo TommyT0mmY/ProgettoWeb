@@ -5,7 +5,7 @@
     margin-top: var(--space-md);
 }
 
-.file-upload-info {
+#attachments-hint {
     font-size: var(--fs-caption);
     color: var(--color-text-muted);
     margin: var(--space-xxs) 0 var(--space-xs) 0;
@@ -30,11 +30,6 @@
     outline: none;
     border-color: var(--color-blue-500);
     box-shadow: var(--focus-ring);
-}
-
-/* Selected Files Preview */
-.selected-files-container {
-    margin-top: var(--space-sm);
 }
 
 .selected-files-list {
@@ -70,122 +65,3 @@
     font-size: var(--fs-small);
 }
 
-/* Attachment Display in Posts (Gmail-style) */
-.post-attachments {
-    margin: var(--space-md) 0;
-    padding: var(--space-sm);
-    background-color: var(--color-bg);
-    border-radius: var(--radius-md);
-    border: var(--border-width-hairline) solid var(--color-border-muted);
-}
-
-.attachments-label {
-    font-size: var(--fs-small);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-xs);
-    font-weight: var(--fw-medium);
-}
-
-.attachments-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.attachment-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: var(--space-xs) var(--space-sm);
-    background-color: var(--color-bg-light);
-    border: var(--border-width-hairline) solid var(--color-border-muted);
-    border-radius: var(--radius-full);
-    font-size: var(--fs-small);
-    text-decoration: none;
-    color: var(--color-text);
-    transition: all var(--transition-fast);
-    max-width: 12.5rem;
-}
-
-.attachment-btn:hover {
-    background-color: var(--color-blue-100);
-    border-color: var(--color-blue-500);
-    color: var(--color-blue-600);
-    text-decoration: none;
-}
-
-.attachment-btn:focus {
-    outline: none;
-    box-shadow: var(--focus-ring);
-}
-
-.attachment-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: var(--radius-sm);
-    font-size: var(--fs-small);
-    font-weight: var(--fw-bold);
-    text-transform: uppercase;
-    flex-shrink: 0;
-}
-
-/* File type icons with colors */
-.file-pdf .attachment-icon {
-    background-color: var(--color-file-pdf);
-    color: var(--color-white);
-}
-
-.file-word .attachment-icon {
-    background-color: var(--color-file-word);
-    color: var(--color-white);
-}
-
-.file-text .attachment-icon {
-    background-color: var(--color-file-text);
-    color: var(--color-white);
-}
-
-.file-image .attachment-icon {
-    background-color: var(--color-file-image);
-    color: var(--color-white);
-}
-
-.file-archive .attachment-icon {
-    background-color: var(--color-file-archive);
-    color: var(--color-white);
-}
-
-.file-generic .attachment-icon {
-    background-color: var(--color-file-generic);
-    color: var(--color-white);
-}
-
-.attachment-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.attachment-size {
-    color: var(--color-text-muted);
-    font-size: var(--fs-small);
-    flex-shrink: 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-    .attachment-btn {
-        max-width: 100%;
-        width: 100%;
-    }
-    
-    .attachments-list {
-        flex-direction: column;
-    }
-}

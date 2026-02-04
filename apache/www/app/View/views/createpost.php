@@ -1,5 +1,5 @@
  <?php 
-/** 
+/**
  * @var \Unibostu\Dto\CategoryDto[] $categories
  * @var \Unibostu\Dto\TagDto[] $tags
  * @var \Unibostu\Dto\CourseDto $thisCourse
@@ -17,70 +17,65 @@ $this->extend('main-layout', [
         ] 
     ]); 
 ?>
-
 <div class="create-post-container">
-    <a href="/courses/<?= h($thisCourse->courseId) ?>" class="back-link">← Go back</a>
-    
-    <h2 class="createPost">Create post for: <?= h($thisCourse->courseName) ?></h2>
-
-<form method="post" id="create-post-form" enctype="multipart/form-data" novalidate>
-    <input type="hidden" name="courseId" value="<?= h($thisCourse->courseId) ?>" />
-    <fieldset>
-        <legend>Post information</legend>
-        <output class="form-error-message" role="alert"></output>
-        <p>
-            <label for="title">Title:</label>
-            <input type="text" name="title" id="title" placeholder="Insert post title" required />
-            <output id="title-error" class="field-error-message"></output>
-        </p>
-        <p>
-            <label for="type">Category:</label>
-            <select id="type" name="categoryId">
-                <option value="">All categories</option>
-                <?php foreach ($categories ?? [] as $category): ?>
-                    <option value="<?= h($category->categoryId) ?>"><?= h($category->categoryName) ?></option>
-                <?php endforeach; ?>
-            </select>
-            <output id="type-error" class="field-error-message"></output>
-        </p>
-    </fieldset>
-    
-    <fieldset>
-        <legend>Topic tags (optional)</legend>
-        <div>
+    <h1 class="createPost">Create post in <?= h($thisCourse->courseName) ?></h1>
+    <form method="post" id="create-post-form" enctype="multipart/form-data" novalidate>
+        <fieldset>
+            <legend>Post information</legend>
+            <output class="form-error-message" role="alert"></output>
+            <div class="field-holder">
+                <input type="text" name="title" id="title" aria-describedby="title-error" required />
+                <label for="title">Post Title</label>
+                <output class="field-error-message" id="title-error" for="title"></output>
+            </div>
+            <div class="field-holder">
+                <select id="category" name="categoryId" aria-describedby="category-error">
+                    <option value="">Select a category</option>
+                    <?php foreach ($categories ?? [] as $category): ?>
+                    <option value="<?=h($category->categoryId)?>"><?=h($category->categoryName)?></option>
+                    <?php endforeach; ?>
+                </select>
+                <label for="category">Category</label>
+                <output class="field-error-message" id="category-error" for="category"></output>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Topic tags <span class="field-optional">(optional)</span></legend>
             <?php foreach ($tags ?? [] as $tag): ?>
-                <p>
-                    <input type="checkbox" name="tags[]" id="tag_<?= h($tag->tagId) ?>" value="<?= h($tag->tagId) ?>" />
-                    <label for="tag_<?= h($tag->tagId) ?>"><?= h($tag->tagName) ?></label>
-                </p>
+            <div class="checkbox-field">
+                <input type="checkbox" name="tags[]" id="tag_<?= h($tag->tagId) ?>" value="<?= h($tag->tagId) ?>" />
+                <label for="tag_<?= h($tag->tagId) ?>"><?= h($tag->tagName) ?></label>
+            </div>
             <?php endforeach; ?>
-        </div>
-    </fieldset>
-    
-    <fieldset>
-        <legend>Content</legend>
-        <p>
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" rows="4" placeholder="Write your post here..." required></textarea>
-            <output id="description-error" class="field-error-message"></output>
-        </p>
-        <div class="file-upload-section">
-            <label for="notesFile">Attachments (optional):</label>
-            <p class="file-upload-info">
-                Max 5 files, 10 MB each. Allowed: PDF, DOC, DOCX, TXT, JPG, PNG, GIF, ZIP, RAR.
-            </p>
-            <input type="file" 
-                   name="files[]" 
-                   id="notesFile" 
-                   multiple 
-                   accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar" />
-            <output id="notesFile-error" class="field-error-message"></output>
-            <div id="file-list" class="selected-files-container"></div>
-        </div>
-    </fieldset>
-    
-    <p>
-        <button type="submit">CREATE POST</button>
-    </p>
-</form>
+        </fieldset>
+        <fieldset>
+            <legend>Post content</legend>
+            <div>
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" placeholder="Write your post here..." required aria-describedby="description-error"></textarea>
+                <output class="field-error-message" id="description-error" for="description"></output>
+            </div>
+            <div class="file-upload-section">
+                <label for="attachments">Attachments <span class="field-optional">(optional)</span></label>
+                <span id="attachments-hint">
+                    Max 5 files, 10 MB each. Allowed: PDF, DOC, DOCX, TXT, JPG, PNG, GIF, ZIP, RAR.
+                </span>
+                <input type="file" name="files[]" id="attachments" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar" aria-describedby="attachments-hint attachments-error"/>
+                <output class="field-error-message" id="attachments-error" for="attachments"></output>
+                <ul id="file-list" class="selected-files-list" aria-label="Selected files"></ul>
+            </div>
+        </fieldset>
+        <input type="hidden" name="courseId" value="<?=h($thisCourse->courseId)?>"/>
+        <output class="form-status-message" role="status"></output>
+        <button type="submit" disabled>Create Post</button>
+    </form>
 </div>
+
+<template id="file-item-template">
+    <li>
+        <span class="file-icon" aria-hidden="true">📎</span>
+        <span class="file-name"></span>
+        <span class="file-size"></span>
+    </li>
+</template>
+

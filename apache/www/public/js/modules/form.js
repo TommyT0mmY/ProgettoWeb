@@ -250,6 +250,7 @@ class Form {
     }
 
     setStatusMessage(message) {
+        if (!this.#generalStatusMessage) return;
         if (!message) {
             message = '';
         }

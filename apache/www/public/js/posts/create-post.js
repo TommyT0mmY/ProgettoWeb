@@ -1,7 +1,7 @@
 import Form from '/js/modules/form.js';
 
 // File upload configuration
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_FILE_SIZE = 1e7; // 10MB
 const MAX_FILES = 5;
 const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip', 'rar'];
 
@@ -54,85 +54,69 @@ const configs = {
             message: 'An error occurred. Please try again.'
         }
     },
-    // Validate files before submission
-    before: () => {
-        const fileInput = document.getElementById('notesFile');
-        const errorOutput = document.getElementById('notesFile-error');
-        
-        if (fileInput && fileInput.files.length > 0) {
-            // Clear previous errors
-            if (errorOutput) errorOutput.textContent = '';
-            
-            // Check file count
-            if (fileInput.files.length > MAX_FILES) {
-                if (errorOutput) {
-                    errorOutput.textContent = `You can upload a maximum of ${MAX_FILES} files.`;
-                }
-                return false;
-            }
-            
-            // Validate each file
-            for (const file of fileInput.files) {
-                // Check file size
-                if (file.size > MAX_FILE_SIZE) {
-                    if (errorOutput) {
-                        errorOutput.textContent = `File "${file.name}" exceeds the maximum size of 10 MB.`;
-                    }
-                    return false;
-                }
-                
-                // Check extension
-                const extension = file.name.split('.').pop().toLowerCase();
-                if (!ALLOWED_EXTENSIONS.includes(extension)) {
-                    if (errorOutput) {
-                        errorOutput.textContent = `File "${file.name}" has an unsupported format. Allowed: ${ALLOWED_EXTENSIONS.join(', ').toUpperCase()}.`;
-                    }
-                    return false;
-                }
-            }
-        }
-        
-        return true;
-    }
+    before: beforeSubmit
 };
 
-const formElement = document.querySelector('form#create-post-form');
-if (formElement) {
-    const createPostForm = new Form(formElement, configs);
-    createPostForm.init();
-    
-    // Setup file input preview
-    const fileInput = document.getElementById('notesFile');
-    const fileListContainer = document.getElementById('file-list');
-    
-    if (fileInput && fileListContainer) {
-        fileInput.addEventListener('change', () => {
-            fileListContainer.innerHTML = '';
-            
-            if (fileInput.files.length > 0) {
-                const list = document.createElement('ul');
-                list.className = 'selected-files-list';
-                
-                for (const file of fileInput.files) {
-                    const li = document.createElement('li');
-                    const sizeFormatted = file.size < 1024 
-                        ? `${file.size} B` 
-                        : file.size < 1048576 
-                            ? `${(file.size / 1024).toFixed(1)} KB`
-                            : `${(file.size / 1048576).toFixed(1)} MB`;
-                    
-                    li.innerHTML = `
-                        <span class="file-icon">📎</span>
-                        <span class="file-name">${escapeHtml(file.name)}</span>
-                        <span class="file-size">(${sizeFormatted})</span>
-                    `;
-                    list.appendChild(li);
-                }
-                
-                fileListContainer.appendChild(list);
-            }
-        });
+const createPostForm = new Form(document.querySelector('form#create-post-form'), configs);
+createPostForm.init();
+
+const attachmentsInput = document.getElementById('attachments');
+attachmentsInput.addEventListener('change', onAttachmentsInputChange);
+
+function onAttachmentsInputChange() {
+    const fileList = document.getElementById('file-list');
+    fileList.innerHTML = '';
+    const files = this.files;
+    if (files.length <= 0) return;
+    for (const file of files) {
+        const item = document.getElementById('file-item-template').content.cloneNode(true);
+        item.querySelector('.file-name').textContent = escapeHtml(file.name);
+        item.querySelector('.file-size').textContent = formatSize(file.size);
+        fileList.appendChild(item);
     }
+}
+
+function formatSize(size) {
+    const units = ["B", "KB", "MB"];
+    let i = 0;
+    for (;i < units.length-1 && size >= 1000; i++) {
+        size /= 1000;
+    }
+    return `${size.toFixed(1)} ${units[i]}`;
+}
+
+function beforeSubmit() {
+    const attachmentsInput = document.getElementById('attachments');
+    const attachmentsErrorOutput = document.getElementById('attachments-error');
+    const files = attachmentsInput.files;
+    if (!attachmentsInput) {
+        return true;
+    }
+    if (files.length <= 0) {
+        return true;
+    }
+    attachmentsErrorOutput.textContent = '';
+    if (files.length > MAX_FILES) {
+        attachmentsErrorOutput.textContent = `You can upload a maximum of ${MAX_FILES} files.`;
+        return false;
+    }
+    for (const file of files) {
+        if (file.size > MAX_FILE_SIZE) {
+            attachmentsErrorOutput.textContent = `File "${file.name}" exceeds the maximum size of 10 MB.`;
+            return false;
+        }
+        const extension = file.name.split('.').pop().toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(extension)) {
+            attachmentsErrorOutput.textContent = `File "${file.name}" has an unsupported format. Allowed: ${ALLOWED_EXTENSIONS.join(', ').toUpperCase()}.`;
+            return false;
+        }
+        const type = file.type;
+        if (type && !type.startsWith('image/') && !type.startsWith('application/')) {
+            attachmentsErrorOutput.textContent = `File "${file.name}" has an unsupported MIME type.`;
+            return false;
+        }
+    }
+    return true;
 }
 
 function escapeHtml(text) {
@@ -140,3 +124,4 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+

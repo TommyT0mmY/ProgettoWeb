@@ -135,7 +135,7 @@ body > header img.menu-container {
 
 /* Header e Titolo */
 .post header h3 {
-    color: var(--color-text);
+    color: var(--color-bold-text);
     margin: 0 0 var(--space-xxs) 0;
     font-size: var(--fs-md);
     overflow-wrap: break-word;
@@ -313,16 +313,19 @@ body > header img.menu-container {
     flex-shrink: 0;
 }
 
-/* File type icons using pseudo-element with text */
+/* File type icons */
 .attachment-btn .attachment-icon::before {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: var(--fs-icon-label);
     font-weight: var(--fw-bold);
     text-align: center;
-    line-height: var(--icon-size-sm);
+    line-height: 1;
     border-radius: var(--radius-xs);
     width: var(--icon-size-sm);
     height: var(--icon-size-sm);
+
 }
 
 /* PDF */
@@ -679,6 +682,7 @@ nav h3 {
 #filter-form legend {
     font-size: var(--fs-md);
     font-weight: var(--fw-bold);
+    color: var(--color-bold-text);
 }
 
 #filter-form legend.sub-legend {
