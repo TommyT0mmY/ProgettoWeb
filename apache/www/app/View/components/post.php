@@ -49,7 +49,7 @@ if (!function_exists('getFileTypeClass')) {
         </p>
     </header>
     
-    <div class="post-metadata">
+    <section class="post-metadata">
         <div class="metadata-section" data-section="course">
             <span class="metadata-label">Course:</span>
             <ul class="metadata-list community-list">
@@ -74,14 +74,17 @@ if (!function_exists('getFileTypeClass')) {
                 <?php endforeach; ?>
             </ul>
         </div>
-    </div>
-    <p data-field="description"><?= nl2br(h($description)) ?></p>
+    </section>
     
-    <div class="post-attachments" data-field="attachments" style="display: <?= !empty($attachments) ? '' : 'none' ?>;">
+    <div class="post-content">
+        <p data-field="description"><?= nl2br(h($description)) ?></p>
+    </div>
+    
+    <section class="post-attachments" data-field="attachments" style="display: <?= !empty($attachments) ? '' : 'none' ?>;">
         <span class="attachments-label">Attachments:</span>
-        <div class="attachments-list">
+        <ul class="attachments-list">
             <?php foreach ($attachments as $attachment): ?>
-            <a href="<?= h($attachment->getUrl()) ?>" 
+            <li><a href="<?= h($attachment->getUrl()) ?>"
                target="_blank" 
                rel="noopener noreferrer"
                class="attachment-btn <?= getFileTypeClass($attachment->getExtension()) ?>"
@@ -89,10 +92,10 @@ if (!function_exists('getFileTypeClass')) {
                 <span class="attachment-icon"></span>
                 <span class="attachment-name"><?= h($attachment->originalName) ?></span>
                 <span class="attachment-size"><?= h($attachment->getFormattedSize()) ?></span>
-            </a>
+            </a></li>
             <?php endforeach; ?>
-        </div>
-    </div>
+        </ul>
+    </section>
     
     <footer>
         <ul class="review" data-field="reviewList">

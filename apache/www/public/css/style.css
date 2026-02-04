@@ -264,6 +264,7 @@ body > header img.menu-container {
     flex-wrap: wrap;
     gap: var(--space-xs);
     min-width: 0;
+    list-style: none;
 }
 .attachment-btn {
     display: inline-flex;
