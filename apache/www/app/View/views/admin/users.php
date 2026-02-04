@@ -18,7 +18,7 @@ $this->extend('admin-layout', [
     <h2>Admin - Users Management</h2>
 </header>
 <form action="#" method="GET">
-    <input type="search" name="search" placeholder="Search user" />
+    <input type="search" name="search" placeholder="Search user by username" />
     <button type="submit">Search</button>
 </form>
 

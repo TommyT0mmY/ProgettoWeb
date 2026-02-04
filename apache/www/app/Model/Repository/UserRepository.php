@@ -24,6 +24,23 @@ class UserRepository extends BaseRepository {
     }
 
     /**
+     * Search users by username
+     * 
+     * @param string $searchTerm The search term
+     * @return UserDTO[] Array of UserDTO objects
+     */
+    public function searchByUsername(string $searchTerm): array {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM users WHERE user_id LIKE :searchTerm"
+        );
+        $likeTerm = '%' . $searchTerm . '%';
+        $stmt->bindValue(':searchTerm', $likeTerm, PDO::PARAM_STR);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([$this, 'rowToDTO'], $rows);
+    }
+
+    /**
      * Retrieves a user by user ID
      *
      * @param string $userId The user ID
