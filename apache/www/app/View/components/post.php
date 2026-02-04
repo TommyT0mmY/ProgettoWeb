@@ -97,20 +97,20 @@ if (!function_exists('getFileTypeClass')) {
     <footer>
         <ul class="review" data-field="reviewList">
             <li class="reaction reaction-like <?= $forAdmin ? 'disabled' : '' ?>">
-                <button type="button" class="btn-like <?= $likedByUser === true ? 'active' : '' ?>" <?= $forAdmin ? 'disabled' : '' ?> aria-label="Like this post">
+                <button type="button" class="btn btn-secondary btn-like <?= $likedByUser === true ? 'active' : '' ?>" <?= $forAdmin ? 'disabled' : '' ?> aria-label="Like this post">
                     <img src="/images/icons/like.svg" alt="">
                     <data data-field="likes" value="<?= $likes ?>"><?= $likes ?></data>
                 </button>
             </li>
             <li class="reaction reaction-dislike <?= $forAdmin ? 'disabled' : '' ?>">
-                <button type="button" class="btn-dislike <?= $likedByUser === false ? 'active' : '' ?>" <?= $forAdmin ? 'disabled' : '' ?> aria-label="Dislike this post">
+                <button type="button" class="btn btn-secondary btn-dislike <?= $likedByUser === false ? 'active' : '' ?>" <?= $forAdmin ? 'disabled' : '' ?> aria-label="Dislike this post">
                     <img src="/images/icons/dislike.svg" alt="">
                     <data data-field="dislikes" value="<?= $dislikes ?>"><?= $dislikes ?></data>
                 </button>
             </li>
             <?php if (isset($commentsButton) ? $commentsButton : true): ?>
             <li>
-                <a data-field="commentsLink" href="/posts/<?= h($postId) ?>" aria-label="Go to post comments">Comments</a>
+                <a class="btn btn-secondary" data-field="commentsLink" href="/posts/<?= h($postId) ?>" aria-label="Go to post comments">Comments</a>
             </li>
             <?php endif; ?>
         </ul>            

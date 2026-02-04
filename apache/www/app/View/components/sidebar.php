@@ -15,24 +15,22 @@ foreach ($courses as $course) {
 }
 ?>
 <nav id="navbar" aria-label="Main navigation">
-  <div class="sidebar-content">
-    <ul class="nav-main">
-      <li><a href="#" id="logout-link">Logout</a></li>
-    </ul>
-    
-    <h2>Your courses</h2>
-    
-    <?php foreach ($coursesByFaculty as $facultyName => $facultyCourses): ?>
-    <section>
-      <h3><?= h($facultyName) ?></h3>
-      <ul class="nav-courses">
-        <?php foreach($facultyCourses as $course): ?>
-          <li>
-            <a href="/courses/<?= h($course->courseId); ?>"><?= h($course->courseName); ?></a>
-          </li>
-        <?php endforeach; ?>
-      </ul>
+    <button id="logout-button" class="btn btn-secondary">Logout</button>
+    <section aria-labelledby="courses-heading">
+        <h2 id="courses-heading">Your courses</h2>
+        <ul class="nav-faculties">
+            <?php foreach ($coursesByFaculty as $facultyName => $facultyCourses): ?>
+            <li>
+                <h3><?= h($facultyName) ?></h3>
+                <ul class="nav-courses">
+                    <?php foreach($facultyCourses as $course): ?>
+                    <li>
+                        <a class="btn btn-primary" href="/courses/<?= h($course->courseId); ?>"><?= h($course->courseName); ?></a>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+            <?php endforeach; ?>
+        </ul>
     </section>
-    <?php endforeach; ?>
-  </div>
 </nav>

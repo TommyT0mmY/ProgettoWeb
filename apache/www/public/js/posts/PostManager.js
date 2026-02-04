@@ -46,7 +46,7 @@ export class PostManager {
         // Create li element for delete button
         const deleteItem = document.createElement('li');
         const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'btn-delete-post';
+        deleteBtn.className = 'btn btn-danger';
         deleteBtn.textContent = 'Delete';
         deleteBtn.type = 'button';
         

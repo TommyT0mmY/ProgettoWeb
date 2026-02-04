@@ -16,9 +16,9 @@ $this->extend('admin-layout', [
 </header>
 <form action="/faculties" method="GET">
     <input type="search" name="search" placeholder="Search faculty" />
-    <button type="submit">Search</button>
+    <button type="submit" class="btn btn-secondary">Search</button>
 </form>
-<button type="button" data-action="add" data-entity="faculty" data-url="/faculties/add">Add Faculty</button>
+<button type="button" class="btn btn-primary" data-action="add" data-entity="faculty" data-url="/faculties/add">Add Faculty</button>
 
 <div class="post-container">
 <?php foreach ($faculties ?? [] as $faculty): ?>
@@ -34,6 +34,7 @@ $this->extend('admin-layout', [
                         <button type="button" 
                                 data-action="edit" 
                                 data-entity="faculty" 
+                                class="btn btn-primary"
                                 data-id="<?= h($faculty->facultyId) ?>"
                                 data-url="/faculties/<?= h($faculty->facultyId) ?>/edit">
                             Edit
@@ -42,6 +43,7 @@ $this->extend('admin-layout', [
                     <li>
                         <button type="button" 
                                 data-action="delete" 
+                                class="btn btn-danger"
                                 data-entity="faculty" 
                                 data-id="<?= h($faculty->facultyId) ?>"
                                 data-url="/api/faculties/<?= h($faculty->facultyId) ?>">
@@ -51,6 +53,7 @@ $this->extend('admin-layout', [
                     <li>
                         <button type="button" 
                                 data-action="view" 
+                                class="btn btn-secondary"
                                 data-entity="course" 
                                 data-id="<?= h($faculty->facultyId) ?>"
                                 data-url="/courses?facultyId=<?= h($faculty->facultyId) ?>">

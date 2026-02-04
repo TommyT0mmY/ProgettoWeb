@@ -12,7 +12,7 @@ $this->extend('admin-layout', [
 
 <header class="dashboard-header">
     <h2>Admin - Dashboard</h2>
-    <a href="#" id="logout-link">Logout</a>
+    <button id="logout-button" class="btn btn-secondary">Logout</button>
 </header>
 
 <div class="post-container">
@@ -27,7 +27,7 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="/faculties">
+                        <a class="btn btn-primary" href="/faculties">
                             View Faculties
                         </a>
                     </li>
@@ -43,7 +43,7 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="/categories">
+                        <a class="btn btn-primary" href="/categories">
                             View Categories
                         </a>
                     </li>
@@ -59,7 +59,7 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <a href="/users">
+                        <a class="btn btn-primary" href="/users">
                             View Users
                         </a>
                     </li>

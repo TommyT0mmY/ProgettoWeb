@@ -40,7 +40,7 @@
                 <?php endforeach; ?>
             </fieldset>
             <?php endif; ?>
-            <button type="submit" class="btn btn-primary">Filter</button>
+            <button type="submit" class="btn btn-secondary">Filter</button>
         </fieldset>
     </form>
 </section>

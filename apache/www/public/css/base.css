@@ -41,14 +41,16 @@
     --color-gray-300: oklch(0.7 0 264);
     --color-gray-400: oklch(0.55 0 264);
     --color-gray-500: oklch(0.4 0 264);
+    --color-gray-550: oklch(0.3 0 264);
     --color-gray-600: oklch(0.25 0 264);
     --color-gray-700: oklch(0.15 0 264);
     --color-error: #d93025;
     /* text colors */
     --color-white: oklch(0.99 0 264);
-    --color-text: oklch(0.15 0 264);
-    --color-bold-text: oklch(0.3 0 264);
-    --color-text-muted: oklch(0.4 0 264);
+    --color-text: var(--color-gray-700);
+    --color-semibold-text: var(--color-gray-600);
+    --color-bold-text: var(--color-gray-550);
+    --color-text-muted: var(--color-gray-500);
     --color-link: #1a73e8;
     --color-link-hover: #155ab6;
     /* bg colors */
@@ -180,27 +182,9 @@ html {
     border: 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
-
 /* Document
    ========================================================================== */
-
 /**
  * 1. Correct the line height in all browsers.
  * 2. Prevent adjustments of font size after orientation changes in iOS.
@@ -209,10 +193,8 @@ html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
 }
-
 /* Sections
    ========================================================================== */
-
 /**
  * Remove the margin in all browsers.
  */
@@ -220,14 +202,12 @@ body {
   margin: 0;
   padding: 0;
 }
-
 /**
  * Render the `main` element consistently in IE.
  */
 main {
   display: block;
 }
-
 /**
  * Correct the font size and margin on `h1` elements within `section` and
  * `article` contexts in Chrome, Firefox, and Safari.
@@ -236,10 +216,8 @@ h1 {
   font-size: 2em;
   margin: 0.67em 0;
 }
-
 /* Grouping content
    ========================================================================== */
-
 /**
  * 1. Add the correct box sizing in Firefox.
  * 2. Show the overflow in Edge and IE.
@@ -249,7 +227,6 @@ hr {
   height: 0; /* 1 */
   overflow: visible; /* 2 */
 }
-
 /**
  * 1. Correct the inheritance and scaling of font size in all browsers.
  * 2. Correct the odd `em` font sizing in all browsers.
@@ -258,17 +235,14 @@ pre {
   font-family: monospace, monospace; /* 1 */
   font-size: 1em; /* 2 */
 }
-
 /* Text-level semantics
    ========================================================================== */
-
 /**
  * Remove the gray background on active links in IE 10.
  */
 a {
   background-color: transparent;
 }
-
 /**
  * 1. Remove the bottom border in Chrome 57-
  * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
@@ -278,7 +252,6 @@ abbr[title] {
   text-decoration: underline; /* 2 */
   text-decoration: underline dotted; /* 2 */
 }
-
 /**
  * Add the correct font weight in Chrome, Edge, and Safari.
  */
@@ -286,7 +259,6 @@ b,
 strong {
   font-weight: bolder;
 }
-
 /**
  * 1. Correct the inheritance and scaling of font size in all browsers.
  * 2. Correct the odd `em` font sizing in all browsers.
@@ -297,14 +269,12 @@ samp {
   font-family: monospace, monospace; /* 1 */
   font-size: 1em; /* 2 */
 }
-
 /**
  * Add the correct font size in all browsers.
  */
 small {
   font-size: 80%;
 }
-
 /**
  * Prevent `sub` and `sup` elements from affecting the line height in
  * all browsers.
@@ -316,28 +286,22 @@ sup {
   position: relative;
   vertical-align: baseline;
 }
-
 sub {
   bottom: -0.25em;
 }
-
 sup {
   top: -0.5em;
 }
-
 /* Embedded content
    ========================================================================== */
-
 /**
  * Remove the border on images inside links in IE 10.
  */
 img {
   border-style: none;
 }
-
 /* Forms
    ========================================================================== */
-
 /**
  * 1. Change the font styles in all browsers.
  * 2. Remove the margin in Firefox and Safari.
@@ -352,7 +316,6 @@ textarea {
   line-height: 1.15; /* 1 */
   margin: 0; /* 2 */
 }
-
 /**
  * Show the overflow in IE.
  * 1. Show the overflow in Edge.
@@ -361,7 +324,6 @@ button,
 input { /* 1 */
   overflow: visible;
 }
-
 /**
  * Remove the inheritance of text transform in Edge, Firefox, and IE.
  * 1. Remove the inheritance of text transform in Firefox.
@@ -370,7 +332,6 @@ button,
 select { /* 1 */
   text-transform: none;
 }
-
 /**
  * Correct the inability to style clickable types in iOS and Safari.
  */
@@ -380,7 +341,6 @@ button,
 [type="submit"] {
   -webkit-appearance: button;
 }
-
 /**
  * Remove the inner border and padding in Firefox.
  */
@@ -391,7 +351,6 @@ button::-moz-focus-inner,
   border-style: none;
   padding: 0;
 }
-
 /**
  * Restore the focus styles unset by the previous rule.
  */
@@ -401,14 +360,12 @@ button:-moz-focusring,
 [type="submit"]:-moz-focusring {
   outline: 1px dotted ButtonText;
 }
-
 /**
  * Correct the padding in Firefox.
  */
 fieldset {
   padding: 0.35em 0.75em 0.625em;
 }
-
 /**
  * 1. Correct the text wrapping in Edge and IE.
  * 2. Correct the color inheritance from `fieldset` elements in IE.
@@ -423,21 +380,18 @@ legend {
   padding: 0; /* 3 */
   white-space: normal; /* 1 */
 }
-
 /**
  * Add the correct vertical alignment in Chrome, Firefox, and Opera.
  */
 progress {
   vertical-align: baseline;
 }
-
 /**
  * Remove the default vertical scrollbar in IE 10+.
  */
 textarea {
   overflow: auto;
 }
-
 /**
  * 1. Add the correct box sizing in IE 10.
  * 2. Remove the padding in IE 10.
@@ -447,7 +401,6 @@ textarea {
   box-sizing: border-box; /* 1 */
   padding: 0; /* 2 */
 }
-
 /**
  * Correct the cursor style of increment and decrement buttons in Chrome.
  */
@@ -455,7 +408,6 @@ textarea {
 [type="number"]::-webkit-outer-spin-button {
   height: auto;
 }
-
 /**
  * 1. Correct the odd appearance in Chrome and Safari.
  * 2. Correct the outline style in Safari.
@@ -464,14 +416,12 @@ textarea {
   -webkit-appearance: textfield; /* 1 */
   outline-offset: -2px; /* 2 */
 }
-
 /**
  * Remove the inner padding in Chrome and Safari on macOS.
  */
 [type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
-
 /**
  * 1. Correct the inability to style clickable types in iOS and Safari.
  * 2. Change font properties to `inherit` in Safari.
@@ -480,37 +430,125 @@ textarea {
   -webkit-appearance: button; /* 1 */
   font: inherit; /* 2 */
 }
-
 /* Interactive
    ========================================================================== */
-
 /*
  * Add the correct display in Edge, IE 10+, and Firefox.
  */
 details {
   display: block;
 }
-
 /*
  * Add the correct display in all browsers.
  */
 summary {
   display: list-item;
 }
-
 /* Misc
    ========================================================================== */
-
 /**
  * Add the correct display in IE 10+.
  */
 template {
   display: none;
 }
-
 /**
  * Add the correct display in IE 10.
  */
 [hidden] {
   display: none;
+}
+
+
+
+
+
+.btn {
+    appearance: none;
+    text-decoration: none;
+    border: none;
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xs);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-md);
+    font-weight: var(--fw-medium);
+    font-size: var(--fs-sm);
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
+    user-select: none;
+    white-space: nowrap;
+}
+.btn * {
+    font-weight: inherit;
+    font-size: inherit;
+}
+.btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.btn-primary {
+    background-color: var(--color-blue-500);
+    color: var(--color-white);
+}
+.btn-primary * {
+    color: var(--color-white);
+}
+.btn-primary:hover {
+    background-color: var(--color-blue-700);
+    box-shadow: var(--shadow-sm);
+}
+.btn-primary:disabled {
+    background-color: var(--color-blue-200);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.btn-secondary {
+    background-color: var(--color-gray-200);
+    color: var(--color-bold-text);
+}
+.btn-secondary * {
+    color: var(--color-bold-text);
+}
+.btn-secondary:hover {
+    background-color: var(--color-gray-300);
+    box-shadow: var(--shadow-sm);
+}
+.btn-secondary:disabled {
+    background-color: var(--color-gray-100);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.btn-tertiary {
+    background-color: transparent;
+    color: var(--color-blue-500);
+}
+.btn-tertiary * {
+    color: var(--color-blue-500);
+}
+.btn-tertiary:hover {
+    background-color: var(--color-blue-100);
+    box-shadow: var(--shadow-sm);
+}
+.btn-tertiary:disabled {
+    color: var(--color-blue-200);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.btn-danger {
+    background-color: var(--color-error);
+    color: var(--color-white);
+}
+.btn-danger:hover {
+    background-color: #c02d23;
+    box-shadow: var(--shadow-sm);
+}
+.btn-danger:disabled {
+    background-color: #f8b4b0;
+    cursor: not-allowed;
+    box-shadow: none;
 }

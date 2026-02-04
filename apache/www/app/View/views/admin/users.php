@@ -19,7 +19,7 @@ $this->extend('admin-layout', [
 </header>
 <form action="#" method="GET">
     <input type="search" name="search" placeholder="Search user by username" />
-    <button type="submit">Search</button>
+    <button type="submit" class="btn btn-secondary">Search</button>
 </form>
 
 <div class="post-container">
@@ -37,7 +37,8 @@ $this->extend('admin-layout', [
         <footer>
             <ul class="review">
                     <li>
-                        <button type="button" 
+                        <button type="button"
+                                class="btn btn-primary"
                                 data-action="view" 
                                 data-entity="user" 
                                 data-id="<?= h($user->userId) ?>"
@@ -49,14 +50,14 @@ $this->extend('admin-layout', [
                         <?php if ($user->suspended): ?>
                             <button type="button" 
                                     id="unban-user-btn-<?= h($user->userId) ?>" 
-                                    class="unban-user-btn"
+                                    class="unban-user-btn btn btn-danger"
                                     data-user-id="<?= h($user->userId) ?>">
                                 Unban
                             </button>
                         <?php else: ?>
                             <button type="button" 
                                     id="ban-user-btn-<?= h($user->userId) ?>" 
-                                    class="ban-user-btn"
+                                    class="ban-user-btn btn btn-danger"
                                     data-user-id="<?= h($user->userId) ?>">
                                 Ban
                             </button>

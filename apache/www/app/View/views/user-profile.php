@@ -48,13 +48,13 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
         <p class="user-banned">User banned</p>
         <?php endif; ?>
         <?php if ($isOwnProfile): ?>
-        <button type="button" onclick="window.location.href='/edit-profile'">Change info</button>   
+        <button class="btn btn-primary" type="button" onclick="window.location.href='/edit-profile'">Change info</button>   
         <?php endif; ?>
         <?php if ($isAdmin && !$viewedUser->suspended): ?>
-        <button type="button" id="ban-user-btn" class="btn-ban-user" data-user-id="<?= h($viewedUser->userId) ?>">Ban User</button>
+        <button type="button" id="ban-user-btn" class="btn btn-danger" data-user-id="<?= h($viewedUser->userId) ?>">Ban User</button>
         <?php endif; ?>
         <?php if ($isAdmin && $viewedUser->suspended): ?>
-        <button type="button" id="unban-user-btn" class="btn-unban-user" data-user-id="<?= h($viewedUser->userId) ?>">Unban User</button>
+        <button type="button" id="unban-user-btn" class="btn btn-danger" data-user-id="<?= h($viewedUser->userId) ?>">Unban User</button>
         <?php endif; ?>
     </section>
     <section>
@@ -70,7 +70,7 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
                 </ul>
             <?php endif; ?>
             <?php if ($isOwnProfile): ?>
-            <button type="button" onclick="window.location.href='/select-courses'">Change chosen courses</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/select-courses'">Change chosen courses</button>
             <?php endif; ?>
         <?php endif; ?>
     </section>

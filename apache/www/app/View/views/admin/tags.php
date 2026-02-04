@@ -19,10 +19,11 @@ $this->extend('admin-layout', [
 </header>
 <form action="#" method="GET">
     <input type="search" name="search" placeholder="Search tag" />
-    <button type="submit">Search</button>
+    <button type="submit" class="btn btn-secondary">Search</button>
 </form>
 <button type="button" 
         data-action="add" 
+        class="btn btn-primary"
         data-entity="tag" 
         data-url="/tags/add?courseId=<?= h($course->courseId) ?>">
     Add Tag
@@ -41,6 +42,7 @@ $this->extend('admin-layout', [
                         <button type="button" 
                                 data-action="edit" 
                                 data-entity="tag" 
+                                class="btn btn-primary"
                                 data-id="<?= h($tag->tagId) ?>"
                                 data-url="/tags/<?= h($tag->tagId) ?>/edit">
                             Edit
@@ -49,6 +51,7 @@ $this->extend('admin-layout', [
                     <li>
                         <button type="button" 
                                 data-action="delete" 
+                                class="btn btn-danger"
                                 data-entity="tag" 
                                 data-id="<?= h($tag->tagId) ?>"
                                 data-url="/api/tags/<?= h($tag->tagId) ?>">
