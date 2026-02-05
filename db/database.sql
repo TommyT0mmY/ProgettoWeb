@@ -855,6 +855,12 @@ INSERT INTO `post_tags` (`post_id`, `tag_id`) VALUES
 -- Post 45 - Reazioni (Chimica)
 (45, 15);
 
+-- allegati mock
+INSERT INTO `post_attachments` (`attachment_id`, `post_id`, `file_name`, `original_name`, `mime_type`, `file_size`, `created_at`) VALUES
+(1, 45, '1770309373_c02dc51bc18f0e3b.pdf', 'arch_confronto.pdf', 'application/pdf', 1829827, '2026-02-05 16:36:13'),
+(2, 45, '1770309373_bcaca49456d42713.pdf', 'arch_parallele.pdf', 'application/pdf', 3864942, '2026-02-05 16:36:13'),
+(3, 45, '1770309373_a2f3cbc1d103eeeb.pdf', 'boole.pdf', 'application/pdf', 530503, '2026-02-05 16:36:13');
+
 INSERT INTO `administrators` (`admin_id`, `password`) VALUES
 -- password: aaaaaa
 ('testadmin', '$2y$12$IopdjTqt.gNIuYN7FDXZJOZo.02BGca/Jw0uf0v0xhsN89gf9HoCW');
