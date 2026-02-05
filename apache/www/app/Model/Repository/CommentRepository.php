@@ -55,7 +55,9 @@ class CommentRepository extends BaseRepository {
      * @throws RepositoryException if save fails
      */
     public function save(CreateCommentDTO $dto): CommentDTO {
-        return $this->executeInTransaction(function() use ($dto) {
+        try {
+            $this->pdo->beginTransaction();
+            
             $stmt = $this->pdo->prepare(
                 "INSERT INTO comments 
                  (post_id, comment_text, created_at, deleted, user_id, parent_comment_id)
@@ -72,8 +74,20 @@ class CommentRepository extends BaseRepository {
                 throw new RepositoryException("Failed to save comment");
             }
             
-            return $this->lastInsertedComment();
-        });
+            $result = $this->lastInsertedComment();
+            
+            $this->pdo->commit();
+            
+            return $result;
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            if (!($e instanceof RepositoryException)) {
+                throw new RepositoryException($e->getMessage(), (int)$e->getCode(), $e);
+            }
+            throw $e;
+        }
     }
 
     /**
