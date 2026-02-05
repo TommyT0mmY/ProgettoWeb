@@ -64,7 +64,7 @@ class UserRepository extends BaseRepository {
      * @param string $userId The user ID
      * @return bool True if the user exists, false otherwise
      */
-    public function userExists(string $userId): bool {
+    public function exists(string $userId): bool {
         $stmt = $this->pdo->prepare(
             "SELECT COUNT(*) as count FROM users WHERE user_id = :userId"
         );
