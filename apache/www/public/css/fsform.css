@@ -55,6 +55,7 @@ main {
     background-color: var(--color-bg-light);
     border-radius: var(--radius-md); 
     box-shadow: var(--shadow-sm);
+    font-size: var(--fs-base);
 }
 
 .field-holder textarea {
@@ -87,7 +88,6 @@ main {
     background-color: transparent;
     transition: 
         transform var(--transition-fast) var(--easing-smooth),
-        font-size var(--transition-fast) ease-in-out,
         color var(--transition-fast) ease-in-out;
 }
 
@@ -97,12 +97,10 @@ main {
 .field-holder:not(.course-item) input.has-value + label,
 .field-holder:not(.course-item) select + label {
     transform: translateY(-50%);
-    font-size: var(--space-fs);
 }
 
 .field-holder:not(.course-item) :disabled + label {
     transform: translateY(-50%);
-    font-size: var(--space-fs);
 }
 
 .field-error-message {

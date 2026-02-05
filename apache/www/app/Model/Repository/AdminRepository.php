@@ -25,7 +25,7 @@ class AdminRepository extends BaseRepository {
     /**
      * Verifies if the admin exists 
      */
-    public function adminExists(string $adminId): bool {
+    public function exists(string $adminId): bool {
         $stmt = $this->pdo->prepare(
             "SELECT COUNT(*) as count FROM administrators WHERE admin_id = :adminId"
         );

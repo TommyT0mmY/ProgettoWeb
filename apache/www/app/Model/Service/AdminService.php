@@ -24,7 +24,7 @@ class AdminService implements RoleService {
     }
 
     public function exists(string $adminId): bool {
-        return $this->adminRepository->adminExists($adminId);
+        return $this->adminRepository->exists($adminId);
     }
 
     public function isSuspended(string $id): bool {

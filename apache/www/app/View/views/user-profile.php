@@ -70,7 +70,7 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
                 </ul>
             <?php endif; ?>
             <?php if ($isOwnProfile): ?>
-            <button type="button" class="btn btn-primary" onclick="window.location.href='/select-courses'">Change chosen courses</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/select-courses'">Manage courses</button>
             <?php endif; ?>
         <?php endif; ?>
     </section>
@@ -79,7 +79,7 @@ $isOwnProfile = !$isAdmin && $user->userId === $viewedUser->userId;
 <article class="user-posts">
     <h2><?= $isOwnProfile ? "My Posts" : h($viewedUser->firstName . "'s Posts") ?></h2>
     <?php if (empty($posts)): ?>
-        <p>No posts to show.</p>
+        <p class="no-posts">No posts to show.</p>
     <?php else: ?>
     <?= $this->component("posts-filter", [
         'action' => "/users/{$viewedUser->userId}",

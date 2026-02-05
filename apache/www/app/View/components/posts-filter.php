@@ -10,7 +10,7 @@
  */
 ?>
 <section class="post-filters">
-    <form action="<?=$action?>" method="get" id="filter-form">
+    <form action="<?=h($action)?>" method="get" id="filter-form">
         <fieldset>
             <legend>Filter posts</legend>
             <div class="field-holder">

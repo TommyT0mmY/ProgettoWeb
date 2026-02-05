@@ -42,7 +42,7 @@ class PostQuery {
     }
 
     public function authoredBy(?string $authorId): self {
-        $this->authorId = $this->typeCorrection($authorId, string::class);
+        $this->authorId = $this->typeCorrection($authorId, 'string');
         return $this;
     }
 

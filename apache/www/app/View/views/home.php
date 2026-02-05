@@ -30,6 +30,12 @@ if (!$isAdmin) {
 $this->extend($layout, $layoutParams);
 ?>
 
+<? if (empty($posts)): ?>
+<section class="no-posts">
+    <p>No posts to show.</p>
+    <a href="/select-courses" class="btn btn-primary">Subscribe to courses</a>
+</section>
+<? else: ?>
 <?= $this->component("posts-filter", [
     'action' => "/",
     'categories' => $categories,
@@ -41,3 +47,4 @@ $this->extend($layout, $layoutParams);
     <?= $this->component('post', ['post' => $post, 'forAdmin' => $isAdmin, 'currentPageUrl' => '/']) ?>
 <?php endforeach; ?>
 </div>
+<? endif; ?>

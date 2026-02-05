@@ -22,3 +22,6 @@ RUN a2enmod rewrite headers
 
 # Configurazioni di sicurezza
 COPY security-custom.ini /usr/local/etc/php/conf.d/
+
+# Allegati mock dentro /var/uploads
+COPY allegati_mock/ /var/uploads/

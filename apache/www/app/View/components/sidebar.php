@@ -18,6 +18,9 @@ foreach ($courses as $course) {
     <button id="logout-button" class="btn btn-secondary">Logout</button>
     <section aria-labelledby="courses-heading">
         <h2 id="courses-heading">Your courses</h2>
+        <? if (empty($coursesByFaculty)): ?>
+        <p>You are not enrolled in any courses.</p>
+        <? else: ?>
         <ul class="nav-faculties">
             <?php foreach ($coursesByFaculty as $facultyName => $facultyCourses): ?>
             <li>
@@ -32,5 +35,6 @@ foreach ($courses as $course) {
             </li>
             <?php endforeach; ?>
         </ul>
+        <? endif; ?>
     </section>
 </nav>

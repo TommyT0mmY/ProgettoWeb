@@ -2,31 +2,39 @@
 
 Il sito web è basato su uno stack LAMP containerizzato utilizzando Docker Compose.
 
----
-
-## ✅ Struttura Essenziale del Progetto
-
-```
-├── init.sh              # Script di Setup Essenziale (crea .env e secrets)
-├── docker-compose.yml   # Definizione dei servizi Docker
-├── Dockerfile           # Definizione del container PHP/Apache
-├── db/                  # Script SQL di inizializzazione (eseguiti al primo avvio)
-├── www/                 # Root del server web (sorgenti PHP)
-    ├── index.php
-    └── ...
-├── secrets/             # 🔐 Directory per i segreti (password)
-└── .env                 # Variabili d'ambiente importate in docker-compose.yml
-```
-
----
+-----
 
 ## 🚀 Quick Start in 3 Passi
 
 Assicurati di avere **Docker** e **Docker Compose (v2)** installati.
 
-### 1. Prepara l'ambiente (Setup Iniziale)
+### 1. Preparazione dell'ambiente per la prima esecuzione
 
-Rendi lo script di setup eseguibile ed eseguilo. Questo creerà il file `.env` e le password nella cartella `secrets/`.
+#### Windows
+
+Per prima cosa, crea manualmente un file `.env` nella root del progetto con il seguente contenuto:
+
+```env
+# MySQL Configuration
+MYSQL_DATABASE=unibostu
+MYSQL_USER=unibostu
+```
+
+E poi, crea la cartella `secrets/` e al suo interno i file `db_root_password.txt` e `db_user_password.txt` con le password desiderate per l'utente `root` e l'utente `unibostu`.
+
+Per esempio:
+
+```txt
+rootpassword123
+```
+
+```txt
+userpassword123
+```
+
+#### Linux
+
+Per linux si può eseguire direttamente lo script `init.sh` che si occupa di creare il file `.env` e le password nella cartella `secrets/`.
 
 ```bash
 chmod +x init.sh
@@ -48,6 +56,35 @@ docker compose up --build
 | **Sito Web (www)** | `http://localhost:80` | Mappato su `./www`
 | **phpMyAdmin** | `http://localhost:8001` | **User:** `{$MYSQL_USER}` in `.env` <br> **Password:** `./secrets/db_user_password.txt`
 | **db (MySQL)** | (Rete interna) | Configurato in `.env` e `secrets/`.
+
+-----
+
+## 👤 Utenti di Test
+
+Il database viene inizializzato con i seguenti utenti di test:
+
+| Username | Password | Ruolo | Nome | Cognome |
+|---|---|---|---|---|
+| `testuser` | `aaaaaa` | Utente normale | Test | User |
+| `testadmin` | `aaaaaa` | Amministratore | - | - |
+
+**Nota:** Questi utenti sono pre-caricati nel database per scopi di testing e sviluppo.
+
+-----
+
+## ✅ Struttura Essenziale del Progetto
+
+```
+├── init.sh              # Script di Setup Essenziale (crea .env e secrets)
+├── docker-compose.yml   # Definizione dei servizi Docker
+├── Dockerfile           # Definizione del container PHP/Apache
+├── db/                  # Script SQL di inizializzazione (eseguiti al primo avvio)
+├── www/                 # Root del server web (sorgenti PHP)
+    ├── index.php
+    └── ...
+├── secrets/             # 🔐 Directory per i segreti (password)
+└── .env                 # Variabili d'ambiente importate in docker-compose.yml
+```
 
 -----
 

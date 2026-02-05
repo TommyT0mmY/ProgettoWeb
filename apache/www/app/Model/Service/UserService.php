@@ -76,7 +76,7 @@ class UserService implements RoleService {
      * @return bool True if user exists.
      */
     public function exists(string $userId): bool {
-        return $this->userRepository->userExists($userId);
+        return $this->userRepository->exists($userId);
     }
 
     /**
@@ -161,6 +161,7 @@ class UserService implements RoleService {
         if (empty($dto->password)) {
             $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_REQUIRED);
         }
+        $exceptionBuilder->throwIfAny();
         $this->userRepository->updateProfile($dto);
     }
 

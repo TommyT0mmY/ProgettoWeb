@@ -70,7 +70,7 @@ class PostController extends BaseController {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
         if ($postId === null) {
-            throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
+            ValidationException::build([ValidationErrorCode::POST_ID_REQUIRED])->throwIfAny();
         }
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
