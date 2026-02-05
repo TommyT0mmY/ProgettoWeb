@@ -49,6 +49,19 @@ docker compose up --build
 | **phpMyAdmin** | `http://localhost:8001` | **User:** `{$MYSQL_USER}` in `.env` <br> **Password:** `./secrets/db_user_password.txt`
 | **db (MySQL)** | (Rete interna) | Configurato in `.env` e `secrets/`.
 
+---
+
+## 👤 Utenti di Test
+
+Il database viene inizializzato con i seguenti utenti di test:
+
+| Username | Password | Ruolo | Nome | Cognome |
+|---|---|---|---|---|
+| `testuser` | `aaaaaa` | Utente normale | Test | User |
+| `testadmin` | `aaaaaa` | Amministratore | - | - |
+
+**Nota:** Questi utenti sono pre-caricati nel database per scopi di testing e sviluppo.
+
 -----
 
 ## 🛠 Comandi Utili
