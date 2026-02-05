@@ -508,36 +508,30 @@ template {
     box-shadow: none;
 }
 .btn-secondary {
-    background-color: var(--color-gray-200);
-    color: var(--color-bold-text);
+    background-color: var(--color-bg-light);
+    border: 1px solid var(--color-blue-500);
+    color: var(--color-blue-500);
 }
 .btn-secondary * {
-    color: var(--color-bold-text);
+    color: var(--color-blue-500);
 }
 .btn-secondary:hover {
-    background-color: var(--color-gray-300);
+    background-color: var(--color-blue-500);
+    color: var(--color-white);
     box-shadow: var(--shadow-sm);
+}
+.btn-secondary:hover * {
+    color: var(--color-white);
 }
 .btn-secondary:disabled {
-    background-color: var(--color-gray-100);
-    cursor: not-allowed;
-    box-shadow: none;
-}
-.btn-tertiary {
-    background-color: transparent;
-    color: var(--color-blue-500);
-}
-.btn-tertiary * {
-    color: var(--color-blue-500);
-}
-.btn-tertiary:hover {
-    background-color: var(--color-blue-100);
-    box-shadow: var(--shadow-sm);
-}
-.btn-tertiary:disabled {
+    background-color: var(--color-bg-light);
+    border-color: var(--color-blue-200);
     color: var(--color-blue-200);
     cursor: not-allowed;
     box-shadow: none;
+}
+.btn-secondary:disabled * {
+    color: var(--color-blue-200);
 }
 .btn-danger {
     background-color: var(--color-error);

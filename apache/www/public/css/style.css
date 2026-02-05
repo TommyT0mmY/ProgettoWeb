@@ -490,6 +490,10 @@ nav h3 {
     font-size: var(--fs-base);
     margin-bottom: var(--space-xs);
 }
+nav p {
+    color: var(--color-text);
+    font-size: var(--fs-base);
+}
 nav ul {
     display: flex;
     flex-direction: column;
@@ -647,8 +651,7 @@ nav .btn {
 }
 .user-posts h2 {
     margin: 0;
-    padding-top: var(--space-md);
-    padding-left: var(--space-md);
+    padding: var(--space-md);
     background-color: var(--color-bg);
 }
 
@@ -658,4 +661,31 @@ nav .btn {
     justify-content: space-between;
     align-items: center;
     padding: var(--space-md);
+}
+
+section.no-posts {
+    display: flex;
+    flex-direction: column;
+    /* center stuff horizontally */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: var(--feed-max-width);
+    margin-inline: auto;
+    padding: var(--space-md);
+}
+.no-posts {
+    margin-top: var(--space-md);
+    margin-left: var(--space-md);
+}
+.no-posts * {
+    overflow-wrap: break-word;
+    white-space: normal;
+    text-wrap: balance;
+}
+@media screen and (max-width: 768px) {
+    section.no-posts {
+        align-items: stretch;
+    }
 }
