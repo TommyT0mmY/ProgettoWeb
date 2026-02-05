@@ -35,7 +35,7 @@ class CommentController extends BaseController {
         $pathVars = $request->getAttribute(RequestAttribute::PATH_VARIABLES);
         $postId = $pathVars['postid'] ?? null;
         if ($postId === null) {
-            throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
+            ValidationException::build()->addError(ValidationErrorCode::POST_ID_REQUIRED)->throwIfAny();
         }
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         [ "text" => $text, "parentCommentId" => $parentCommentId ] = $request->getAttribute(RequestAttribute::FIELDS);
@@ -99,10 +99,10 @@ class CommentController extends BaseController {
         $postId = $pathVars['postid'] ?? null;
         $commentId = $pathVars['commentid'] ?? null;
         if ($postId === null) {
-            throw new ValidationException(errors: [ValidationErrorCode::POST_ID_REQUIRED]);
+            ValidationException::build()->addError(ValidationErrorCode::POST_ID_REQUIRED)->throwIfAny();
         }
         if ($commentId === null) {
-            throw new ValidationException(errors: [ValidationErrorCode::COMMENT_ID_REQUIRED]);
+            ValidationException::build()->addError(ValidationErrorCode::COMMENT_ID_REQUIRED)->throwIfAny();
         }
         $userId = $request->getAttribute(RequestAttribute::ROLE_ID);
         $currentRole = $request->getAttribute(RequestAttribute::ROLE);
