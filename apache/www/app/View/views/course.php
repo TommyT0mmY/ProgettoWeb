@@ -34,7 +34,7 @@ $this->extend($layout, $layoutParams);
 <div class="course-header">
     <h1><?= h($thisCourse->courseName) ?></h1>
     <?php if (!$isAdmin): ?>
-    <a href="/courses/<?= h($thisCourse->courseId) ?>/createpost" class="btn-create-post">New post</a>
+    <a href="/courses/<?= h($thisCourse->courseId) ?>/createpost" class="btn-create-post btn btn-primary">New post</a>
     <?php endif; ?>
 </div>
 <?= $this->component("posts-filter", [

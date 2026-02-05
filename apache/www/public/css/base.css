@@ -166,6 +166,11 @@ html {
     font-size: 125%; /* Do not use px, use % or rem for accessibility */
     color: var(--color-text);
 }
+@media (max-width: 768px) {
+    html {
+        font-size: 100%;
+    }
+}
 
 /*
  * Hides an element visually while keeping it accessible to screen readers
