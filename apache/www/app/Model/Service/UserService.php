@@ -161,6 +161,7 @@ class UserService implements RoleService {
         if (empty($dto->password)) {
             $exceptionBuilder->addError(ValidationErrorCode::PASSWORD_REQUIRED);
         }
+        $exceptionBuilder->throwIfAny();
         $this->userRepository->updateProfile($dto);
     }
 
