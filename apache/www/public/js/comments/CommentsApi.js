@@ -1,8 +1,6 @@
-const API_BASE = 'http://localhost:80/api';
-
 export async function fetchComments(postId) {
     try {
-        const response = await fetch(`${API_BASE}/posts/${postId}/comments`);
+        const response = await fetch(`/api/posts/${postId}/comments`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -25,7 +23,7 @@ export async function postComment(commentData) {
         commentData['csrf-key'] = window.csrfKey;
         commentData['csrf-token'] = window.csrfToken;
         
-        const response = await fetch(`${API_BASE}/posts/${commentData.postid}/comments`, {
+        const response = await fetch(`/api/posts/${commentData.postid}/comments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -56,7 +54,7 @@ export async function deleteComment(postId, commentId) {
             'csrf-token': window.csrfToken
         };
         
-        const response = await fetch(`${API_BASE}/posts/${postId}/comments/${commentId}`, {
+        const response = await fetch(`/api/posts/${postId}/comments/${commentId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
